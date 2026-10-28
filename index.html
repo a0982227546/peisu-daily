@@ -67,7 +67,9 @@ function advance(){const now=slotAt(gameNow());if(state.lastSlot===null){state.l
 function life(){if(!state.life)state.life={objects:{},shared:null,invitationDay:'',lastLifeTick:0};if(!state.life.objects)state.life.objects={};return state.life}
 function setLifeObject(where,label,hours=12){const l=life(),now=gameNow(),id=where+':'+label;l.objects[id]={room:where,label,originalLabel:label,created:now,expires:now+hours*3600000,handled:false,changed:false};save()}
 function clearLifeObject(where,label){delete life().objects[where+':'+label];save()}
-function lifeObjects(where){return Object.values(life().objects).filter(x=>x.room===where&&x.expires>gameNow())}
+const PERSISTENT_LEFT_ITEMS=new Set(['桌上的茶','留下的餐盒','茶几上的零食','沙發旁的書','留下的茶點']);
+function isPersistentLeftItem(obj){return !!obj&&PERSISTENT_LEFT_ITEMS.has(obj.originalLabel||obj.label)}
+function lifeObjects(where){return Object.values(life().objects).filter(x=>x.room===where&&(isPersistentLeftItem(x)||x.expires>gameNow()))}
 function beginShared(kind){const l=life(),duration=kind==='movie'?85:40;l.shared={kind,started:gameNow(),ends:gameNow()+duration*60000,room:kind==='movie'?'living':'kitchen',joined:true};setLifeObject(l.shared.room,kind==='movie'?'電影正在播放':'桌上的餐具',kind==='movie'?2:3);save()}
 // 自主生活只在已經過去的時間格結算，不會因為重開頁面重抽。
 function autonomousLife(now=gameNow()){
@@ -77,7 +79,7 @@ function autonomousLife(now=gameNow()){
   // 物品放下至少 25 分鐘才有機會被注意到；同一件物品最多結算一次。
   const earliest=obj.created+25*60000;
   if(now<earliest)continue;
-  const end=Math.min(now,obj.expires);
+  const end=isPersistentLeftItem(obj)?now:Math.min(now,obj.expires);
   if(end<earliest){obj.handled=true;changed=true;continue}
   const steps=Math.min(96,Math.floor((end-earliest)/(30*60000))+1);
   let eligible=false;
@@ -86,7 +88,7 @@ function autonomousLife(now=gameNow()){
    if(activity(slotAt(t)).room===obj.room){eligible=true;break}
   }
   // 沒經過這個房間就不會碰物品。未經過則保留到過期。
-  if(!eligible){if(now>=obj.expires){obj.handled=true;changed=true}continue}
+  if(!eligible){if(!isPersistentLeftItem(obj)&&now>=obj.expires){obj.handled=true;changed=true}continue}
   obj.handled=true;changed=true;
   const roll=hash(Math.floor(obj.created/60000)+id.length*43);
   let outcome='';
@@ -99,7 +101,7 @@ function autonomousLife(now=gameNow()){
  }
  if(changed)save();
 }
-function updateLife(){const l=life(),now=gameNow();autonomousLife(now);let changed=false;for(const [k,obj] of Object.entries(l.objects)){if(obj.expires<=now){delete l.objects[k];changed=true}}if(l.shared&&now>=l.shared.ends){const kind=l.shared.kind;l.shared=null;log(kind==='movie'?'電影播完了。客廳又安靜下來。':'飯吃完了，桌上還留著餐具。');if(kind==='movie')clearLifeObject('living','電影正在播放');changed=true}if(changed)save()}
+function updateLife(){const l=life(),now=gameNow();autonomousLife(now);let changed=false;for(const [k,obj] of Object.entries(l.objects)){if(!isPersistentLeftItem(obj)&&obj.expires<=now){delete l.objects[k];changed=true}}if(l.shared&&now>=l.shared.ends){const kind=l.shared.kind;l.shared=null;log(kind==='movie'?'電影播完了。客廳又安靜下來。':'飯吃完了，桌上還留著餐具。');if(kind==='movie')clearLifeObject('living','電影正在播放');changed=true}if(changed)save()}
 function roomLifeText(where){const objects=lifeObjects(where),shared=life().shared;let result='';if(shared&&shared.room===where&&shared.ends>gameNow()){result+=shared.kind==='movie'?'電影還在播放。裴溯坐在沙發另一側，不時看一眼螢幕。':'飯還沒吃完。裴溯坐在桌邊，偶爾抬頭看你一眼。'}if(objects.length)result+=(result?'\n':'')+'現在留在這裡的東西：'+objects.map(x=>x.label).join('、')+'。';return result||'這裡暫時沒有留下新的生活痕跡。'}
 function observationRoom(x){if(x.room)return x.room;const t=x.text||'';if(/沙發|茶几|客廳/.test(t))return 'living';if(/廚房|流理台|水槽|餐盒|茶杯/.test(t))return 'kitchen';if(/書房|書桌前/.test(t))return 'study';return null}
 function observationTitle(x){const t=x.text||'';const k=x.kind||(/零食/.test(t)?'snack':/餐盒/.test(t)?'meal':/書/.test(t)?'book':/杯|茶/.test(t)?'cup':'other');return ({snack:'🍪 零食有變化',meal:'🍱 餐點有變化',book:'📖 書本位置改變',cup:'☕ 杯子或茶有變化'})[k]||'🏠 物品有變化'}
@@ -1224,7 +1226,31 @@ if(v175jSubtitle)v175jSubtitle.textContent='同住日常 · v1.7.5l 我的房門
 
 // v1.7.5m — Pei Su's CLOSED door: player notes only. No interior access.
 const V175M_PRESETS=['路過，留個字。','別太累了。','你房門上好像少了點裝飾。','看到這張紙記得笑一下。'];
-function v175mData(){const l=life();if(!l.peiDoorNotes175m)l.peiDoorNotes175m={active:null,history:[],seq:0,nextCheckAt:0};return l.peiDoorNotes175m}
+function v175mData(){
+ const l=life();if(!l.peiDoorNotes175m)l.peiDoorNotes175m={active:null,history:[],seq:0,nextCheckAt:0};
+ const n=l.peiDoorNotes175m;
+ if(!Array.isArray(n.history))n.history=[];
+ // Reconcile a legacy save with posted notes but a missing active reference.
+ // Never invent a removal or claim Pei Su took a note without evidence.
+ const posted=n.history.filter(x=>x&&x.status==='posted').sort((a,b)=>(b.at||0)-(a.at||0));
+ if(n.active&&n.active.status!=='posted')n.active=null;
+ if(!n.active&&posted.length){
+  n.active=posted[0];
+  n.nextCheckAt=Math.max(Number(n.nextCheckAt)||0,gameNow()+60*60000);
+ }
+ if(n.active){
+  const match=n.history.find(x=>x.id===n.active.id&&x.at===n.active.at);
+  if(match)n.active=match;
+  else n.history.unshift(n.active);
+  for(const item of n.history){
+   if(item!==n.active&&item.status==='posted'){
+    item.status='unverified';item.reconciliationNote='舊版狀態不一致，無法確認便條去向';
+   }
+  }
+ }
+ n.seq=Math.max(Number(n.seq)||0,...n.history.map(x=>Number(x.id)||0),0);
+ return n;
+}
 function v175mStamp(t){return new Date(t).toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})}
 function v175mPost(text,kind){const n=v175mData();if(n.active)return false;const at=gameNow();const entry={id:++n.seq,text,kind,at,status:'posted',handledAt:null};n.active=entry;n.history.unshift(entry);n.history=n.history.slice(0,100);n.nextCheckAt=at+60*60000;log('你在裴溯房門外貼了一張便條。');save();return true}
 function v175mCollect(force=false){const n=v175mData(),now=gameNow();if(!n.active||(!force&&now<n.nextCheckAt))return false;
@@ -1260,7 +1286,7 @@ function v175mDoorRender(){document.getElementById('v175mDoor')?.remove();if(roo
 }
 const v175mOldRender=render;
 render=function(){v175mCollect();v175mOldRender();v175mDoorRender();const journal=$('journal');if(!journal)return;let hist=$('v175mHistory');if(!hist){hist=el('details','surface');hist.id='v175mHistory';journal.append(hist)}const n=v175mData();hist.replaceChildren();hist.append(el('summary','surface-title','貼給裴溯的房門便條（'+n.history.length+'）'));if(!n.history.length)hist.append(el('p','note','還沒有貼給裴溯的便條。'));
- for(const item of n.history){const e=el('div','life-change-item');e.append(el('div','life-change-detail',item.text));const status={posted:'仍在門上',taken:'裴溯已取走',retrieved:'自己取下'}[item.status]||item.status;e.append(el('small','',v175mStamp(item.at)+'｜'+status+(item.handledAt?'｜'+v175mStamp(item.handledAt):'')));hist.append(e)}
+ for(const item of n.history){const e=el('div','life-change-item');e.append(el('div','life-change-detail',item.text));const status={posted:'仍在門上',taken:'裴溯已取走',retrieved:'自己取下',unverified:'舊版狀態異常・去向未確認'}[item.status]||item.status;e.append(el('small','',v175mStamp(item.at)+'｜'+status+(item.handledAt?'｜'+v175mStamp(item.handledAt):'')));hist.append(e)}
 };
 const v175mSub=document.querySelector('.head .sub');if(v175mSub)v175mSub.textContent='同住日常 · v1.7.5n 裴溯房門便條顯示修正版';
 
