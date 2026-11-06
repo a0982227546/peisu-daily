@@ -33,7 +33,7 @@
 <section id="talk" class="screen hidden"><div class="section-head"><h3>找裴溯說話</h3><span>不一定有回應</span></div><div class="surface"><p id="talkLocation"></p><div class="actions" id="topics"></div><p class="feedback" id="talkReply"></p></div><div class="surface"><div class="surface-title">傳個訊息</div><p>他外出時也能傳訊息，但不保證立即回覆。</p><button class="choice" id="messageBtn">傳一則簡短訊息</button><p class="feedback" id="messageReply"></p></div></section>
 <section id="journal" class="screen hidden"><div class="section-head"><h3>觀察日誌</h3><span>留下發生過的事</span></div><div class="surface" hidden aria-hidden="true"><button id="jumpDev" disabled>測試工具</button></div><div class="surface"><div class="surface-title">事件回顧</div><div class="log" id="eventHistory"></div></div><div class="surface"><div class="surface-title">日常紀錄</div><div class="log" id="dailyLog"></div></div><div class="surface settings" id="developerSettings"><div class="surface-title">存檔與備份</div><p>本機儲存不保證永久有效，建議定期匯出備份。匯入舊版存檔時，未完成的舊事件不會延續，以避免對話錯亂。</p><div class="row"><button id="export">匯出備份</button><button id="importBtn">匯入備份</button><input type="file" id="importFile" accept=".json,application/json" hidden></div><label class="toggle" hidden aria-hidden="true">測試沙盒<input type="checkbox" id="testMode" disabled></label><div id="timeTools" class="hidden"><p class="note" id="timeInfo"></p><div class="row"><button data-fast="10">＋10 分鐘</button><button data-fast="30">＋30 分鐘</button><button data-fast="120">＋2 小時</button></div><p class="note">測試期間使用虛擬時間與複製存檔；關閉測試模式後還原正式資料。</p></div><p class="note">本遊戲可離線使用，不消耗 AI API；原本的裴總聊天室不受影響。</p></div></section>
 </main><nav class="nav"><button data-tab="home" class="active"><b>⌂</b>首頁</button><button data-tab="spaces"><b>▦</b>空間</button><button data-tab="events"><b>✦</b>事件</button><button data-tab="talk"><b>◌</b>說話</button><button data-tab="journal"><b>▤</b>日誌</button></nav>
-<script id="r28-kitchen-data" type="application/json">{"roots":["p_37","p_40","p_43","p_46","p_48","p_59"],"prompts":{"p_35a59718-e3fa-45ef-86bb-1f81f18fbbb9":{"label":"","mode":"random","leadIn":"","removed":true,"replies":[{"text":"","condition":"any","choices":[],"removed":false}]},"p_f0724c25-f6d1-4c27-9cae-cbd3b134d707":{"label":"「今天還挺順利的。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「那不錯。」 他隨口應了一聲，繼續整理手邊的東西。","condition":"any","choices":[],"removed":false}]},"p_4bc412c2-20a5-4f61-a639-93c6217a7158":{"label":"「放哪裡？」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"裴溯：「下面那層就行。」\n你把剩下的食材收好，關上冰箱門。","condition":"any","choices":[],"removed":false}]},"p_a21e16cc-3751-416a-b810-5a9e142c3718":{"label":"「裴總這是在指揮我啊？」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「不是你自己說要幫忙的？」 \n你笑了笑，還是走到水槽旁開始洗菜。","condition":"any","choices":[],"removed":false}]},"p_43":{"label":"問需不需要幫忙","mode":"state","leadIn":"你：「需要幫忙嗎？」","removed":false,"replies":[{"text":"裴溯看了一眼流理臺上的食材。\n裴溯：「那你幫我把菜洗了。」","condition":"preparing_food","choices":["p_91c0a42d-420b-4f65-b1fc-c042716a9958","p_a21e16cc-3751-416a-b810-5a9e142c3718"],"removed":false},{"text":"裴溯：「把那邊的東西收一下。」","condition":"tidying","choices":["p_d9ac2bfb-882e-4d38-b36a-608e465b61c8"],"removed":false},{"text":"裴溯：「不用，快好了。」","condition":"any","choices":[],"removed":false},{"text":"裴溯：「不用，你待著就行。」\n他繼續手上的事。","condition":"any","choices":[],"removed":false}]},"p_40":{"label":"問他今天如何","mode":"random","leadIn":"你走進廚房，裴溯正在流理臺旁。","removed":false,"replies":[{"text":"裴溯：「就那樣。」\n他拿起杯子喝了口水。","condition":"any","choices":[],"removed":false},{"text":"裴溯：「事情不少，剛忙完。」\n他把杯子放回流理臺旁。","condition":"any","choices":[],"removed":false},{"text":"裴溯：「還行。你呢？」","condition":"any","choices":["p_e3c12dad-2f77-4ea0-bb9c-d0b4c452b940","p_f0724c25-f6d1-4c27-9cae-cbd3b134d707","p_4677bcb7-5d01-402c-99c1-cc75fc245d36"],"removed":false},{"text":"裴溯：「沒什麼好說的。」\n他低頭繼續手上的事。","condition":"any","choices":[],"removed":false}]},"p_9b44df35-e3d9-48d9-8179-269d327ef9da":{"label":"「要冰的還是常溫？」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「常溫就行。」\n你倒了杯常溫水遞給他。","condition":"any","choices":[],"removed":false}]},"p_46":{"label":"問他在做什麼","mode":"random","leadIn":"我：「在做什麼？」","removed":false,"replies":[{"text":"裴溯正在流理臺前處理食材。\n裴溯：「弄點吃的。」","condition":"preparing_food","choices":["p_ef128763-e6a3-4e74-a39f-cbd6004e2507","p_da467ee1-b0a2-4dcc-8539-ef41a0ce1f18","p_35a59718-e3fa-45ef-86bb-1f81f18fbbb9"],"removed":false},{"text":"裴溯打開櫃子，正在翻找什麼。\n裴溯：「找個東西。」","condition":"any","choices":["p_f641471c-8ac5-418c-9cf7-16c5de892069","p_9f142a85-8fd2-40e9-be3a-2869134455b1","p_3e9b65c8-1990-47f1-b55d-794760f38e38"],"removed":false},{"text":"裴溯把檯面上的東西一一收好。\n裴溯：「收拾一下。」","condition":"any","choices":[],"removed":false},{"text":"裴溯拿著杯子站在飲水機旁。\n裴溯：「倒水。」","condition":"any","choices":[],"removed":false}]},"p_f641471c-8ac5-418c-9cf7-16c5de892069":{"label":"「找什麼?」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「開罐器，剛剛還看見。」 \n他又拉開另一個抽屜。","condition":"any","choices":[],"removed":false}]},"p_eeab9a20-fd2a-4819-b96e-017934bfb459":{"label":"「有一點。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「冰箱裡應該還有東西。」\n 他朝冰箱的方向看了一眼。","condition":"any","choices":[],"removed":false}]},"p_82cdacca-c85a-4b90-8bc7-403b0b98058d":{"label":"「這邊都要擦？」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"裴溯：「嗯，東西我來收。」\n你拿起抹布擦拭流理臺，裴溯則把旁邊的東西整理好。","condition":"any","choices":[],"removed":false}]},"p_91c0a42d-420b-4f65-b1fc-c042716a9958":{"label":"「好，交給我。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「嗯，洗好放旁邊就行。」 \n你把菜洗乾淨，瀝了水，放在流理臺旁。裴溯接著處理其他食材。","condition":"any","choices":[],"removed":false}]},"p_d9ac2bfb-882e-4d38-b36a-608e465b61c8":{"label":"「好。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「把那邊的杯子收一下。」\n","condition":"any","choices":["p_d793535e-a56d-4507-b9bc-a059437bdcd7"],"removed":false},{"text":"「幫我把檯面擦一下。」","condition":"any","choices":["p_82cdacca-c85a-4b90-8bc7-403b0b98058d"],"removed":false},{"text":"「剩下的食材幫我收進冰箱。」","condition":"any","choices":["p_4bc412c2-20a5-4f61-a639-93c6217a7158"],"removed":false}]},"p_e3c12dad-2f77-4ea0-bb9c-d0b4c452b940":{"label":"「剛忙完，過來找點吃的。」","mode":"random","leadIn":"","removed":false,"replies":[{"text":"裴溯朝冰箱的方向抬了抬下巴。\n裴溯：「裡面還有吃的。」","condition":"any","choices":[],"removed":false},{"text":"裴溯順手拿起一旁放著的點心，遞到你面前。\n裴溯：「喏。」","condition":"any","choices":[],"removed":false}]},"p_53":{"label":"想替他準備","mode":"random","leadIn":"","removed":false,"replies":[{"text":"你：「想說你有想吃的，我可以買回來。」\n裴溯：「不用特地買，真想吃我會說。」","condition":"any","choices":[],"removed":false}]},"p_6f2e8a7e-3f3b-4f1d-9cbb-884eb5733a53":{"label":"「有餅乾，要不要？」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「拿一點吧。」\n 你拿了餅乾給他，他接過去放在一旁。","condition":"any","choices":[],"removed":false}]},"p_da467ee1-b0a2-4dcc-8539-ef41a0ce1f18":{"label":"「那你慢慢弄。」","mode":"random","leadIn":"","removed":false,"replies":[{"text":"「嗯。」 他繼續處理手邊的食材。","condition":"any","choices":[],"removed":false}]},"p_4677bcb7-5d01-402c-99c1-cc75fc245d36":{"label":"「不太順利，有點煩。」","mode":"random","leadIn":"","removed":false,"replies":[{"text":"「怎麼了？」 他停下手上的動作，看了你一眼。","condition":"any","choices":["p_9b91a650-8bf5-4d1b-843f-892bfce712b5"],"removed":false}]},"p_37":{"label":"問他要不要吃／喝點東西","mode":"random","leadIn":"你：「要不要吃點什麼？還是喝點東西？」","removed":false,"replies":[{"text":"裴溯：「有水嗎？」\n他看了眼廚房的杯子。","condition":"any","choices":["p_59209ced-681e-475f-ba37-9e7d95faa149","p_9b44df35-e3d9-48d9-8179-269d327ef9da"],"removed":false},{"text":"裴溯：「有什麼吃的？」","condition":"any","choices":["p_0858ad3f-6b30-46e2-b9c2-1c35209968b8","p_6f2e8a7e-3f3b-4f1d-9cbb-884eb5733a53"],"removed":false},{"text":"裴溯：「不用，我不餓。」","condition":"any","choices":[],"removed":false},{"text":"裴溯：「你餓了？」","condition":"any","choices":["p_eeab9a20-fd2a-4819-b96e-017934bfb459","p_8839001f-12c9-450d-8030-9759c401c100","p_7fe705ed-76c2-4b77-a8d6-8d52a1d5be51","p_1cad29bd-84f6-45ed-9bb7-80773f6a8776"],"removed":false}]},"p_ef128763-e6a3-4e74-a39f-cbd6004e2507":{"label":"「準備做什麼?」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「煮個麵，簡單吃點。」 他把食材放到一旁，繼續準備。","condition":"any","choices":[],"removed":false}]},"p_9f142a85-8fd2-40e9-be3a-2869134455b1":{"label":"「要我幫你找嗎?」","mode":"random","leadIn":"","removed":false,"replies":[{"text":"「不用，應該就在這附近。」 \n他繼續翻找櫃子。","condition":"any","choices":[],"removed":false}]},"p_7fe705ed-76c2-4b77-a8d6-8d52a1d5be51":{"label":"「只是有點渴。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「那就倒點水喝。」\n 他指了指旁邊的杯子。","condition":"any","choices":[],"removed":false}]},"p_59":{"label":"安靜待著","mode":"random","leadIn":"","removed":false,"replies":[{"text":"你走到流理臺前，裴溯稍微往旁邊讓了讓，留出足夠的位置。\n你們各自做著手上的事，沒有打擾對方。","condition":"any","choices":[],"removed":false},{"text":"裴溯正在準備食物。你沒有打擾他，只是靠在一旁看著。\n他偶爾移動手邊的東西，動作不急不慢。","condition":"any","choices":[],"removed":false},{"text":"你走進廚房，倒了杯水，順手整理了一下檯面。\n裴溯在旁邊喝著水，兩個人都沒有特別說話。","condition":"any","choices":[],"removed":false}]},"p_48":{"label":"隨便聊聊","mode":"random","leadIn":"","removed":false,"replies":[{"text":"你：「冰箱裡是不是還有昨天買的水果？」\n裴溯：「應該有，你自己看看。」\n他朝冰箱的方向看了一眼。","condition":"any","choices":[],"removed":false},{"text":"你：「你最近有沒有突然想吃的東西？」\n裴溯：「怎麼突然問這個？」","condition":"any","choices":["p_51","p_53","p_55"],"removed":false},{"text":"我：「下次去買東西，要不要順便買點零食回來？」\n裴溯看了你一眼。\n裴溯：「你想吃就買，問我做什麼？」","condition":"any","choices":[],"removed":false},{"text":"你：「你怎麼還待在廚房？」\n裴溯：「你不也在這兒？」\n他看了你一眼，又繼續手上的事。","condition":"any","choices":[],"removed":false}]},"p_d793535e-a56d-4507-b9bc-a059437bdcd7":{"label":"「好。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"裴溯：「謝了。」\n你把杯子放回櫃子裡。","condition":"any","choices":[],"removed":false}]},"p_59209ced-681e-475f-ba37-9e7d95faa149":{"label":"「有，我幫你倒。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「嗯，謝了。」 \n你拿了杯子替他倒水，放到他手邊。","condition":"any","choices":[],"removed":false}]},"p_1cad29bd-84f6-45ed-9bb7-80773f6a8776":{"label":"","mode":"random","leadIn":"","removed":true,"replies":[{"text":"","condition":"any","choices":[],"removed":false}]},"p_0858ad3f-6b30-46e2-b9c2-1c35209968b8":{"label":"「冰箱裡還有點東西，要看看嗎？」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「看看吧。」 \n你們打開冰箱，找了點能吃的東西。","condition":"any","choices":[],"removed":false}]},"p_3e9b65c8-1990-47f1-b55d-794760f38e38":{"label":"「那你繼續找。」","mode":"random","leadIn":"","removed":false,"replies":[{"text":"「嗯。」 \n你沒有再打擾他。","condition":"any","choices":[],"removed":false}]},"p_9b91a650-8bf5-4d1b-843f-892bfce712b5":{"label":"「今天做什麼都不太順。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"裴溯：「那就先別想了，喝點東西再說。」\n他把旁邊的杯子往你這邊推了推。","condition":"any","choices":[],"removed":false}]},"p_51":{"label":"單純好奇","mode":"random","leadIn":"","removed":false,"replies":[{"text":"你：「就隨便問問。」\n裴溯：「暫時沒有。」","condition":"any","choices":[],"removed":false}]},"p_55":{"label":"自己想不到吃什麼","mode":"random","leadIn":"","removed":false,"replies":[{"text":"你：「我自己不知道要吃什麼，想參考一下。」\n裴溯：「那你問錯人了，我也沒想法。」","condition":"any","choices":[],"removed":false}]},"p_8839001f-12c9-450d-8030-9759c401c100":{"label":"「沒有，就問問你。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「那不用管我。」\n 他繼續做自己的事。","condition":"any","choices":[],"removed":false}]}}}</script>
+<script id="r28-kitchen-data" type="application/json">{"roots":["p_37","p_40","p_43","p_46","p_48","p_59"],"prompts":{"p_35a59718-e3fa-45ef-86bb-1f81f18fbbb9":{"label":"","mode":"random","leadIn":"","removed":true,"replies":[{"text":"","condition":"any","choices":[],"removed":false}]},"p_f0724c25-f6d1-4c27-9cae-cbd3b134d707":{"label":"「今天還挺順利的。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「那不錯。」 他隨口應了一聲，繼續整理手邊的東西。","condition":"any","choices":[],"removed":false}]},"p_4bc412c2-20a5-4f61-a639-93c6217a7158":{"label":"「放哪裡？」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"裴溯：「下面那層就行。」\n你把剩下的食材收好，關上冰箱門。","condition":"any","choices":[],"removed":false}]},"p_a21e16cc-3751-416a-b810-5a9e142c3718":{"label":"「裴總這是在指揮我啊？」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「不是你自己說要幫忙的？」 \n你笑了笑，還是走到水槽旁開始洗菜。","condition":"any","choices":[],"removed":false}]},"p_43":{"label":"問需不需要幫忙","mode":"state","leadIn":"你：「需要幫忙嗎？」","removed":false,"replies":[{"text":"裴溯看了一眼流理臺上的食材。\n裴溯：「那你幫我把菜洗了。」","condition":"preparing_food","choices":["p_91c0a42d-420b-4f65-b1fc-c042716a9958","p_a21e16cc-3751-416a-b810-5a9e142c3718"],"removed":false},{"text":"裴溯：「把那邊的東西收一下。」","condition":"tidying","choices":["p_d9ac2bfb-882e-4d38-b36a-608e465b61c8"],"removed":false},{"text":"裴溯：「不用，快好了。」","condition":"any","choices":[],"removed":false},{"text":"裴溯：「不用，你待著就行。」\n他繼續手上的事。","condition":"any","choices":[],"removed":false}]},"p_40":{"label":"問他今天如何","mode":"random","leadIn":"你走進廚房，裴溯正在流理臺旁。","removed":false,"replies":[{"text":"裴溯：「就那樣。」\n他拿起杯子喝了口水。","condition":"any","choices":[],"removed":false},{"text":"裴溯：「事情不少，剛忙完。」\n他把杯子放回流理臺旁。","condition":"any","choices":[],"removed":false},{"text":"裴溯：「還行。你呢？」","condition":"any","choices":["p_e3c12dad-2f77-4ea0-bb9c-d0b4c452b940","p_f0724c25-f6d1-4c27-9cae-cbd3b134d707","p_4677bcb7-5d01-402c-99c1-cc75fc245d36"],"removed":false},{"text":"裴溯：「沒什麼好說的。」\n他低頭繼續手上的事。","condition":"any","choices":[],"removed":false}]},"p_9b44df35-e3d9-48d9-8179-269d327ef9da":{"label":"「要冰的還是常溫？」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「常溫就行。」\n你倒了杯常溫水遞給他。","condition":"any","choices":[],"removed":false}]},"p_46":{"label":"問他在做什麼","mode":"state","leadIn":"我：「在做什麼？」","removed":false,"replies":[{"text":"裴溯正在流理臺前處理食材。\n裴溯：「弄點吃的。」","condition":"preparing_food","choices":["p_ef128763-e6a3-4e74-a39f-cbd6004e2507","p_da467ee1-b0a2-4dcc-8539-ef41a0ce1f18","p_35a59718-e3fa-45ef-86bb-1f81f18fbbb9"],"removed":false},{"text":"裴溯打開櫃子，正在翻找什麼。\n裴溯：「找個東西。」","condition":"any","choices":["p_f641471c-8ac5-418c-9cf7-16c5de892069","p_9f142a85-8fd2-40e9-be3a-2869134455b1","p_3e9b65c8-1990-47f1-b55d-794760f38e38"],"removed":false},{"text":"裴溯把檯面上的東西一一收好。\n裴溯：「收拾一下。」","condition":"tidying","choices":[],"removed":false},{"text":"裴溯拿著杯子站在飲水機旁。\n裴溯：「倒水。」","condition":"drinking","choices":[],"removed":false}]},"p_f641471c-8ac5-418c-9cf7-16c5de892069":{"label":"「找什麼?」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「開罐器，剛剛還看見。」 \n他又拉開另一個抽屜。","condition":"any","choices":[],"removed":false}]},"p_eeab9a20-fd2a-4819-b96e-017934bfb459":{"label":"「有一點。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「冰箱裡應該還有東西。」\n 他朝冰箱的方向看了一眼。","condition":"any","choices":[],"removed":false}]},"p_82cdacca-c85a-4b90-8bc7-403b0b98058d":{"label":"「這邊都要擦？」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"裴溯：「嗯，東西我來收。」\n你拿起抹布擦拭流理臺，裴溯則把旁邊的東西整理好。","condition":"any","choices":[],"removed":false}]},"p_91c0a42d-420b-4f65-b1fc-c042716a9958":{"label":"「好，交給我。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「嗯，洗好放旁邊就行。」 \n你把菜洗乾淨，瀝了水，放在流理臺旁。裴溯接著處理其他食材。","condition":"any","choices":[],"removed":false}]},"p_d9ac2bfb-882e-4d38-b36a-608e465b61c8":{"label":"「好。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「把那邊的杯子收一下。」\n","condition":"any","choices":["p_d793535e-a56d-4507-b9bc-a059437bdcd7"],"removed":false},{"text":"「幫我把檯面擦一下。」","condition":"any","choices":["p_82cdacca-c85a-4b90-8bc7-403b0b98058d"],"removed":false},{"text":"「剩下的食材幫我收進冰箱。」","condition":"any","choices":["p_4bc412c2-20a5-4f61-a639-93c6217a7158"],"removed":false}]},"p_e3c12dad-2f77-4ea0-bb9c-d0b4c452b940":{"label":"「剛忙完，過來找點吃的。」","mode":"random","leadIn":"","removed":false,"replies":[{"text":"裴溯朝冰箱的方向抬了抬下巴。\n裴溯：「裡面還有吃的。」","condition":"any","choices":[],"removed":false},{"text":"裴溯順手拿起一旁放著的點心，遞到你面前。\n裴溯：「喏。」","condition":"any","choices":[],"removed":false}]},"p_53":{"label":"想替他準備","mode":"random","leadIn":"","removed":false,"replies":[{"text":"你：「想說你有想吃的，我可以買回來。」\n裴溯：「不用特地買，真想吃我會說。」","condition":"any","choices":[],"removed":false}]},"p_6f2e8a7e-3f3b-4f1d-9cbb-884eb5733a53":{"label":"「有餅乾，要不要？」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「拿一點吧。」\n 你拿了餅乾給他，他接過去放在一旁。","condition":"any","choices":[],"removed":false}]},"p_da467ee1-b0a2-4dcc-8539-ef41a0ce1f18":{"label":"「那你慢慢弄。」","mode":"random","leadIn":"","removed":false,"replies":[{"text":"「嗯。」 他繼續處理手邊的食材。","condition":"any","choices":[],"removed":false}]},"p_4677bcb7-5d01-402c-99c1-cc75fc245d36":{"label":"「不太順利，有點煩。」","mode":"random","leadIn":"","removed":false,"replies":[{"text":"「怎麼了？」 他停下手上的動作，看了你一眼。","condition":"any","choices":["p_9b91a650-8bf5-4d1b-843f-892bfce712b5"],"removed":false}]},"p_37":{"label":"問他要不要吃／喝點東西","mode":"random","leadIn":"你：「要不要吃點什麼？還是喝點東西？」","removed":false,"replies":[{"text":"裴溯：「有水嗎？」\n他看了眼廚房的杯子。","condition":"any","choices":["p_59209ced-681e-475f-ba37-9e7d95faa149","p_9b44df35-e3d9-48d9-8179-269d327ef9da"],"removed":false},{"text":"裴溯：「有什麼吃的？」","condition":"any","choices":["p_0858ad3f-6b30-46e2-b9c2-1c35209968b8","p_6f2e8a7e-3f3b-4f1d-9cbb-884eb5733a53"],"removed":false},{"text":"裴溯：「不用，我不餓。」","condition":"any","choices":[],"removed":false},{"text":"裴溯：「你餓了？」","condition":"any","choices":["p_eeab9a20-fd2a-4819-b96e-017934bfb459","p_8839001f-12c9-450d-8030-9759c401c100","p_7fe705ed-76c2-4b77-a8d6-8d52a1d5be51","p_1cad29bd-84f6-45ed-9bb7-80773f6a8776"],"removed":false}]},"p_ef128763-e6a3-4e74-a39f-cbd6004e2507":{"label":"「準備做什麼?」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「煮個麵，簡單吃點。」 他把食材放到一旁，繼續準備。","condition":"any","choices":[],"removed":false}]},"p_9f142a85-8fd2-40e9-be3a-2869134455b1":{"label":"「要我幫你找嗎?」","mode":"random","leadIn":"","removed":false,"replies":[{"text":"「不用，應該就在這附近。」 \n他繼續翻找櫃子。","condition":"any","choices":[],"removed":false}]},"p_7fe705ed-76c2-4b77-a8d6-8d52a1d5be51":{"label":"「只是有點渴。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「那就倒點水喝。」\n 他指了指旁邊的杯子。","condition":"any","choices":[],"removed":false}]},"p_59":{"label":"安靜待著","mode":"random","leadIn":"","removed":false,"replies":[{"text":"你走到流理臺前，裴溯稍微往旁邊讓了讓，留出足夠的位置。\n你們各自做著手上的事，沒有打擾對方。","condition":"any","choices":[],"removed":false},{"text":"裴溯正在準備食物。你沒有打擾他，只是靠在一旁看著。\n他偶爾移動手邊的東西，動作不急不慢。","condition":"any","choices":[],"removed":false},{"text":"你走進廚房，倒了杯水，順手整理了一下檯面。\n裴溯在旁邊喝著水，兩個人都沒有特別說話。","condition":"any","choices":[],"removed":false}]},"p_48":{"label":"隨便聊聊","mode":"random","leadIn":"","removed":false,"replies":[{"text":"你：「冰箱裡是不是還有昨天買的水果？」\n裴溯：「應該有，你自己看看。」\n他朝冰箱的方向看了一眼。","condition":"any","choices":[],"removed":false},{"text":"你：「你最近有沒有突然想吃的東西？」\n裴溯：「怎麼突然問這個？」","condition":"any","choices":["p_51","p_53","p_55"],"removed":false},{"text":"我：「下次去買東西，要不要順便買點零食回來？」\n裴溯看了你一眼。\n裴溯：「你想吃就買，問我做什麼？」","condition":"any","choices":[],"removed":false},{"text":"你：「你怎麼還待在廚房？」\n裴溯：「你不也在這兒？」\n他看了你一眼，又繼續手上的事。","condition":"any","choices":[],"removed":false}]},"p_d793535e-a56d-4507-b9bc-a059437bdcd7":{"label":"「好。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"裴溯：「謝了。」\n你把杯子放回櫃子裡。","condition":"any","choices":[],"removed":false}]},"p_59209ced-681e-475f-ba37-9e7d95faa149":{"label":"「有，我幫你倒。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「嗯，謝了。」 \n你拿了杯子替他倒水，放到他手邊。","condition":"any","choices":[],"removed":false}]},"p_1cad29bd-84f6-45ed-9bb7-80773f6a8776":{"label":"","mode":"random","leadIn":"","removed":true,"replies":[{"text":"","condition":"any","choices":[],"removed":false}]},"p_0858ad3f-6b30-46e2-b9c2-1c35209968b8":{"label":"「冰箱裡還有點東西，要看看嗎？」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「看看吧。」 \n你們打開冰箱，找了點能吃的東西。","condition":"any","choices":[],"removed":false}]},"p_3e9b65c8-1990-47f1-b55d-794760f38e38":{"label":"「那你繼續找。」","mode":"random","leadIn":"","removed":false,"replies":[{"text":"「嗯。」 \n你沒有再打擾他。","condition":"any","choices":[],"removed":false}]},"p_9b91a650-8bf5-4d1b-843f-892bfce712b5":{"label":"「今天做什麼都不太順。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"裴溯：「那就先別想了，喝點東西再說。」\n他把旁邊的杯子往你這邊推了推。","condition":"any","choices":[],"removed":false}]},"p_51":{"label":"單純好奇","mode":"random","leadIn":"","removed":false,"replies":[{"text":"你：「就隨便問問。」\n裴溯：「暫時沒有。」","condition":"any","choices":[],"removed":false}]},"p_55":{"label":"自己想不到吃什麼","mode":"random","leadIn":"","removed":false,"replies":[{"text":"你：「我自己不知道要吃什麼，想參考一下。」\n裴溯：「那你問錯人了，我也沒想法。」","condition":"any","choices":[],"removed":false}]},"p_8839001f-12c9-450d-8030-9759c401c100":{"label":"「沒有，就問問你。」","mode":"state","leadIn":"","removed":false,"replies":[{"text":"「那不用管我。」\n 他繼續做自己的事。","condition":"any","choices":[],"removed":false}]}}}</script>
 <script>
 'use strict';
 const KEY='peisu_observation_official_31_5_20_v1',PREVIOUS=[];
@@ -42,7 +42,7 @@ const defaults=()=>({items:{mine:[],living:[],study:[],kitchen:[]},counts:{knock
 let timeOffset=0,sandbox=false,realState=null;const gameNow=()=>Date.now()+timeOffset;
 let state=defaults(),room='mine',tab='home',testMode=false,notice='';
 try{let raw=localStorage.getItem(KEY),migrated=false;if(!raw){for(const k of PREVIOUS){raw=localStorage.getItem(k);if(raw){migrated=true;break}}}if(raw){const d=JSON.parse(raw);if(d&&d.items&&Array.isArray(d.logs)){state={...defaults(),...d,items:{...defaults().items,...d.items},flags:{...(d.flags||{})},followupsDone:{...(d.followupsDone||{})},life:{...defaults().life,...(d.life||{}),objects:{...(d.life?.objects||{})}}};if(migrated&&(!d.activeEvent||!['remote','cable','note','late','invite_movie','invite_food','cable_return','note_followup'].includes(d.activeEvent.type))){state.activeEvent=null;state.events=[];state.eventCursor=0;state.lastAutoDay='';state.lastAutoWindow='';state.logs.unshift({at:fmt(gameNow()),text:'已讀取舊版生活資料；舊版未完成事件不會繼續。'});}}}}catch(e){notice='讀取存檔失敗，已使用新資料。'}
-function $(id){return document.getElementById(id)}function fmt(ms){return new Date(ms).toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})}function save(){state.lastSeen=gameNow();try{if(!sandbox)localStorage.setItem(KEY,JSON.stringify(state));return true}catch(e){return false}}function log(s){state.logs.unshift({at:fmt(gameNow()),text:s});state.logs=state.logs.slice(0,100);save()}function memory(kind,detail){state.memory.unshift({kind,detail,at:gameNow()});state.memory=state.memory.slice(0,50)}function hash(n){let x=(Math.imul(n+state.seed,1664525)+1013904223)|0;x^=x>>>16;x=Math.imul(x,2246822519);return (x>>>0)/4294967296}function slotAt(ms){return Math.floor(ms/7200000)}
+function $(id){return document.getElementById(id)}function fmt(ms){return new Date(ms).toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})}function save(){state.lastSeen=gameNow();if(sandbox)return true;try{localStorage.setItem(KEY,JSON.stringify(state));r31526StorageStatus(false);return true}catch(e){r31526StorageStatus(true);return false}}function log(s){state.logs.unshift({at:fmt(gameNow()),text:s});state.logs=state.logs.slice(0,100);save()}function memory(kind,detail){state.memory.unshift({kind,detail,at:gameNow()});state.memory=state.memory.slice(0,50)}function hash(n){let x=(Math.imul(n+state.seed,1664525)+1013904223)|0;x^=x>>>16;x=Math.imul(x,2246822519);return (x>>>0)/4294967296}function slotAt(ms){return Math.floor(ms/7200000)}
 function activity(slot){const d=new Date(slot*7200000),h=d.getHours(),day=Math.floor(slot/12),r=hash(slot),outing=hash(day*101+17),start=outing<.55?11:outing<.82?13:15,len=outing<.25?4:2;if(outing<.78&&h>=start&&h<start+len)return {room:'away',name:'外出',detail:'他出門處理自己的事，稍晚應該會回來。'};if(h>=2&&h<8)return r<.8?{room:'pei',name:'休息',private:true}:{room:'study',name:'熬夜看資料'};if(h<11)return r<.42?{room:'kitchen',name:'準備飲料'}:r<.75?{room:'living',name:'短暫休息'}:{room:'study',name:'看資料'};if(h<18)return r<.54?{room:'study',name:'處理事情'}:r<.76?{room:'living',name:'閱讀'}:r<.9?{room:'kitchen',name:'準備吃的'}:{room:'pei',name:'獨處',private:true};if(h<22)return r<.37?{room:'study',name:'閱讀'}:r<.67?{room:'living',name:'休息'}:r<.85?{room:'kitchen',name:'倒水'}:{room:'pei',name:'待在房間',private:true};return r<.42?{room:'study',name:'看資料'}:r<.75?{room:'pei',name:'休息',private:true}:{room:'living',name:'獨自待著'}}
 function baseCurrent(){return testMode?{room,name:'對話測試中'}:activity(slotAt(gameNow()))}
 // Every scene has an explicit speaker and a finite set of valid next-scene IDs.
@@ -58,15 +58,15 @@ const EVENTS={
 };
 function validateEvents(){for(const [id,e] of Object.entries(EVENTS)){if(!e.nodes[e.start])throw Error(id+' missing start');for(const [nodeId,node] of Object.entries(e.nodes)){if(node.end&&node.choices)throw Error(id+'/'+nodeId+' invalid end');if(!node.end&&!node.choices?.length)throw Error(id+'/'+nodeId+' dead end');for(const c of node.choices||[])if(!e.nodes[c[1]])throw Error(id+'/'+nodeId+' bad target '+c[1])}}}validateEvents();
 function pending(){const a=state.activeEvent;return a&&EVENTS[a.type]&&EVENTS[a.type].nodes[a.node]?a:null}
-function startEvent(type,testing=false){if(pending())return false;const e=EVENTS[type];if(!e)return false;state.activeEvent={type,node:e.start,history:[{who:e.nodes[e.start].who,text:e.nodes[e.start].text}],started:gameNow(),testing};log((testing?'測試事件：':'裴溯主動事件：')+e.title);save();render();return true}
-function pick(index){const a=pending();if(!a)return;const e=EVENTS[a.type],node=e.nodes[a.node],c=node.choices?.[index];if(!c)return;const next=e.nodes[c[1]];a.history.push({who:'你',text:c[0]},{who:next.who,text:next.text});a.node=c[1];if(next.flag){state.flags[next.flag]=gameNow();memory('event',next.flag);if(next.flag==='shared_movie')beginShared('movie');if(next.flag==='shared_meal')beginShared('meal');if(next.flag==='movie_solo')setLifeObject('living','電視正在播放',2)}if(next.end)finishEvent('completed');else{save();render()}}
+function startEvent(type,testing=false){if(pending()||r31526Busy('event'))return false;if(!testing&&baseCurrent().room==='away')return false;const e=EVENTS[type];if(!e)return false;state.activeEvent={type,node:e.start,history:[{who:e.nodes[e.start].who,text:e.nodes[e.start].text}],started:gameNow(),testing};log((testing?'測試事件：':'裴溯主動事件：')+e.title);save();render();return true}
+function pick(index){const a=pending();if(!a)return;if(!sandbox&&baseCurrent().room==='away'){$('actionReply').textContent='裴溯目前外出，這段當面互動會等他回家後再接續。';return}const e=EVENTS[a.type],node=e.nodes[a.node],c=node.choices?.[index];if(!c)return;const next=e.nodes[c[1]];if(next?.flag&&['shared_movie','shared_meal'].includes(next.flag)&&r31526Busy('event')){$('actionReply').textContent='目前還有一段生活情境進行中，請先結束後再回應這個邀約。';return}a.history.push({who:'你',text:c[0]},{who:next.who,text:next.text});a.node=c[1];if(next.flag){state.flags[next.flag]=gameNow();memory('event',next.flag);if(next.flag==='shared_movie')beginShared('movie');if(next.flag==='shared_meal')beginShared('meal');if(next.flag==='movie_solo')setLifeObject('living','電視正在播放',2)}if(next.end)finishEvent('completed');else{save();render()}}
 function finishEvent(status){const a=pending();if(!a)return;state.eventHistory.unshift({at:fmt(gameNow()),type:a.type,status,transcript:a.history});state.eventHistory=state.eventHistory.slice(0,50);state.activeEvent=null;log((status==='completed'?'事件完成：':'事件略過：')+EVENTS[a.type].title);save();render()}
-function dueFollowup(){if(pending())return;const rules=[['cable_lent','cable_return',12],['note_seen','note_followup',16]];for(const [flag,event,hours] of rules){const when=Number(state.flags?.[flag]);if(when&&gameNow()-when>=hours*3600000&&!state.followupsDone?.[flag]){state.followupsDone[flag]=gameNow();startEvent(event);save();return}}}
-function autoEvent(){if(pending())return;const now=new Date(),hour=now.getHours(),day=now.getFullYear()+'-'+(now.getMonth()+1)+'-'+now.getDate(),window=hour<11?'morning':hour<17?'day':hour<22?'evening':'night';if(state.lastAutoDay===day&&state.lastAutoWindow===window)return;state.lastAutoDay=day;state.lastAutoWindow=window;const h=hash(Math.floor(gameNow()/86400000)*37+(window==='morning'?1:window==='day'?2:window==='evening'?3:4));if(h<.35){const atHome=activity(slotAt(gameNow())).room!=='away';const pool=window==='night'?['remote','cable','note','late']:['remote','cable','note'];if(atHome&&window==='evening')pool.push('invite_movie','invite_food','invite_movie','invite_food');const type=pool[Math.floor(hash(Math.floor(gameNow()/86400000)*19+hour)*pool.length)];startEvent(type)}save()}
+function dueFollowup(){if(pending()||r31526Busy('event')||baseCurrent().room==='away')return;const rules=[['cable_lent','cable_return',12],['note_seen','note_followup',16]];for(const [flag,event,hours] of rules){const when=Number(state.flags?.[flag]);if(when&&gameNow()-when>=hours*3600000&&Number(state.followupsDone?.[flag]||0)<when){if(startEvent(event)){state.followupsDone[flag]=gameNow();save()}return}}}
+function autoEvent(){if(pending()||r31526Busy('event')||baseCurrent().room==='away')return;const now=new Date(gameNow()),hour=now.getHours(),day=now.getFullYear()+'-'+(now.getMonth()+1)+'-'+now.getDate(),window=hour<11?'morning':hour<17?'day':hour<22?'evening':'night';if(state.lastAutoDay===day&&state.lastAutoWindow===window)return;state.lastAutoDay=day;state.lastAutoWindow=window;const h=hash(Math.floor(gameNow()/86400000)*37+(window==='morning'?1:window==='day'?2:window==='evening'?3:4));if(h<.35){const atHome=activity(slotAt(gameNow())).room!=='away';const pool=window==='night'?['remote','cable','note','late']:['remote','cable','note'];if(atHome&&window==='evening')pool.push('invite_movie','invite_food','invite_movie','invite_food');const type=pool[Math.floor(hash(Math.floor(gameNow()/86400000)*19+hour)*pool.length)];startEvent(type)}save()}
 function advance(){const now=slotAt(gameNow());if(state.lastSlot===null){state.lastSlot=now;log('同住日常開始了。')}else if(now>state.lastSlot){const diff=now-state.lastSlot;if(diff>24)log('過去幾天，各自的生活照常進行。');for(let i=Math.max(now-8,state.lastSlot+1);i<=now;i++){const a=activity(i),b=activity(i-1);if(a.room!==b.room)state.logs.unshift({at:fmt(i*7200000),text:'裴溯：'+(a.room==='away'?'外出':ROOMS[a.room][0]+'・'+a.name)})}state.logs=state.logs.slice(0,100);state.lastSlot=now;save()}else if(now<state.lastSlot){state.lastSlot=now;log('裝置時間已變更，生活時間重新對齊。')}updateLife();dueFollowup();autoEvent()}
 function life(){if(!state.life)state.life={objects:{},shared:null,invitationDay:'',lastLifeTick:0};if(!state.life.objects)state.life.objects={};return state.life}
 function setLifeObject(where,label,hours=12){const l=life(),now=gameNow(),id=where+':'+label;l.objects[id]={room:where,label,originalLabel:label,created:now,expires:now+hours*3600000,handled:false,changed:false};save()}
-function clearLifeObject(where,label){delete life().objects[where+':'+label];save()}
+function clearLifeObject(where,label){r31526RemoveObject(where,label);save()}
 const PERSISTENT_LEFT_ITEMS=new Set(['桌上的茶','留下的餐盒','茶几上的零食','沙發旁的書','留下的茶點','用過的杯子','用過的餐具','剛做好的食物','書桌上的資料冊','整理好的文件']);
 function isPersistentLeftItem(obj){return !!obj&&PERSISTENT_LEFT_ITEMS.has(obj.originalLabel||obj.label)}
 function lifeObjects(where){return Object.values(life().objects).filter(x=>x.room===where&&(isPersistentLeftItem(x)||x.expires>gameNow()))}
@@ -155,7 +155,7 @@ const STORY={
 function storyLife(){const l=life();l.stories=l.stories||{};return l.stories}
 function activeStory(where){const x=storyLife()[where];return x&&x.until>gameNow()&&!x.finished&&!x.interrupted?x:null}
 function current(){v31523ReconcileDeparture();const l=life(),shared=l.shared;if(shared&&shared.ends>gameNow())return {room:shared.room,name:shared.kind==='movie'?'一起看電影':'一起吃飯',detail:'共同活動中'};for(const where of ['study','living','kitchen']){const x=activeStory(where);if(x)return {room:where,name:where==='study'?'整理資料':where==='living'?(x.variant==='reading'?'看書':'看電影'):'準備吃的',detail:'持續生活情境中'}}return baseCurrent()}
-function beginStory(where){if(!STORY[where]||!v31523StoryAllowed(where,where==='living'?'movie':undefined))return;const stories=storyLife(),now=gameNow();if(activeStory(where))return;const prev=stories[where];if(prev&&!prev.interrupted&&now-prev.started<3*3600000)return;stories[where]={node:'a',started:now,until:now+STORY[where].duration*60000,finished:false,history:[],startedRoom:where,startedActivity:baseCurrent().name||'',variant:where==='living'?'movie':undefined};log('裴溯開始了：'+STORY[where].title);save();render()}
+function beginStory(where){if(r31526Busy('story'))return;if(!STORY[where]||!v31523StoryAllowed(where,where==='living'?'movie':undefined))return;const stories=storyLife(),now=gameNow();if(activeStory(where))return;const prev=stories[where];if(prev&&!prev.interrupted&&now-prev.started<3*3600000)return;stories[where]={node:'a',started:now,until:now+STORY[where].duration*60000,finished:false,history:[],startedRoom:where,startedActivity:baseCurrent().name||'',variant:where==='living'?'movie':undefined};log('裴溯開始了：'+STORY[where].title);save();render()}
 function storyPick(where,i){const st=activeStory(where);if(!st||!v31523StoryCanContinue(where))return;const node=STORY[where].nodes[st.node],choice=node?.[1]?.[i];if(!choice)return;st.history.push({at:gameNow(),choice:choice[0],response:STORY[where].nodes[choice[1]][0]});st.node=choice[1];memory('story',where+':'+choice[0]);if(!STORY[where].nodes[st.node][1].length){st.finished=true;st.outcome=choice[1];state.flags['story_'+where+'_'+choice[1]]=gameNow();log('生活片段：'+STORY[where].title+'。'+STORY[where].nodes[st.node][0]);if(where==='study'&&choice[1]!=='z')setLifeObject('study','書桌上的資料冊',12);if(where==='kitchen'&&choice[1]==='p')setLifeObject('kitchen','用過的餐具',3)}save();render()}
 function storyRender(where,obs){const st=activeStory(where),data=STORY[where];if(!st)return false;if(!v31523StoryCanContinue(where)){obs.append(el('div','life-detail','這段生活情境暫時無法接續；裴溯目前不在這裡或有其他事情。'));return true;}const node=data.nodes[st.node];obs.append(el('div','life-title',data.title+' · 進行中'));obs.append(el('div','ambient',node[0]));obs.append(el('p','note','你可以切換房間，回來仍會接著這件事。活動會隨時間結束。'));for(const [i,c] of node[1].entries()){const b=el('button','life-button',c[0]);b.onclick=()=>storyPick(where,i);obs.append(b)}return true}
 function roomScene(){const a=current(),where=room,slot=slotAt(gameNow()),list=AMBIENT[where]||[],idx=Math.floor(hash(slot*11+where.length*7)*list.length),area=$('ambientScene'),obs=$('observeScene');area.replaceChildren();area.append(el('div','life-title','房間裡的動靜'),el('div','ambient',where==='living'&&(lifeObjects('living').some(x=>x.originalLabel==='電視正在播放')||life().shared?.kind==='movie'&&life().shared.ends>gameNow())&&/電視沒有開/.test(list[idx]||'')?'電視畫面仍亮著，客廳傳來影片的聲音。':list[idx]||''));obs.replaceChildren();if(storyRender(where,obs))return;const shared=life().shared;if(shared&&shared.room===where&&shared.ends>gameNow()){obs.append(el('div','life-title','裴溯正在做什麼'),el('div','ambient',shared.kind==='movie'?'裴溯坐在沙發另一端，電影仍在播放。':'裴溯坐在餐桌旁，還在吃飯。'));return}if(a.room!==where||a.private||!STORY[where]){obs.append(el('div','life-title','裴溯的動靜'),el('div','life-detail',a.room===where?'他想自己待著。':a.room==='away'?'他還在外面。':'裴溯不在這個空間。'));return}const prev=storyLife()[where];if(prev&&!prev.interrupted&&gameNow()-prev.started<3*3600000){obs.append(el('div','life-title','裴溯的動靜'),el('div','ambient',where==='study'?'他還在書桌前處理資料。':where==='kitchen'?'他還在廚房忙自己的事。':'他在客廳做自己的事。'));return}obs.append(el('div','life-title','觀察裴溯正在做什麼'),el('div','ambient',where==='study'?'裴溯正在書架前找東西。':where==='kitchen'?'裴溯正在流理臺前準備吃的。':'裴溯在沙發上看電影。'));const b=el('button','life-button','走近看看');b.onclick=()=>beginStory(where);obs.append(b)}
@@ -191,11 +191,11 @@ function doAction(id){const a=current(),near=a.room===room,items={book:'書',cof
 const TOPICS=[['hello','打招呼'],['day','問今天如何'],['busy','問忙不忙'],['food','問要不要吃東西'],['rest','叫他休息'],['together','邀他去客廳'],['tease','故意逗他'],['quiet','安靜待著']];function talk(id){const a=current();state.counts.talk++;let t='';if(a.room!==room)t='裴溯不在這個房間。';else if(a.private)t='門關著。他現在沒有談話的意思。';else{const replies={hello:['「嗯。」','他抬眼看了你一下。'],day:['「還行。」','「怎麼突然問這個？」'],busy:['「你看不出來？」','「有一點事。」'],food:['「你餓了？」','「放著吧。」'],rest:['「我知道。」','「你先去休息。」'],together:['「等一下。」','「你先過去。」'],tease:['「你很閒？」','他看了你一眼，沒有接話。'],quiet:['他沒趕你走，只是繼續做自己的事。','你們安靜地待了一會兒。']};const arr=replies[id];t=arr[Math.floor(hash(slotAt(gameNow())+state.counts.talk*31)*arr.length)];if(a.room==='study'&&id!=='quiet'&&hash(slotAt(gameNow())+state.counts.talk*13)<.3)t='他正專心看資料，暫時沒有回應。'}$('talkReply').textContent=t;memory('talk',id);log('你試著跟裴溯說話：'+TOPICS.find(x=>x[0]===id)[1]);render()}
 function message(){const a=activity(slotAt(gameNow())),replies=a.room==='away'?['訊息已送出。他還在外面，暫時沒回。','過了一會兒，他回了：「有事？」','他回覆：「晚點說。」']:['他回覆：「嗯？」','他暫時沒有回覆。','他回覆：「怎麼了？」'];state.counts.talk++;$('messageReply').textContent=replies[Math.floor(hash(slotAt(gameNow())+state.counts.talk*17+7)*replies.length)];log('你傳了一則訊息給裴溯。')}
 function el(tag,cls,text){const x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=text;return x}
-function renderEvent(target,compact=false){target.replaceChildren();const a=pending();if(!a){target.append(el('div','empty','目前沒有待回應的事件。'));if(compact){const b=el('button','quiet','前往事件頁');b.onclick=()=>switchTab('events');target.append(b)}return}const e=EVENTS[a.type],node=e.nodes[a.node];const header=el('div','event-head');header.append(el('h3','',e.title),el('span','event-badge',e.special?'特殊事件':'進行中'));target.append(header);if(compact){const last=a.history[a.history.length-1];target.append(el('p','event-desc',last.who+'：'+last.text));const b=el('button','choice','查看並回應 →');b.onclick=()=>switchTab('events');target.append(b);return}const transcript=el('div','dialog');a.history.forEach(x=>{const line=el('div','line'+(x.who==='你'?' player':x.who==='旁白'?' narrator':''));if(x.who!=='旁白')line.append(el('span','speaker',x.who));line.append(document.createTextNode(x.text));transcript.append(line)});target.append(transcript);node.choices.forEach((c,i)=>{const b=el('button','choice',c[0]);b.onclick=()=>pick(i);target.append(b)});const skip=el('button','quiet','先不理他');skip.style.marginTop='12px';skip.onclick=()=>finishEvent('ignored');target.append(skip)}
+function renderEvent(target,compact=false){target.replaceChildren();const a=pending();if(!a){target.append(el('div','empty','目前沒有待回應的事件。'));if(compact){const b=el('button','quiet','前往事件頁');b.onclick=()=>switchTab('events');target.append(b)}return}const e=EVENTS[a.type],node=e.nodes[a.node];const header=el('div','event-head');header.append(el('h3','',e.title),el('span','event-badge',e.special?'特殊事件':'進行中'));target.append(header);if(compact){const last=a.history[a.history.length-1];target.append(el('p','event-desc',last.who+'：'+last.text));const b=el('button','choice','查看並回應 →');b.onclick=()=>switchTab('events');target.append(b);return}const transcript=el('div','dialog');a.history.forEach(x=>{const line=el('div','line'+(x.who==='你'?' player':x.who==='旁白'?' narrator':''));if(x.who!=='旁白')line.append(el('span','speaker',x.who));line.append(document.createTextNode(x.text));transcript.append(line)});target.append(transcript);if(!sandbox&&baseCurrent().room==='away')target.append(el('p','note','裴溯目前外出，等他回家後可接續這段互動。'));node.choices.forEach((c,i)=>{const b=el('button','choice',c[0]);b.disabled=!sandbox&&baseCurrent().room==='away';b.onclick=()=>pick(i);target.append(b)});const skip=el('button','quiet','先不理他');skip.style.marginTop='12px';skip.onclick=()=>finishEvent('ignored');target.append(skip)}
 function renderShared(){const target=$('sharedArea');target.replaceChildren();target.append(el('div','surface-title','正在進行的生活'));const shared=life().shared;if(shared&&shared.ends>gameNow()){target.append(el('p','',shared.kind==='movie'?'你們開始看電影了。前往客廳，可以繼續互動。':'你們正在吃飯。前往廚房，可以繼續互動。'));const b=el('button','choice','前往'+ROOMS[shared.room][0]);b.onclick=()=>{room=shared.room;switchTab('spaces')};target.append(b)}else target.append(el('p','note','目前沒有正在進行的共同活動。主動邀約成功後，活動會在對應房間持續一段時間。'))}
 function render(){const now=new Date(gameNow()),a=current();$('clock').textContent=now.toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit',hour12:false});$('date').textContent=now.toLocaleDateString('zh-TW',{month:'2-digit',day:'2-digit'});$('heroTitle').textContent=a.room==='away'?'出門了':a.name;$('heroDetail').textContent=a.room==='away'?'裴溯不在家。等他回來，生活還是照常繼續。':'裴溯現在在'+ROOMS[a.room][0]+'。'+(a.private?'他想自己待著。':'有自己的事情要做，不一定有空說話。');$('heroStatus').textContent=a.room==='away'?'外出中':a.private?'在家 · 不便打擾':'在家 · '+ROOMS[a.room][0];$('rooms').replaceChildren();for(const [id,r] of Object.entries(ROOMS)){const b=el('button','room'+(id===room?' active':''));b.append(el('span','emoji',r[1]),document.createTextNode(r[0].replace('裴溯房間','他的房間')));b.onclick=()=>{room=id;$('actionReply').textContent='';render()};$('rooms').append(b)}$('roomTitle').textContent=ROOMS[room][0];$('roomDesc').textContent=ROOMS[room][2]+(a.room===room?'　裴溯在這裡。':'');$('items').replaceChildren();for(const item of state.items[room]||[])$('items').append(el('span','chip',item));roomScene();renderLife();$('actions').replaceChildren();for(const [id,label] of ACTIONS[room]){const b=el('button','action',label);b.onclick=()=>doAction(id);$('actions').append(b)}renderEvent($('eventArea'));renderShared();$('homeNotice').classList.toggle('hidden',!pending());$('homeWhisper').textContent=life().shared?'家裡正在發生一件小事。你可以去「空間」看看。':a.room==='away'?'家裡暫時安靜。他有自己的行程。':a.private?'門關著，先讓他做自己的事。':'家裡一切如常。偶爾會有新的動靜。';$('talkLocation').textContent=a.room==='away'?'裴溯目前外出。':a.room===room?'裴溯就在這裡。':'裴溯現在在'+ROOMS[a.room][0]+'。';$('topics').replaceChildren();for(const [id,label] of TOPICS){const b=el('button','action',label);b.onclick=()=>talk(id);$('topics').append(b)}$('eventHistory').replaceChildren();if(!state.eventHistory.length)$('eventHistory').append(el('p','note','還沒有完成的事件。'));for(const h of state.eventHistory.slice(0,30)){const d=el('div','entry');d.append(el('small','',h.at+'｜'+(EVENTS[h.type]?.title||'舊版事件')+'｜'+(h.status==='ignored'?'未回應':'已結束')),document.createTextNode((h.transcript||[]).map(x=>x.who+'：'+x.text).join('\n')));$('eventHistory').append(d)}$('dailyLog').replaceChildren();for(const x of state.logs.slice(0,70)){const d=el('div','entry');d.append(el('small','',x.at),document.createTextNode(x.text));$('dailyLog').append(d)}if(!state.logs.length)$('dailyLog').append(el('p','note','尚無紀錄。'));$('testMode').checked=sandbox;$('timeTools').classList.toggle('hidden',!sandbox);if(sandbox)$('timeInfo').textContent='沙盒時間：'+fmt(gameNow())+'（已推進 '+Math.round(timeOffset/60000)+' 分鐘）'}
 function switchTab(t){tab=t;for(const id of ['home','spaces','events','talk','journal'])$(id).classList.toggle('hidden',id!==t);document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));render();window.scrollTo({top:0,behavior:'instant'})}
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));$('jumpDev').onclick=()=>{$('developerSettings').scrollIntoView({behavior:'smooth',block:'start'})};$('homeNotice').onclick=()=>switchTab('events');$('testTrigger').onclick=()=>{if(!sandbox&&!confirm('這會在正式存檔產生測試事件。建議先開啟日誌內的測試沙盒。仍要繼續嗎？'))return;if(pending()){alert('先完成或略過目前事件，再觸發下一個。');return}const ids=['invite_movie','invite_food','remote','cable','note','late','cable_return','note_followup'];startEvent(ids[state.eventCursor++%ids.length],true);save()};$('messageBtn').onclick=message;$('testMode').onchange=e=>toggleSandbox(e.target.checked);document.querySelectorAll('[data-fast]').forEach(b=>b.onclick=()=>fastForward(Number(b.dataset.fast))); $('export').onclick=()=>{if(sandbox){alert('請先關閉測試沙盒，再匯出正式存檔。');return}save();const data={version:12,state},blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='裴總觀察日誌_v12_存檔.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)};$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const d=JSON.parse(await file.text());if(![2,3,4,5,6,7,8,9,10,11,12].includes(d.version)||!d.state?.items||!Array.isArray(d.state.logs))throw Error('invalid');if(sandbox){alert('請先關閉測試沙盒再匯入。');return}if(!confirm('匯入會覆蓋目前存檔，確定嗎？'))return;state={...defaults(),...d.state,items:{...defaults().items,...d.state.items},flags:{...(d.state.flags||{})},followupsDone:{...(d.state.followupsDone||{})},life:{...defaults().life,...(d.state.life||{}),objects:{...(d.state.life?.objects||{})}}};if(d.version<6){state.activeEvent=null;state.events=[];state.eventCursor=0;log('匯入舊版存檔，未完成事件已清除。')}state.lastSlot=slotAt(gameNow());save();render();alert('匯入完成')}catch(err){alert('無法匯入：請選擇 v0.2～v1.2 的有效 JSON 存檔。')}finally{e.target.value=''}};
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));$('jumpDev').onclick=()=>{$('developerSettings').scrollIntoView({behavior:'smooth',block:'start'})};$('homeNotice').onclick=()=>switchTab('events');$('testTrigger').onclick=()=>{if(!sandbox&&!confirm('這會在正式存檔產生測試事件。建議先開啟日誌內的測試沙盒。仍要繼續嗎？'))return;if(pending()){alert('先完成或略過目前事件，再觸發下一個。');return}const ids=['invite_movie','invite_food','remote','cable','note','late','cable_return','note_followup'];startEvent(ids[state.eventCursor++%ids.length],true);save()};$('messageBtn').onclick=message;$('testMode').onchange=e=>toggleSandbox(e.target.checked);document.querySelectorAll('[data-fast]').forEach(b=>b.onclick=()=>fastForward(Number(b.dataset.fast))); $('export').onclick=()=>{if(sandbox){alert('請先關閉測試沙盒，再匯出正式存檔。');return}save();const data={version:12,state},blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='裴總觀察日誌_v12_存檔.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)};$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const d=JSON.parse(await file.text());if(![2,3,4,5,6,7,8,9,10,11,12].includes(d.version)||!d.state?.items||!Array.isArray(d.state.logs))throw Error('invalid');if(sandbox){alert('請先關閉測試沙盒再匯入。');return}if(!confirm('匯入會覆蓋目前存檔，確定嗎？'))return;state={...defaults(),...d.state,items:{...defaults().items,...d.state.items},flags:{...(d.state.flags||{})},followupsDone:{...(d.state.followupsDone||{})},life:{...defaults().life,...(d.state.life||{}),objects:{...(d.state.life?.objects||{})}}};if(d.version<6){state.activeEvent=null;state.events=[];state.eventCursor=0;log('匯入舊版存檔，未完成事件已清除。')}state.lastSlot=slotAt(gameNow());const persisted=save();render();alert(persisted?'匯入完成':'資料已讀入，但手機尚未成功保存。請先匯出備份，並查看畫面上的存檔提醒。')}catch(err){alert('無法匯入：請選擇 v0.2～v1.2 的有效 JSON 存檔。')}finally{e.target.value=''}};
 
 // v1.2.3: 對話續接與可重現的沙盒測試，不修改正式聊天室。
 const KNOCK_BRANCH={
@@ -270,7 +270,7 @@ const PRIVATE_SCENES={
  }}};
 function privateData(){const l=life();l.privateScenes=l.privateScenes||{};return l.privateScenes}
 function privateActive(where){const x=privateData()[where];return x&&!x.finished&&x.until>gameNow()?x:null}
-function privateBegin(where){if(!PRIVATE_SCENES[where]||privateActive(where))return;const prev=privateData()[where],now=gameNow();if(prev&&now-prev.started<30*60000){$('actionReply').textContent='這段房門互動剛結束。可以稍後再敲。';render();return}privateData()[where]={node:where==='mine'?"n1":'a',started:now,until:now+PRIVATE_SCENES[where].duration*60000,finished:false};log('生活片段開始：'+PRIVATE_SCENES[where].title);render()}
+function privateBegin(where){if(r31526Busy('private'))return;if(!PRIVATE_SCENES[where]||privateActive(where))return;const prev=privateData()[where],now=gameNow();if(prev&&now-prev.started<30*60000){$('actionReply').textContent='這段房門互動剛結束。可以稍後再敲。';render();return}privateData()[where]={node:where==='mine'?"n1":'a',started:now,until:now+PRIVATE_SCENES[where].duration*60000,finished:false};log('生活片段開始：'+PRIVATE_SCENES[where].title);render()}
 function privatePick(where,index){const x=privateActive(where),scene=PRIVATE_SCENES[where];if(!x||!scene)return;const next=scene.nodes[x.node][1][index];if(!next)return;x.node=next[1];if(!scene.nodes[x.node][1].length){if(where!=='mine')x.finished=true;log('生活片段：'+scene.title+'。'+scene.nodes[x.node][0]);if(where==='mine'&&/離開自己的房間|結束這段時間/.test(scene.nodes[x.node][0]))memory('private','尊重自己的休息時間')}save();render()}
 function privateRender(){if(room!=='mine'&&room!=='pei')return;const where=room,scene=PRIVATE_SCENES[where],target=$('observeScene');target.replaceChildren();const x=privateActive(where),a=current();if(x&&!scene.nodes[x.node]&&where==='mine')x.node="n1";if(x){target.append(el('div','life-title',scene.title+' · 進行中'),el('div','ambient',scene.nodes[x.node][0]),el('p','note','切換空間後可以接續；時間經過後情境會自然結束。'));scene.nodes[x.node][1].forEach((c,i)=>{const b=el('button','life-button',c[0]);b.onclick=()=>privatePick(where,i);target.append(b)});if(where==='mine'&&!scene.nodes[x.node][1].length){const b=el('button','quiet','結束這段時間');b.onclick=()=>{x.finished=true;save();render()};target.append(b)}return}
  if(where==='pei'&&a.room!=='pei'){target.append(el('div','life-title','他的房間'));target.append(el('div','ambient','裴溯目前不在房間。門關著，沒有必要擅自進去。'));return}
@@ -291,8 +291,8 @@ const DAILY_V131={"sofa":{"room":"living","title":"沙發上的短暫休息","re
 const DAILY_IDS_131={living:['sofa','choosefilm','smallask'],study:['missingfile','quietwork','workbreak'],kitchen:['dinner','fridge','midnight'],mine:['oldthing','doorvisit'],pei:['busydoor','exitdoor']};
 function daily131(){const l=life();if(!l.dailyV131)l.dailyV131={active:null,history:[],lastById:{},rotation:{}};return l.dailyV131}
 function daily131Active(){const d=daily131(),a=d.active;if(!a)return null;if(!DAILY_V131[a.id]){d.active=null;return null}if(a.until<=gameNow()){daily131Finish('time');return null}return a}
-function daily131Finish(reason){const d=daily131(),a=d.active;if(!a)return;const def=DAILY_V131[a.id];d.history.unshift({id:a.id,at:gameNow(),reason,choices:a.history||[]});d.history=d.history.slice(0,70);d.lastById[a.id]=gameNow();d.active=null;log('生活片段：'+def.title+'（'+(reason==='time'?'時間經過後結束':'已結束')+'）');if(a.id==='dinner'&&r27SemanticNode(a)!=='branch2')setLifeObject('kitchen','用過的餐具',3);if(a.id==='missingfile'&&['found','done','end'].includes(r27SemanticNode(a)))setLifeObject('study','整理好的文件',4);save()}
-function daily131Begin(id,forced=false){v31523ReconcileDeparture();const def=DAILY_V131[id],d=daily131();if(!def||def.r27Removed||daily131Active())return false;if(!forced&&(v31523OtherActive()||Object.values(storyLife()).some(x=>x&&!x.finished&&!x.interrupted&&x.until>gameNow())))return false;if(life().shared&&life().shared.ends>gameNow()){if(!forced)return false;life().shared=null}
+function daily131Finish(reason){const d=daily131(),a=d.active;if(!a)return;const def=DAILY_V131[a.id];d.history.unshift({id:a.id,at:gameNow(),reason,choices:a.history||[]});d.history=d.history.slice(0,70);d.lastById[a.id]=gameNow();d.active=null;log('生活片段：'+def.title+'（'+(reason==='time'?'時間經過後結束':'已結束')+'）');if(a.id==='dinner'&&reason==='complete'&&r31526MealWasEaten(a))setLifeObject('kitchen','用過的餐具',3);if(a.id==='missingfile'&&['found','done','end'].includes(r27SemanticNode(a)))setLifeObject('study','整理好的文件',4);save()}
+function daily131Begin(id,forced=false){if(forced&&!sandbox)return false;if(forced)r31526EndSandboxActivities();if(!forced&&r31526Busy('daily'))return false;if(!forced&&id==='doorvisit'&&(baseCurrent().room==='away'||baseCurrent().private))return false;v31523ReconcileDeparture();const def=DAILY_V131[id],d=daily131();if(!def||def.r27Removed||daily131Active())return false;if(!forced&&(v31523OtherActive()||Object.values(storyLife()).some(x=>x&&!x.finished&&!x.interrupted&&x.until>gameNow())))return false;if(life().shared&&life().shared.ends>gameNow()){if(!forced)return false;life().shared=null}
  if(def.requires){const now=current();if(!forced&&(now.room!==def.room||now.private))return false;if(forced&&def.room==='pei'&&false)return false}
  if(!forced&&d.lastById[id]&&gameNow()-d.lastById[id]<2*3600000)return false;if(forced){const p=privateData()[def.room];if(p)p.finished=true;const old=storyLife()[def.room];if(old)old.finished=true;}
  d.active={id,node:'start',started:gameNow(),until:gameNow()+def.duration*60000,history:[],forced:!!forced};d.rotation[def.room]=(d.rotation[def.room]||0)+1;log('生活片段開始：'+def.title);save();render();return true}
@@ -366,7 +366,7 @@ for(const [label,fn] of fixtures){const b=el('button','choice',label);b.onclick=
 // v1.7 integrated expansion. Additive layer; existing scene graph remains unchanged.
 const V17_HOLIDAYS={'01-01':'新的一年','02-14':'普通的二月十四日','10-31':'十月底的夜晚','12-31':'年末'};
 function v17(){const l=life();if(!l.expansion17)l.expansion17={version:1,decor:{},memories:[],encounters:[],specials:{},archive:[],recent:{},test:{},lastVisit:0,lastInvite:0};return l.expansion17}
-function v17Day(ms=gameNow()){const d=new Date(ms);return String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function v17Day(ms=gameNow()){const d=new Date(ms);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function v17Add(kind,text,where,meta={}){const v=v17();const key=meta.key||kind+':'+text+':'+v17Day();if(v.archive.some(x=>x.key===key))return false;v.archive.unshift({key,kind,text,where,at:gameNow(),meta});v.archive=v.archive.slice(0,140);save();return true}
 function v17Remember(kind,detail,where){const v=v17();const key=kind+':'+detail;if(v.memories.some(x=>x.key===key))return;v.memories.unshift({key,kind,detail,where,at:gameNow()});v.memories=v.memories.slice(0,40);v17Add('memory',detail,where,{key:'mem:'+key})}
 function v17MemoryFlags(){const h=habitStore(),v=v17(),ins=habitInsights();return {movie:(h.shared||[]).some(x=>x.kind==='movie'),meal:(h.shared||[]).some(x=>x.kind==='food'),quiet:ins.some(x=>x.key==='quiet'),study:(h.roomVisits.study||0)>=4,decor:Object.keys(v.decor).length>0,repeat:Object.values(h.activities).some(n=>n>=3)}}
@@ -381,8 +381,8 @@ const V17_SPECIAL={
  holiday:{title:'日子有點特別',where:'living',min:1,steps:{start:{text:'日曆上的日期讓你停了一下。今天似乎跟平常有點不同，但家裡依舊照常運作。',options:[['自己留個小紀念','keep'],['看看裴溯在做什麼','look'],['照平常過','normal']]},keep:{text:'你在日誌裡留下簡單的紀錄。這一天不需要特別安排也能記得。',options:[['結束','__end__']]},look:{text:'裴溯正在忙自己的事情，沒有特別提起今天。你也不必強迫他有所表示。',options:[['回去做自己的事','__end__']]},normal:{text:'你決定照平常的步調過。日子還是慢慢向前。',options:[['結束','__end__']]}}}
 };
 function v17SpecialActive(){const a=v17().specials.active;if(!a)return null;if(gameNow()>a.until){v17Finish('time');return null}return a}
-function v17Start(id,forced=false){v31523ReconcileDeparture();const def=V17_SPECIAL[id],v=v17();if(!def||v17SpecialActive()||daily131Active()||Object.values(storyLife()).some(x=>x&&!x.finished&&!x.interrupted&&x.until>gameNow())||privateActive(def.where)||life().shared&&life().shared.ends>gameNow())return false;if(!forced){if(!r27DateEligible(id))return false;if(id==='midnight'){const h=new Date(gameNow()).getHours();if(h<23&&h>4)return false}if(!v17ActivityStart('special:'+id))return false}v.specials.active={id,node:'start',where:def.where,at:gameNow(),until:gameNow()+90*60000,forced};room=def.where;v17Add('special','開始：'+def.title,def.where,{key:'start:'+id+':'+gameNow()});save();render();return true}
-function v17Finish(reason){const v=v17(),a=v.specials.active;if(!a)return;const def=V17_SPECIAL[a.id];v17Add('special',def.title+'（'+(reason==='time'?'時間經過':'已完成')+'）',a.where,{key:'finish:'+a.id+':'+a.at});v.specials.active=null;save()}
+function v17Start(id,forced=false){if(forced&&!sandbox)return false;if(forced)r31526EndSandboxActivities();if(!forced&&r31526Busy('special'))return false;if(!forced&&['rainy','midnight'].includes(id)&&baseCurrent().room==='away')return false;v31523ReconcileDeparture();const def=V17_SPECIAL[id],v=v17();if(!def||v17SpecialActive()||daily131Active()||Object.values(storyLife()).some(x=>x&&!x.finished&&!x.interrupted&&x.until>gameNow())||privateActive(def.where)||life().shared&&life().shared.ends>gameNow())return false;if(!forced){if(!r27DateEligible(id))return false;if(id==='midnight'){const h=new Date(gameNow()).getHours();if(h<23&&h>4)return false}if(!v17ActivityStart('special:'+id))return false}v.specials.active={id,node:'start',where:def.where,at:gameNow(),until:gameNow()+90*60000,forced};room=def.where;v17Add('special','開始：'+def.title,def.where,{key:'start:'+id+':'+gameNow()});save();render();return true}
+function v17Finish(reason){const v=v17(),a=v.specials.active;if(!a)return;const def=V17_SPECIAL[a.id];v17Add('special',def.title+'（'+(reason==='time'?'時間經過':reason==='departure'?'裴溯外出後結束':reason==='test'?'測試中止':'已完成')+'）',a.where,{key:'finish:'+a.id+':'+a.at});v.specials.active=null;save()}
 function v17Pick(to){const a=v17SpecialActive();if(!a)return;if(to==='__end__'){v17Finish('complete');render();return}const node=V17_SPECIAL[a.id].steps[to];if(!node)return;a.node=to;save();render()}
 function v17Panel(){let p=$('v17Panel');if(!p){p=el('div','life-review');p.id='v17Panel';$('lifeScene').parentNode.insertBefore(p,$('lifeScene').nextSibling)}p.replaceChildren();const a=v17SpecialActive(),v=v17();if(a&&a.where===room){p.classList.remove('hidden');const def=V17_SPECIAL[a.id],node=def.steps[a.node];p.append(el('div','life-title','特殊生活片段｜'+def.title),el('p','life-detail',node.text));for(const [label,to] of node.options){const b=el('button','choice',label);b.onclick=()=>v17Pick(to);p.append(b)}return}const decor=V17_DECOR[room]||[];if(decor.length){p.append(el('div','life-title',room==='mine'?'你的房間布置':'共用空間的小物'));p.append(el('p','note','這裡只調整固定擺設；放書、零食、咖啡等日常物品請使用下方原有的生活操作。'));const grid=el('div','v171-decor-grid');p.append(grid);for(const [id,label] of decor){const on=!!v.decor[room+':'+id];const b=el('button','choice v171-decor-button',(on?'收起':'擺放')+'｜'+label);b.onclick=()=>v17Decor(room,id);grid.append(b)}if(v17DecorLabel(room).length)p.append(el('p','life-detail','目前擺放：'+v17DecorLabel(room).join('、')))}else p.classList.add('hidden');if(decor.length)p.classList.remove('hidden')}
 function v17Journal(){let p=$('v17Journal');if(!p){p=el('div','surface');p.id='v17Journal';$('developerSettings').parentNode.insertBefore(p,$('developerSettings'))}p.replaceChildren();p.append(el('div','surface-title','共同生活的後續與收藏'),el('p','note','已發生的事情會留在這裡；不需要每天登入，也沒有好感度。'));const flags=v17MemoryFlags();const lines=[flags.movie?'你們曾一起看過電影。':'尚未記錄一起看電影。',flags.meal?'你們曾一起吃過飯。':'尚未記錄一起吃飯。',flags.quiet?'你經常選擇安靜共處。':'安靜共處習慣尚未形成。',flags.study?'你最近常待在書房。':'書房習慣尚未形成。'];for(const t of lines)p.append(el('p','life-detail','・'+t));const records=v17().archive;if(records.length){const d=el('details','life-changes');d.append(el('summary','','完整生活收藏（'+records.length+'）'));for(const x of records.slice(0,60))d.append(el('p','life-detail',fmt(x.at)+'｜'+(ROOMS[x.where]?.[0]||'全家')+'｜'+x.text));p.append(d)}else p.append(el('p','note','還沒有新的收藏紀錄。'))}
@@ -410,7 +410,7 @@ function v31523OtherActive(){
 }
 function v31523StoryAllowed(where,variant){
  const a=current(),now=gameNow(),scheduled=baseCurrent();
- if(scheduled.room==='away'||a.room!==where||a.private||v31523OtherActive())return false;
+ if(scheduled.room==='away'||a.room!==where||a.private||v31523OtherActive()||r31526Busy('story'))return false;
  if(Object.values(storyLife()).some(x=>x&&!x.finished&&!x.interrupted&&x.until>now))return false;
  if(where==='living'){
   const tv=lifeObjects('living').some(x=>x.originalLabel==='電視正在播放');
@@ -444,7 +444,7 @@ function v31523ReconcileDeparture(){
    log('生活片段中斷：裴溯外出了。');changed=true;
   }
  }
- if(changed)save();return changed;
+ if(r31526ReconcileOtherDepartures())changed=true;if(changed)save();return changed;
 }
 function v31523StoryCanContinue(where){
  v31523ReconcileDeparture();
@@ -507,8 +507,8 @@ function v172Choose(to){
  const data=v172(),s=data.scene;if(!s)return;
  const item=data.items[s.key];if(!item){data.scene=null;render();return}
  if(to==='close'){data.scene=null;save();render();return}
- if(to==='finish'){delete data.items[s.key];data.scene=null;log('你完成了'+V172_ITEMS[s.key].label+'的日常活動。');save();render();return}
- if(to==='store'){item.phase='stored';data.scene=null;save();render();return}
+ if(to==='finish'){r31526RemovePortable(s.key);data.scene=null;log('你完成了'+V172_ITEMS[s.key].label+'的日常活動。');save();render();return}
+ if(to==='store'){r31526RemovePortable(s.key);data.scene=null;save();render();return}
  if(to==='eat'){item.amount=Math.max(0,item.amount-1);item.phase='opened';s.node=item.amount?'afterEat':'empty'}
  else if(to==='read'){item.progress=Math.min(3,item.progress+1);item.phase='reading';s.node=item.progress===3?'readDone':'reading'}
  else if(to==='drink'){item.amount=Math.max(0,item.amount-1);item.phase='used';s.node=item.amount?'afterDrink':'empty'}
@@ -519,6 +519,7 @@ function v172Choose(to){
 function v172SceneNode(s,item){
  const def=V172_ITEMS[s.key],kind=def?.type;
  if(kind==='snack'){
+  if(Number(item.amount)<=0)s.node='empty';
   if(s.node==='notice')return ['你拆開零食時，裴溯剛好經過，瞥了眼包裝。\n「什麼口味？」',[['把包裝轉給他看','flavor'],['問他要不要吃','offer'],['繼續自己吃','eat']]];
   if(s.node==='flavor')return ['他看了一眼包裝，伸手指了指袋子。\n「給我一個。」',[['遞給他','share'],['說自己還想留著','decline']]];
   if(s.node==='offer')return ['「給我一個就行。」他沒有伸手拿整包。',[['遞給他','share'],['還是自己吃','eat']]];
@@ -535,6 +536,7 @@ function v172SceneNode(s,item){
   return ['書放在這裡。'+(item.progress?'上次讀到的地方還記得。':'你還沒開始看。'),[['翻閱一會兒','read'],['先放著','close'],['收回書架','store']]];
  }
  if(kind==='drink'){
+  if(Number(item.amount)<=0)s.node='empty';
   if(s.node==='afterDrink')return ['你喝了幾口，杯子還在原位。',[['再喝一點','drink'],['暫時放著','close'],['洗杯子','finish']]];
   if(s.node==='empty')return ['杯子已經空了。',[['洗乾淨並收好','finish']]];
   return ['杯子放在這裡。',[['喝一點','drink'],['晚點再喝','close'],['洗杯子並收好','finish']]];
@@ -633,17 +635,8 @@ const v172R=render;render=function(){v172R();v172Sandbox()};
 
 
 // v1.7.2b: one explicit recovery control for every type of active test scene.
-function v172bStopActivities(){
- const l=life();
- if(l.dailyV131)l.dailyV131.active=null;
- if(l.talkV141)l.talkV141.done=true;
- if(l.interaction172)l.interaction172.scene=null;
- if(l.expansion17&&l.expansion17.specials)l.expansion17.specials.active=null;
- if(l.shared)l.shared=null;
- if(l.story)l.story.active=null;
- // This is a sandbox-only recovery; preserve all actual object and memory records.
- save();render();
-}
+function v172bStopActivities(){if(!sandbox)return;r31526EndSandboxActivities();save();render()}
+
 const v172bRender=render;
 render=function(){
  v172bRender();
@@ -767,7 +760,7 @@ Object.assign(V141_DIALOG,V174_DIALOG);
 function v174Migrate(){const data=v172();if(data.migrated174)return;for(const [where,items] of Object.entries(state.items||{})){for(const label of items||[]){const type={書:'book',零食:'snack',咖啡:'coffee'}[label],key=where+':'+type;if(type&&V172_ITEMS[key]&&!data.items[key])data.items[key]={phase:'new',amount:3,progress:0,where,type}}}data.migrated174=true;save()}
 function v174RoomTags(){const host=$('items');host.replaceChildren();const labels=[];for(const [key,def] of Object.entries(V172_ITEMS)){if(key.startsWith(room+':')&&v172().items[key]?.phase!=='stored'&&v172().items[key])labels.push(def.label)}for(const name of v17DecorLabel(room))if(!labels.includes(name))labels.push(name);for(const obj of lifeObjects(room)){if(!labels.includes(obj.label))labels.push(obj.label)}for(const label of labels)host.append(el('span','chip',label));host.classList.toggle('hidden',labels.length===0)}
 const v174OldChoose=v172Choose;
-v172Choose=function(to){const scene=v172().scene,where=scene?.where;if(to==='store'&&scene){delete v172().items[scene.key];v172().scene=null;log('你把'+(V172_ITEMS[scene.key]?.label||'物品')+'收起來了。');render();return}return v174OldChoose(to)};
+v172Choose=function(to){const scene=v172().scene,where=scene?.where;if(to==='store'&&scene){r31526RemovePortable(scene.key);v172().scene=null;log('你把'+(V172_ITEMS[scene.key]?.label||'物品')+'收起來了。');render();return}return v174OldChoose(to)};
 function v174Talk(){const host=$('topics');host.replaceChildren();const a=current(),x=v141TalkActive(),stale=life().talkV141;if(x){host.append(el('p','note','正在接續剛才的對話，後續選項就在下面。'));return}if(stale&&!stale.done){host.append(el('p','note','之前的對話暫停中。可以回到原本空間接續，或先結束。'));const b=el('button','choice','結束已暫停的對話');b.onclick=()=>{stale.done=true;save();render()};host.append(b);return}if(a.room==='away'){host.append(el('p','note','裴溯外出中。你可以傳訊息，也可能收到他的聯絡。'));return}if(a.private){host.append(el('p','note','裴溯現在想獨處；可以先不打擾他。'));return}const where=a.room;if(room!==where)host.append(el('p','note','裴溯目前在'+ROOMS[where][0]+'；選擇話題後會前往該空間。'));else host.append(el('p','note','這裡的話題會依空間改變，不一定每次都全部出現。'));const all=V174_TALKS[where]||[],slot=Math.floor(gameNow()/7200000);let choices=all.filter(([id],i)=>hash(slot*53+i*31+where.length)>.25);if(choices.length<5)choices=all.slice(0,5);choices=choices.slice(0,6);const grid=el('div','v173-talk-grid');host.append(grid);for(const [id,label] of choices){const b=el('button','action',label);b.onclick=()=>{const now=current();if(now.room!==where||now.private)return;room=where;talk(id);switchTab('talk')};grid.append(b)}}
 function v174Items(){const old=$('v173Items');if(!old)return;const special=v17SpecialActive();const original=$('v17Panel');if(original&&special&&special.where===room)original.classList.remove('hidden');const action=$('actions');for(const [i,b] of [...action.children].entries()){const id=ACTIONS[room]?.[i]?.[0];if(['book','coffee','snack','tidy','plant','note'].includes(id))b.classList.add('hidden')}
  const lifeArea=$('lifeScene');for(const b of lifeArea.querySelectorAll('button.life-button')){if(/^(把零食留在茶几上|把書放在沙發旁|留一杯茶|留一份餐點|收起：)/.test(b.textContent))b.classList.add('hidden')}
@@ -818,7 +811,7 @@ function v175Panel(){
    // Start the selected item's own interaction, regardless of older hidden scenes.
    const data=v172();data.scene=null;
    if(!data.items[key]||data.items[key].phase==='stored'){data.items[key]={phase:'new',amount:3,progress:0,where:room,type:def.type};if(room==='mine')v175fRecord('放置'+def.label+'。')}
-   data.scene={key,where:room,kind:def.type,node:'start',at:gameNow()};
+   data.scene={key,where:room,kind:def.type,node:(def.type==='snack'||def.type==='drink')&&Number(data.items[key].amount)<=0?'empty':'start',at:gameNow()};
    $('actionReply').textContent='';save();render();
   });
  }
@@ -1011,7 +1004,7 @@ function v175cRender(){
  host.classList.toggle('hidden',labels.length===0);
  // The room description and top tags must come from the same current inventory.
  const scene=$('lifeScene');
- const detail=scene?.querySelector('.life-detail');
+ const detail=scene?.querySelector('[data-room-inventory-summary]');
  if(detail){
   const shared=life().shared;
   const sharedText=shared&&shared.room===room&&shared.ends>gameNow()?(shared.kind==='movie'?'電影還在播放。':'飯還沒吃完。'):'';
@@ -1197,7 +1190,7 @@ const V175J_MESSAGES=[
 ];
 function v175jState(){
  const l=life();if(!l.doorNotes175j)l.doorNotes175j={active:null,history:[],nextAt:gameNow()+2*3600000,seq:0};
- return l.doorNotes175j;
+ const n=l.doorNotes175j;if(!Array.isArray(n.history))n.history=[];if(n.active){const match=n.history.find(x=>x.id===n.active.id&&x.at===n.active.at);if(match){const done=['kept','removed'];if(done.includes(n.active.status)&&!done.includes(match.status))Object.assign(match,n.active);n.active=done.includes(match.status)?null:match}else n.history.unshift(n.active)}return n;
 }
 function v175jMaybe(){
  const n=v175jState(),now=gameNow();
@@ -1277,7 +1270,7 @@ render=function(){
  for(const entry of n.history){
   const line=el('div','life-change-item');
   line.append(el('div','life-change-detail',entry.text));
-  const status={unread:'尚未閱讀',read:'仍貼在門上',kept:'已收藏',removed:'已丟棄'}[entry.status]||entry.status;
+  const uncertain=['unread','read'].includes(entry.status)&&(!n.active||n.active.id!==entry.id||n.active.at!==entry.at);const status=uncertain?'舊紀錄未留下處理結果':({unread:'尚未閱讀',read:'仍貼在門上',kept:'已收藏',removed:'已丟棄'}[entry.status]||entry.status);if(uncertain){line.append(el('p','note','如果這張便條原本想留下，可以補收進收藏。'));const recover=el('button','choice','將這張舊便條補收進收藏');recover.onclick=()=>{entry.status='kept';entry.handledAt=gameNow();entry.recoveredFromLegacy=true;log('你將一張舊便條補收進收藏。');save();render()};line.append(recover)}
   line.append(el('small','',v175jDate(entry.at)+'｜'+status+(entry.handledAt?'｜處理於 '+v175jDate(entry.handledAt):'')));
   panel.append(line);
  }
@@ -1692,6 +1685,7 @@ function affLog(t){let l=life();l.affectionLog=l.affectionLog||[];l.affectionLog
 function activeWhere(){return forced.where||(current().room||'away')}
 function posText(){const w=activeWhere();return w==='away'?'裴溯目前外出，不在家。':w==='pei'?'裴溯目前在自己的房間。':w==='mine'?'裴溯目前在你的房間。':'裴溯目前在'+(ROOMS[w]?.[0]||'家裡')+'。'}
 function clear(){stateA.step='';shade.classList.remove('on');panel.replaceChildren()}
+window.addEventListener('r31526-sandbox-reset',clear);
 function view(title,lines,options,sub=''){
  panel.replaceChildren();panel.append(el('h3','',title));if(sub)panel.append(el('p','affmeta',sub));
  for(const line of lines){if(line)panel.append(el('div','affline',line))}
@@ -1976,6 +1970,109 @@ const R28_KITCHEN=JSON.parse(document.getElementById('r28-kitchen-data').textCon
  };
 })();
 
+// 31-5-26: shared state rules; approved narrative text and graph stay intact.
+function r31526StorageStatus(failed){
+ save.failed=failed;
+ let box=$('r31526SaveWarning');
+ if(!failed){if(box)box.remove();return}
+ if(box)return;
+ box=el('section','surface');box.id='r31526SaveWarning';box.setAttribute('role','alert');
+ box.style.cssText='margin:12px;padding:14px;border:2px solid #dca76c;border-radius:12px;background:#30251d;color:#fff;';
+ box.append(el('strong','','這次進度尚未成功保存'),el('p','','目前還能繼續操作，但重開前請先匯出備份。手機可能暫時無法儲存資料。'));
+ const backup=el('button','choice','匯出目前進度備份');backup.onclick=()=>$('export').click();box.append(backup);
+ document.body.prepend(box);
+}
+function r31526Busy(except){
+ const l=life(),now=gameNow();
+ if(except!=='event'&&pending())return true;
+ if(except!=='daily'&&l.dailyV131?.active?.until>now)return true;
+ if(except!=='special'&&l.expansion17?.specials?.active?.until>now)return true;
+ if(except!=='shared'&&l.shared?.ends>now)return true;
+ if(except!=='story'&&Object.values(l.stories||{}).some(x=>x&&!x.finished&&!x.interrupted&&x.until>now))return true;
+ if(except!=='private'&&Object.entries(l.privateScenes||{}).some(([where,x])=>x&&!x.finished&&x.until>now&&(PRIVATE_SCENES[where]?.nodes[x.node]?.[1]?.length||0)>0))return true;
+ return false;
+}
+function r31526RemovePortable(key){
+ const def=V172_ITEMS[key];if(!def)return;
+ const where=key.split(':')[0],type=key.split(':')[1],data=v172();
+ delete data.items[key];if(data.scene?.key===key)data.scene=null;
+ if(Array.isArray(state.items?.[where]))state.items[where]=state.items[where].filter(x=>x!==({book:'書',snack:'零食',coffee:'咖啡'}[type]));
+ for(const [id,obj] of Object.entries(life().objects||{})){
+  const label=obj?.originalLabel||obj?.label;
+  const aliases=key==='living:book'?['被挪到茶几上的書']:key==='living:snack'?['開封的零食']:[];
+  if(obj?.room===where&&(label===def.label||aliases.includes(label)))delete life().objects[id];
+ }
+ if(def.type==='book'&&life().expansion17?.decor)life().expansion17.decor[where+':books']=false;
+}
+function r31526RemoveObject(where,label){
+ const objects=life().objects;
+ for(const [id,obj] of Object.entries(objects)){
+  if(obj?.room!==where||![obj.label,obj.originalLabel].includes(label))continue;
+  const original=obj.originalLabel||obj.label;
+  delete objects[id];
+  for(const [key,def] of Object.entries(V172_ITEMS))if(key.startsWith(where+':')&&def.label===original)r31526RemovePortable(key);
+ }
+ if(where==='living'&&['電影正在播放','電視正在播放'].includes(label)&&life().shared?.kind==='movie'){
+  life().shared=null;delete objects['living:電影正在播放'];delete objects['living:電視正在播放'];
+ }
+}
+function r31526ReconcileInventory(){
+ const data=v172();let changed=false;
+ // A hidden legacy book decoration must remain manageable through its book entry.
+ const decor=life().expansion17?.decor;
+ if(decor)for(const where of ['mine','study','living'])if(decor[where+':books']&&V172_ITEMS[where+':book']){
+  const key=where+':book';
+  if(!data.items[key])data.items[key]={phase:'new',amount:3,progress:0,where,type:'book'};
+  decor[where+':books']=false;changed=true;
+ }
+ for(const [key,def] of Object.entries(V172_ITEMS))if(data.items[key]?.phase==='stored'){
+  r31526RemovePortable(key);changed=true;
+ }
+ if(changed)save();
+}
+function r31526EndSandboxActivities(){
+ if(!sandbox)return;
+ const l=life();state.activeEvent=null;
+ if(l.dailyV131)l.dailyV131.active=null;
+ if(l.expansion17?.specials)l.expansion17.specials.active=null;
+ if(l.interaction172)l.interaction172.scene=null;
+ for(const x of Object.values(l.stories||{}))if(x&&!x.finished){x.finished=true;x.outcome='sandbox_recovery'}
+ for(const x of Object.values(l.privateScenes||{}))if(x)x.finished=true;
+ if(l.talkV141)l.talkV141.done=true;
+ l.r28KitchenDialogue=null;l.r31517RoomDialogue=null;l.snackTalk315=null;l.shared=null;l.affectionBed=false;
+ if(l.peiDoorTalk175o){l.peiDoorTalk175o.node=null;l.peiDoorTalk175o.kind=null}
+ window.dispatchEvent(new Event('r31526-sandbox-reset'));
+}
+function r31526MealWasEaten(a){
+ const semantic=node=>R27_SEMANTIC[a.id]?.[node]||String(node||'').replace(/^r27_legacy_/,'');
+ return semantic(a.node)==='eat'||(a.history||[]).some(x=>semantic(x.from)==='eat'||semantic(x.to)==='eat');
+}
+function r31526DepartureAt(started,until){
+ if(!Number.isFinite(started)||started>gameNow())return null;
+ if(activity(slotAt(started)).room==='away')return started;
+ const last=slotAt(Math.min(gameNow(),Number.isFinite(until)?until:gameNow()));
+ for(let slot=slotAt(started)+1;slot<=last;slot++)if(activity(slot).room==='away'&&activity(slot-1).room!=='away')return slot*7200000;
+ return null;
+}
+function r31526ReconcileOtherDepartures(){
+ const l=life();let changed=false;
+ const d=l.dailyV131?.active;
+ if(d&&!d.forced&&(DAILY_V131[d.id]?.requires||d.id==='doorvisit')&&r31526DepartureAt(d.started,d.until)!==null){
+  log('生活片段中斷：裴溯外出了。');daily131Finish('departure');changed=true;
+ }
+ const shared=l.shared;
+ if(shared&&r31526DepartureAt(shared.started,shared.ends)!==null){
+  l.shared=null;
+  if(shared.kind==='movie')delete l.objects['living:電影正在播放'];
+  log('共同活動結束：裴溯外出了。');changed=true;
+ }
+ const special=l.expansion17?.specials?.active;
+ if(special&&!special.forced&&['rainy','midnight'].includes(special.id)&&r31526DepartureAt(special.at,special.until)!==null){
+  v17Finish('departure');changed=true;
+ }
+ return changed;
+}
+
 advance();render();if(notice)alert(notice);setInterval(()=>{advance();render()},60000);
 </script><style id="r29-text-format-fix">
 /* 僅修正文字排版，不變更劇情或互動邏輯。 */
@@ -2031,7 +2128,7 @@ advance();render();if(notice)alert(notice);setInterval(()=>{advance();render()},
 'use strict';
 function putAwayBook(where){
  const key=where+':book', data=v172();
- delete data.items[key];
+ r31526RemovePortable(key);
  if(data.scene&&data.scene.key===key)data.scene=null;
  // 同步清除早期版本留存的同一本書，避免上方標籤殘留。
  if(where==='living'){
@@ -2194,8 +2291,8 @@ function v3154OriginalSnackChoose(to){
  const data=v172(),s=data.scene;if(!s)return;
  const item=data.items[s.key];if(!item){data.scene=null;render();return}
  if(to==='close'){data.scene=null;save();render();return}
- if(to==='finish'){delete data.items[s.key];data.scene=null;log('你完成了'+V172_ITEMS[s.key].label+'的日常活動。');save();render();return}
- if(to==='store'){item.phase='stored';data.scene=null;save();render();return}
+ if(to==='finish'){r31526RemovePortable(s.key);data.scene=null;log('你完成了'+V172_ITEMS[s.key].label+'的日常活動。');save();render();return}
+ if(to==='store'){r31526RemovePortable(s.key);data.scene=null;save();render();return}
  if(to==='eat'){item.amount=Math.max(0,item.amount-1);item.phase='opened';s.node=item.amount?'afterEat':'empty'}
  else if(to==='read'){item.progress=Math.min(3,item.progress+1);item.phase='reading';s.node=item.progress===3?'readDone':'reading'}
  else if(to==='drink'){item.amount=Math.max(0,item.amount-1);item.phase='used';s.node=item.amount?'afterDrink':'empty'}
@@ -2206,6 +2303,7 @@ function v3154OriginalSnackChoose(to){
 function v3154OriginalSnackNode(s,item){
  const def=V172_ITEMS[s.key],kind=def?.type;
  if(kind==='snack'){
+  if(Number(item.amount)<=0)s.node='empty';
   if(s.node==='notice')return ['你拆開零食時，裴溯剛好經過，瞥了眼包裝。\n「什麼口味？」',[['把包裝轉給他看','flavor'],['問他要不要吃','offer'],['繼續自己吃','eat']]];
   if(s.node==='flavor')return ['他看了一眼包裝，伸手指了指袋子。\n「給我一個。」',[['遞給他','share'],['說自己還想留著','decline']]];
   if(s.node==='offer')return ['「給我一個就行。」他沒有伸手拿整包。',[['遞給他','share'],['還是自己吃','eat']]];
@@ -2222,6 +2320,7 @@ function v3154OriginalSnackNode(s,item){
   return ['書放在這裡。'+(item.progress?'上次讀到的地方還記得。':'你還沒開始看。'),[['翻閱一會兒','read'],['先放著','close'],['收回書架','store']]];
  }
  if(kind==='drink'){
+  if(Number(item.amount)<=0)s.node='empty';
   if(s.node==='afterDrink')return ['你喝了幾口，杯子還在原位。',[['再喝一點','drink'],['暫時放著','close'],['洗杯子','finish']]];
   if(s.node==='empty')return ['杯子已經空了。',[['洗乾淨並收好','finish']]];
   return ['杯子放在這裡。',[['喝一點','drink'],['晚點再喝','close'],['洗杯子並收好','finish']]];
@@ -2470,4 +2569,44 @@ render=function(){
 };
 })();
 </script>
-<script>document.querySelector(".head .sub").textContent="同住日常 · 正式版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
+<script id="r31-5-26-inventory-ui">(function(){
+ 'use strict';
+ const previousRender=render;
+ function removeObject(where,label,verb){
+  r31526RemoveObject(where,label);
+  const text='你把'+label+verb+'。';$('actionReply').textContent=text;log(text);save();render();
+ }
+ function inventoryActions(){
+  const panel=$('v173Items');if(!panel||room==='pei')return;
+  const area=el('section','life-review');area.id='r31526InventoryActions';
+  area.append(el('div','life-title','目前物品｜收納與清理'));
+  let count=0;
+  for(const [key,def] of Object.entries(V172_ITEMS)){
+   const item=v172().items[key];if(!key.startsWith(room+':')||!item||item.phase==='stored')continue;
+   const b=el('button','choice',(def.type==='drink'?'洗淨收好｜':'收起｜')+def.label);
+   b.onclick=()=>{r31526RemovePortable(key);$('actionReply').textContent='你把'+def.label+(def.type==='drink'?'洗淨收好了。':'收起來了。');if(room==='mine')v175fRecord($('actionReply').textContent);log($('actionReply').textContent);save();render()};
+   area.append(b);count++;
+  }
+  for(const obj of lifeObjects(room)){
+   const original=obj.originalLabel||obj.label;
+   if(Object.entries(V172_ITEMS).some(([key,def])=>key.startsWith(room+':')&&def.label===original&&v172().items[key]))continue;
+   // Tea and lunchbox already have their own reversible entry; show the rest explicitly.
+   if(['桌上的茶','留下的餐盒','電視正在播放'].includes(original))continue;
+   const dirty=/空杯|用過的杯子|用過的餐具|空盤|桌上的餐具/.test(obj.label);
+   const playing=/電影正在播放/.test(original);
+   const b=el('button','choice',(playing?'關閉｜':dirty?'洗淨收好｜':'收起｜')+obj.label);
+   const where=room,label=obj.label;
+   b.onclick=()=>removeObject(where,label,playing?'關掉了':dirty?'洗淨收好了':'收起來了');area.append(b);count++;
+   if(original==='剛做好的食物'){
+    const eat=el('button','choice','吃完並收好｜'+obj.label);eat.onclick=()=>removeObject(where,label,'吃完，並把餐具洗淨收好了');area.append(eat);
+   }
+  }
+  if(count)panel.append(area);
+ }
+ render=function(){r31526ReconcileInventory();previousRender();inventoryActions()};
+ window.addEventListener('pageshow',()=>{advance();render()});
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden){advance();render()}});
+ render();
+})();
+</script>
+<script>document.querySelector(".head .sub").textContent="同住日常 · 31-5-26 修正版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
