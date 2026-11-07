@@ -508,7 +508,7 @@ function v172Choose(to){
  const item=data.items[s.key];if(!item){data.scene=null;render();return}
  if(!sandbox&&['share','flavor','offer'].includes(to)&&!r31528NpcAt(s.where)){render();return}
  if(to==='close'){data.scene=null;save();render();return}
- if(to==='finish'){r31526RemovePortable(s.key);data.scene=null;log('你完成了'+V172_ITEMS[s.key].label+'的日常活動。');save();render();return}
+ if(to==='finish'){r31526RemovePortable(s.key,V172_ITEMS[s.key]?.type!=='book');data.scene=null;log('你完成了'+r31529Label(s.key,item)+'的日常活動。');save();render();return}
  if(to==='store'){r31526RemovePortable(s.key);data.scene=null;save();render();return}
  if(to==='eat'){item.amount=Math.max(0,item.amount-1);item.phase='opened';s.node=item.amount?'afterEat':'empty'}
  else if(to==='read'){item.progress=Math.min(3,item.progress+1);item.phase='reading';s.node=item.progress===3?'readDone':'reading'}
@@ -570,7 +570,7 @@ function v172Render(){
  panel.classList.remove('hidden');
  const item=data.items[s.key];if(!item){data.scene=null;save();return}
  const [desc,choices]=v172SceneNode(s,item);
- panel.append(el('div','life-title','正在進行｜'+V172_ITEMS[s.key].label),el('p','life-detail',desc));
+ panel.append(el('div','life-title','正在進行｜'+r31529Label(s.key,item)),el('p','life-detail',desc));
  for(const [label,to] of choices){const b=el('button','choice',label);b.onclick=()=>v172Choose(to);panel.append(b)}
  // Show a consistent return route in the conversation tab without duplicating the dialogue.
 }
@@ -793,7 +793,7 @@ function v175RoomTags(){
  const host=$('items');host.replaceChildren();const labels=[];
  const add=(x)=>{if(x&&!labels.includes(x))labels.push(x)};
  for(const [key,def] of Object.entries(V172_ITEMS)){
-  const item=v172().items[key];if(key.startsWith(room+':')&&item&&item.phase!=='stored')add(def.label+(item.phase==='opened'?' · 已拆封':item.phase==='reading'?' · 閱讀中':''));
+  const item=v172().items[key];if(key.startsWith(room+':')&&item&&item.phase!=='stored')add(r31529Label(key,item)+(item.phase==='opened'?' · 已拆封':item.phase==='reading'?' · 閱讀中':''));
  }
  for(const name of v17DecorLabel(room))add(name);
  for(const obj of lifeObjects(room))add(obj.label);
@@ -809,10 +809,10 @@ function v175Panel(){
  const add=(label,fn)=>{const b=el('button','choice',label);b.onclick=fn;grid.append(b);return b};
  // One stateful entry per portable object.
  for(const [key,def] of Object.entries(V172_ITEMS).filter(([k])=>k.startsWith(room+':'))){
-  const item=v172().items[key],present=item&&item.phase!=='stored';add((present?'查看／使用｜':'放置／使用｜')+def.label,()=>{
+  const item=v172().items[key],present=item&&item.phase!=='stored';add((present?'查看／使用｜':r31529HasStored(key)?'取出／使用｜':'放置／使用｜')+r31529Label(key,item),()=>{
    // Start the selected item's own interaction, regardless of older hidden scenes.
    const data=v172();data.scene=null;
-   if(!data.items[key]||data.items[key].phase==='stored'){data.items[key]={phase:'new',amount:3,progress:0,where:room,type:def.type};if(room==='mine')v175fRecord('放置'+def.label+'。')}
+   if(!data.items[key]||data.items[key].phase==='stored'){if(!r31529Restore(key))data.items[key]={phase:'new',amount:3,progress:0,where:room,type:def.type};if(room==='mine')v175fRecord('放置'+r31529Label(key)+'。')}
    data.scene={key,where:room,kind:def.type,node:(def.type==='snack'||def.type==='drink')&&Number(data.items[key].amount)<=0?'empty':'start',at:gameNow()};
    $('actionReply').textContent='';save();render();
   });
@@ -981,7 +981,7 @@ function v175cInventory(where){
  for(const [key,def] of Object.entries(V172_ITEMS)){
   const item=v172().items[key];
   if(key.startsWith(where+':')&&item&&item.phase!=='stored'){
-   add(def.label+(item.phase==='opened'?' · 已拆封':item.phase==='reading'?' · 閱讀中':item.phase==='used'?' · 使用中':''));
+   add(r31529Label(key,item)+(item.phase==='opened'?' · 已拆封':item.phase==='reading'?' · 閱讀中':item.phase==='used'?' · 使用中':''));
   }
  }
  // The portable book and the older fixed 'books' decoration represent the same visible object.
@@ -1182,28 +1182,85 @@ if(v175iSubtitle)v175iSubtitle.textContent='同住日常 · v1.7.5i 我的房間
 
 // v1.7.5j — own-door notes from Pei Su. Separate from the room's existing
 // '留下便條' action; never enter or modify the player's private room.
-const V175J_MESSAGES=[
- '冰箱裡有你昨天放的東西，記得看看。',
- '客廳的燈我關了。',
- '我出去一趟。門記得鎖。',
- '桌上那本書我沒動。',
- '今天有點忙，有事晚點說。',
- '廚房有熱水。自己倒。'
+const R31529_NOTE_TEMPLATES=[
+ {key:'general1',text:'看到就行，不用專程來報告。'},
+ {key:'general2',text:'有事就敲門。別站在外面猜。'},
+ {key:'general3',text:'先做你的事。我忙完會出來。'},
+ {key:'general4',text:'紙條收好。別又夾進哪本書裡找不到。'},
+ {key:'general5',text:'沒什麼要緊事。只是路過，留一張。'},
+ {key:'general6',text:'有話可以直接說，我又不會不聽。'},
+ {key:'general7',text:'想坐一會兒就過來。不用每次都找理由。'},
+ {key:'general8',text:'不用替我安排整天。你的事情也記得做。'},
+ {key:'general9',text:'別把所有事都堆到最後。先處理一件。'},
+ {key:'general10',text:'這張沒有別的意思。你不用研究那麼久。'},
+ {key:'general11',text:'留個字。省得你又說只看見一扇關著的門。'},
+ {key:'general12',text:'有空再看。不急。'},
+ {key:'care1',text:'記得吃東西。別只拿飲料當一餐。'},
+ {key:'care2',text:'坐久了就起來走走。別等肩膀不舒服才想起來。'},
+ {key:'care3',text:'水記得喝。這也要人提醒？'},
+ {key:'care4',text:'累了就歇一下。事情又不會因為你盯著它就自己做完。'},
+ {key:'care5',text:'出門前看看天氣。外套和傘，自己記得拿。'},
+ {key:'care6',text:'有不舒服就說，別等人猜。'},
+ {key:'care7',text:'想吃什麼就先想好。別問到最後又說隨便。'},
+ {key:'care8',text:'忙完再過來也行。我沒催你。'},
+ {key:'play1',text:'這張算是我先留的。你可以不用搶著回。'},
+ {key:'play2',text:'門不是留言板。不過再多一張，也還貼得下。'},
+ {key:'play3',text:'你要是真想找我，紙條可以少寫兩句，人直接過來。'},
+ {key:'play4',text:'路過。沒有躲你。'},
+ {key:'play5',text:'別盯著字猜語氣。想知道，自己來問。'},
+ {key:'play6',text:'看完要收就收。別貼到最後連門都快看不見。'},
+ {key:'morning1',text:'早。先吃點東西，再開始忙。',from:6,to:11},
+ {key:'morning2',text:'起來了就把窗簾拉開。別一整天都窩著。',from:7,to:11},
+ {key:'noon1',text:'中午了。先去吃飯，別等到下午才想起來。',from:11,to:14},
+ {key:'afternoon1',text:'下午要是睏了就歇一會兒。別硬撐。',from:14,to:18},
+ {key:'evening1',text:'晚點想吃什麼，可以先留個字。',from:17,to:21},
+ {key:'evening2',text:'今天做不完的就留一點給明天。',from:20,to:24},
+ {key:'night1',text:'已經很晚了。別又說再看一下就睡。',night:true},
+ {key:'night2',text:'晚安。這次不是催你，是我先說的。',night:true},
+ {key:'study1',text:'書房桌上的東西先別挪。我還記得放在哪裡。',where:'study'},
+ {key:'study2',text:'想看書可以自己拿。看完記得放回去。',where:'study'},
+ {key:'kitchen1',text:'進廚房順手看看杯子。用過的自己洗。',where:'kitchen'},
+ {key:'living1',text:'客廳可以坐。沒有人要趕你走。',where:'living'},
+ {key:'snack1',text:'零食拆了就記得封好。別一直敞著放。',needs:'openedSnack'},
+ {key:'book1',text:'看到哪一頁就記一下。省得下次又從頭翻。',needs:'readingBook'},
+ {key:'gift1',text:'帶回來的東西你有空再看。沒有要你立刻收。',needs:'gift'},
+ {key:'cushion1',text:'靠墊想用就拿。用完別隨手丟到地上。',needs:'cushion'}
 ];
+const V175J_MESSAGES=R31529_NOTE_TEMPLATES.map(x=>x.text);
+const R31529_GIFTS=[
+ {key:'butter',label:'奶油餅乾',type:'snack',line:'路過買的。你想吃再拆。'},
+ {key:'seaweed',label:'海苔脆片',type:'snack',line:'這個口味你可以試試。'},
+ {key:'chocolate',label:'巧克力小點',type:'snack',line:'帶了一點。不是讓你拿來當正餐。'},
+ {key:'cracker',label:'鹽味小餅乾',type:'snack',line:'放著，晚點想吃再拿。'},
+ {key:'nuts',label:'一小袋堅果',type:'snack',line:'順手帶的。你要就收好。'},
+ {key:'cookies',label:'燕麥餅乾',type:'snack',line:'挑了一包。合不合口味，你自己試。'},
+ {key:'novel',label:'隨手帶回的小書',type:'book',line:'看見這本，覺得你也許會想翻。'},
+ {key:'essays',label:'一本短篇集',type:'book',line:'有空再看。看完告訴我也行。'},
+ {key:'mystery',label:'一本懸疑小說',type:'book',line:'先別翻最後一頁。'},
+ {key:'tea',label:'一杯無糖茶',type:'drink',line:'帶了兩杯。這杯給你。'},
+ {key:'coffee',label:'一杯咖啡',type:'drink',line:'你的那杯。記得喝，別又放著忘了。',from:6,to:18},
+ {key:'milkTea',label:'一杯奶茶',type:'drink',line:'順路帶回來的。收著吧。',from:8,to:21}
+];
+const R31529_REPLIES={
+ rest:['知道。你也別只顧著提醒我。','我有分寸。你累了就先歇。','看到了。你自己的休息也記得顧。','嗯。這張我收下了。'],
+ food:['知道了。你自己也記得吃。','看見了。別只留字，自己也去吃點東西。','嗯。你也別拿飲料當一餐。','收到了。你先照顧好自己。'],
+ affection:['看到了。下次當面說。','嗯。紙條我收下了。','別只留在紙上。想見我就過來。','知道了。這張我留著。','嗯。我也是。'],
+ weather:['知道。你出門也記得拿外套和傘。','看到了。別只提醒我，自己也記得。','嗯。你也注意一點。'],
+ goodnight:['嗯。下次不用等我才睡。','看到了。你也記得好好休息。','晚安收到了。別為了等回覆又熬著。'],
+ morning:['看到了。你也記得先吃點東西。','嗯。你的早安我收到了。','知道了。今天也別一忙就忘了吃飯。'],
+ outing:['知道了。鑰匙記得帶。','嗯。路上小心。','看見了。回來再說。'],
+ thanks:['收到了。這點事不用一直謝。','嗯。知道了。','看見了。下次有事直接說。'],
+ apology:['看到了。想說的，等你願意再當面說。','嗯。先別急著解釋。','這張我收下了。其他的之後再說。'],
+ work:['看到了。你自己的事情也慢慢理清楚。','知道。你也別把自己弄得太累。','嗯。忙完再說，不用急。'],
+ question:['便條看到了。這件事當面說。','收到了。有事可以直接過來問。','看見了。等方便的時候再說。'],
+ neutral:['便條我收到了。','看見了。這張先放我這裡。','嗯。你的字我看到了。','收到了。不用一直來確認。']
+};
+
 function v175jState(){
  const l=life();if(!l.doorNotes175j)l.doorNotes175j={active:null,history:[],nextAt:gameNow()+2*3600000,seq:0};
  const n=l.doorNotes175j;if(!Array.isArray(n.history))n.history=[];if(n.active){const match=n.history.find(x=>x.id===n.active.id&&x.at===n.active.at);if(match){const done=['kept','removed'];if(done.includes(n.active.status)&&!done.includes(match.status))Object.assign(match,n.active);n.active=done.includes(match.status)?null:match}else n.history.unshift(n.active)}return n;
 }
-function v175jMaybe(){
- const n=v175jState(),now=gameNow();
- if(n.active||now<n.nextAt)return;
- // At most one decision per interval; no automatic reply to player's notes.
- n.nextAt=now+(3+Math.floor(Math.random()*5))*3600000;
- if(Math.random()>=0.45){save();return;}
- const idx=Math.floor(Math.random()*V175J_MESSAGES.length);
- const entry={id:++n.seq,text:V175J_MESSAGES[idx],at:now,status:'unread',handledAt:null};
- n.active=entry;n.history.unshift(entry);n.history=n.history.slice(0,80);save();
-}
+function v175jMaybe(){r31529MaybeNote()}
 function v175jDate(at){return new Date(at).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}
 function v175jRender(){
  const old=$('v175jDoor');if(old)old.remove();
@@ -1215,7 +1272,7 @@ function v175jRender(){
   if(note.status==='unread'){note.status='read';save()}
   wrap.append(el('p','note','裴溯在你的房門外留了一張便條。'));
   const paper=el('div','life-change-item');
-  paper.append(el('div','life-change-detail',note.text));
+  if(note.replyTo)paper.append(r31529ReplyLink(note));paper.append(el('div','life-change-detail',note.text));
   paper.append(el('small','', '貼上時間：'+v175jDate(note.at)));
   wrap.append(paper);
   const take=el('button','choice','收下收藏');take.onclick=()=>{note.status='kept';note.handledAt=gameNow();n.active=null;save();render()};wrap.append(take);
@@ -1246,7 +1303,7 @@ v175jRender=function(){
  if(!saved.length)section.append(el('p','note','目前還沒有收藏裴溯留下的便條。'));
  for(const note of saved){
   const item=el('div','life-change-item');
-  item.append(el('div','life-change-detail',note.text));
+  if(note.replyTo)item.append(r31529ReplyLink(note));item.append(el('div','life-change-detail',note.text));
   item.append(el('small','', '貼上時間：'+v175jDate(note.at)+(note.handledAt?'｜收藏時間：'+v175jDate(note.handledAt):'')));
   section.append(item);
  }
@@ -1271,7 +1328,7 @@ render=function(){
  if(!n.history.length)panel.append(el('p','note','目前沒有房門便條紀錄。'));
  for(const entry of n.history){
   const line=el('div','life-change-item');
-  line.append(el('div','life-change-detail',entry.text));
+  if(entry.replyTo)line.append(r31529ReplyLink(entry));line.append(el('div','life-change-detail',entry.text));
   const uncertain=['unread','read'].includes(entry.status)&&(!n.active||n.active.id!==entry.id||n.active.at!==entry.at);const status=uncertain?'舊紀錄未留下處理結果':({unread:'尚未閱讀',read:'仍貼在門上',kept:'已收藏',removed:'已丟棄'}[entry.status]||entry.status);if(uncertain){line.append(el('p','note','如果這張便條原本想留下，可以補收進收藏。'));const recover=el('button','choice','將這張舊便條補收進收藏');recover.onclick=()=>{entry.status='kept';entry.handledAt=gameNow();entry.recoveredFromLegacy=true;log('你將一張舊便條補收進收藏。');save();render()};line.append(recover)}
   line.append(el('small','',v175jDate(entry.at)+'｜'+status+(entry.handledAt?'｜處理於 '+v175jDate(entry.handledAt):'')));
   panel.append(line);
@@ -1315,7 +1372,7 @@ function v175mCollect(force=false){const n=v175mData(),now=gameNow();if(!n.activ
  n.nextCheckAt=now+60*60000;
  // A private, asynchronous decision. No text analysis, forced response or room entry.
  if(!force&&(current().room==='away'||Math.random()>=.48)){save();return false}
- const note=n.active;note.status='taken';note.handledAt=now;n.active=null;
+ const note=n.active;note.status='taken';note.handledAt=now;n.active=null;r31529ScheduleReply(note,force&&sandbox);
  save();return true}
 function v175mDoorRender(){document.getElementById('v175mDoor')?.remove();if(room!=='pei')return;
  const n=v175mData(),wrap=el('section','life-review');wrap.id='v175mDoor';
@@ -1337,14 +1394,14 @@ function v175mDoorRender(){document.getElementById('v175mDoor')?.remove();if(roo
  }else{
   wrap.append(el('p','note','門上目前沒有你貼的便條。一次只能貼一張。'));
   const presets=el('div','v175n-preset-grid');for(const content of V175M_PRESETS){const b=el('button','choice v175n-preset-button',content);b.onclick=()=>{if(v175mPost(content,'preset'))render()};presets.append(b)}wrap.append(presets);
-  const custom=el('textarea','');custom.rows=3;custom.maxLength=240;custom.placeholder='寫一張自己的便條（最多 240 字；不會自動理解或回覆）';custom.style.cssText='width:100%;margin-top:12px;padding:12px;border-radius:12px;border:1px solid #41536a;background:#111c29;color:#eaf0f8;font:inherit;resize:vertical';wrap.append(custom);
+  const custom=el('textarea','');custom.rows=3;custom.maxLength=240;custom.placeholder='寫一張自己的便條（最多 240 字；收下後可能收到離線便條回覆）';custom.style.cssText='width:100%;margin-top:12px;padding:12px;border-radius:12px;border:1px solid #41536a;background:#111c29;color:#eaf0f8;font:inherit;resize:vertical';wrap.append(custom);
   const post=el('button','choice','把這張便條貼在門外');post.onclick=()=>{const text=custom.value.trim();if(!text){custom.focus();return}if(v175mPost(text,'free'))render()};wrap.append(post)
  }
  const host=$('v173Items');if(host?.parentNode)host.parentNode.insertBefore(wrap,host);else $('lifeScene')?.append(wrap);
 }
 const v175mOldRender=render;
 render=function(){v175mCollect();v175mOldRender();v175mDoorRender();const journal=$('journal');if(!journal)return;let hist=$('v175mHistory');if(!hist){hist=el('details','surface');hist.id='v175mHistory';journal.append(hist)}const n=v175mData();hist.replaceChildren();hist.append(el('summary','surface-title','貼給裴溯的房門便條（'+n.history.length+'）'));if(!n.history.length)hist.append(el('p','note','還沒有貼給裴溯的便條。'));
- for(const item of n.history){const e=el('div','life-change-item');e.append(el('div','life-change-detail',item.text));const status={posted:'仍在門上',taken:'裴溯已取走',retrieved:'自己取下',unverified:'舊版狀態異常・去向未確認'}[item.status]||item.status;e.append(el('small','',v175mStamp(item.at)+'｜'+status+(item.handledAt?'｜'+v175mStamp(item.handledAt):'')));hist.append(e)}
+ for(const item of n.history){const e=el('div','life-change-item');e.append(el('div','life-change-detail',item.text));const status={posted:'仍在門上',taken:'裴溯已取走',retrieved:'自己取下',unverified:'舊版狀態異常・去向未確認'}[item.status]||item.status;e.append(el('small','',v175mStamp(item.at)+'｜'+status+(item.handledAt?'｜'+v175mStamp(item.handledAt):'')));if(item.replyStatus==='pending')e.append(el('small','','｜可能稍後收到回覆'));if(item.replyStatus==='delivered')e.append(el('small','','｜已回覆：'+v175mStamp(item.repliedAt)));hist.append(e)}
 };
 const v175mSub=document.querySelector('.head .sub');if(v175mSub)v175mSub.textContent='同住日常 · v1.7.5n 裴溯房門便條顯示修正版';
 
@@ -1974,6 +2031,154 @@ const R28_KITCHEN=JSON.parse(document.getElementById('r28-kitchen-data').textCon
 
 
 
+// 31-5-29: local-only possessions, return gifts and note correspondence.
+function r31529(){
+ const l=life();
+ if(!l.features29){l.features29={version:1,seq:0,closet:[],returns:{cursor:slotAt(gameNow()),seen:[],lastGiftAt:0,pending:null,history:[]},notes:{recent:[],replyRecent:[],queue:[]}};save()}
+ const f=l.features29;
+ if(!Array.isArray(f.closet))f.closet=[];
+ return f;
+}
+function r31529Id(){const f=r31529();return 'r29-'+gameNow()+'-'+(++f.seq)}
+function r31529TrimNotes(n){
+ const recent=new Set(n.history.filter(x=>x.status!=='kept').slice(0,80));
+ n.history=n.history.filter(x=>x.status==='kept'||recent.has(x));
+}
+function r31529Label(key,item=v172().items[key]){return item?.r29Label||V172_ITEMS[key]?.label||'物品'}
+function r31529Destinations(type){return type==='book'?['mine','living','study']:type==='drink'?['mine','kitchen']:['mine','living','kitchen']}
+function r31529TypeKey(where,type){return where+':'+(type==='drink'?'coffee':type)}
+function r31529Store(key){
+ const item=v172().items[key],def=V172_ITEMS[key];if(!item||!def)return false;
+ if(def.type!=='book'&&Number(item.amount)<=0)return false;
+ const f=r31529();item.r29id=item.r29id||r31529Id();
+ const entry={id:item.r29id,homeKey:key,label:r31529Label(key,item),type:def.type,item:JSON.parse(JSON.stringify(item)),storedAt:gameNow()};
+ const existing=f.closet.find(x=>x.id===entry.id);
+ if(existing)Object.assign(existing,entry);else f.closet.push(entry);
+ return true;
+}
+function r31529Place(id,where){
+ const f=r31529(),entry=f.closet.find(x=>x.id===id);if(!entry||!r31529Destinations(entry.type).includes(where))return false;
+ const key=r31529TypeKey(where,entry.type),data=v172();if(data.items[key]&&data.items[key].phase!=='stored')return false;
+ if(data.items[key]?.phase==='stored'){r31529Store(key);delete data.items[key]}
+ const item=JSON.parse(JSON.stringify(entry.item));item.where=where;item.r29id=entry.id;item.r29Label=entry.label;
+ item.type=V172_ITEMS[key].type;if(item.phase==='stored')item.phase=item.amount<3?'opened':'new';
+ data.items[key]=item;f.closet=f.closet.filter(x=>x.id!==id);save();return true;
+}
+function r31529Restore(key){
+ const entry=r31529().closet.find(x=>x.homeKey===key&&!x.item.r29GiftKey&&x.label===V172_ITEMS[key]?.label);
+ return !!entry&&r31529Place(entry.id,key.split(':')[0]);
+}
+function r31529HasStored(key){return r31529().closet.some(x=>x.homeKey===key&&!x.item.r29GiftKey&&x.label===V172_ITEMS[key]?.label)}
+function r31529GiftCandidate(at){
+ const h=new Date(at).getHours();const choices=R31529_GIFTS.filter(x=>x.from===undefined||h>=x.from&&h<x.to);
+ const r=r31529().returns,previous=r.history[0]?.giftKey;
+ const pool=choices.filter(x=>x.key!==previous);return pool[Math.floor(hash(Math.floor(at/60000)+419)*pool.length)];
+}
+function r31529OfferGift(at=gameNow(),outingId='test',force=false){
+ if(force&&!sandbox)return false;
+ const r=r31529().returns;if(r.pending)return false;
+ if(!force&&(r.lastGiftAt&&at-r.lastGiftAt<48*3600000||hash(Math.floor(at/7200000)+719)>.45))return false;
+ const def=r31529GiftCandidate(at);r.pending={id:r31529Id(),giftKey:def.key,label:def.label,type:def.type,line:def.line,at,outingId,deferred:false};
+ r.lastGiftAt=at;save();return true;
+}
+function r31529CheckReturns(){
+ const r=r31529().returns,now=slotAt(gameNow());
+ if(now<r.cursor){r.cursor=now;save();return}
+ if(now===r.cursor)return;
+ let candidate=null;
+ for(let slot=Math.max(r.cursor+1,now-36);slot<=now;slot++){
+  if(activity(slot-1).room!=='away'||activity(slot).room==='away')continue;
+  let start=slot-1;while(start>slot-12&&activity(start-1).room==='away')start--;
+  const id=String(state.seed)+':'+start;
+  if(r.seen.includes(id))continue;
+  r.seen.push(id);if(gameNow()-slot*7200000<=12*3600000)candidate={at:slot*7200000,id};
+ }
+ r.seen=r.seen.slice(-180);r.cursor=now;
+ if(candidate&&!r.pending)r31529OfferGift(candidate.at,candidate.id);
+ save();
+}
+function r31529TakeGift(){
+ const f=r31529(),r=f.returns,g=r.pending;if(!g)return false;
+ const where=g.type==='book'?'study':g.type==='drink'?'kitchen':'living';
+ f.closet.push({id:g.id,homeKey:r31529TypeKey(where,g.type),label:g.label,type:g.type,storedAt:gameNow(),item:{r29id:g.id,r29Label:g.label,r29GiftKey:g.giftKey,phase:'new',amount:3,progress:0,where,type:g.type}});
+ r.history.unshift({...g,acceptedAt:gameNow(),status:'accepted'});r.history=r.history.slice(0,60);r.pending=null;
+ log('你收下了裴溯帶回的'+g.label+'，放進收納櫃。');save();return true;
+}
+function r31529NoteAllowed(){
+ const a=current();return a.room!=='away'&&!a.private&&!r31526Busy('')&&!document.getElementById('affShade')?.classList.contains('on');
+}
+function r31529NoteEligible(t){
+ const a=current(),h=new Date(gameNow()).getHours();
+ if(t.from!==undefined&&!(h>=t.from&&h<t.to))return false;
+ if(t.night&&!r31527Night()||t.where&&a.room!==t.where)return false;
+ const items=Object.entries(v172().items);
+ if(t.needs==='openedSnack'&&!items.some(([key,item])=>V172_ITEMS[key]?.type==='snack'&&item.phase==='opened'&&item.amount>0))return false;
+ if(t.needs==='readingBook'&&!items.some(([key,item])=>V172_ITEMS[key]?.type==='book'&&item.progress>0))return false;
+ if(t.needs==='gift'&&!r31529().returns.pending)return false;
+ if(t.needs==='cushion'&&!v17().decor['living:cushion'])return false;
+ return true;
+}
+function r31529SelectNote(){
+ const f=r31529().notes,pool=R31529_NOTE_TEMPLATES.filter(r31529NoteEligible);
+ const fresh=pool.filter(x=>!f.recent.includes(x.key)),options=fresh.length?fresh:pool;
+ const t=options[Math.floor(Math.random()*options.length)];
+ f.recent=[...f.recent.filter(x=>x!==t.key),t.key].slice(-12);return t;
+}
+function r31529Classify(text){
+ const t=String(text||'').replace(/\s+/g,'');
+ if(/(?:不用|不必|不要|別|别)(?:特地|特意)?(?:回覆|回复|回復|回答|回信|回訊息|回消息)|(?:不用|不必|不要|別|别)回(?:我|這張|这张|這個|这个|[。！!?，,]|$)/.test(t))return 'no_reply';
+ if(/對不起|对不起|抱歉/.test(t))return 'apology';
+ const deniedAffection=/不(?:想|愛|爱|喜歡|喜欢)你|不是.*(?:想你|愛你|爱你)|別.*(?:想你|愛你|爱你)/.test(t);
+ if(!deniedAffection&&/愛你|爱你|想你|喜歡你|喜欢你|想抱你|想親你|想亲你/.test(t))return 'affection';
+ if(/晚安|好夢|好梦/.test(t))return 'goodnight';
+ if(/早安|早上好/.test(t))return 'morning';
+ if(/我出門|我出门|我要出去|我出去|晚點回|晚点回/.test(t))return 'outing';
+ if(/謝謝|谢谢|感謝|感谢/.test(t))return 'thanks';
+ if(/休息|熬夜|累了|太累|睡覺|睡觉|早點睡|早点睡|別太晚|别太晚|不要.*太晚|早點回|早点回/.test(t))return 'rest';
+ if(/吃飯|吃饭|吃東西|吃东西|喝水|早餐|午餐|晚餐|點心|点心|留了.*吃/.test(t))return 'food';
+ if(/天冷|冷了|下雨|外套|多穿|雨傘|雨伞|天熱|天热/.test(t))return 'weather';
+ if(/加油|工作|忙完|別太忙|别太忙/.test(t))return 'work';
+ if(/嗎|吗|？|\?|在哪|什麼|什么|幾點|几点/.test(t))return 'question';
+ return 'neutral';
+}
+function r31529ScheduleReply(note,force=false){
+ force=!!(force&&sandbox);
+ if(note.replyDecision)return false;
+ const category=r31529Classify(note.text),chance=hash(Math.floor(note.at/60000)+Number(note.id)*71+277);
+ note.replyDecision=true;
+ if(category==='no_reply'||!force&&chance>=(category==='neutral'?.5:.82)){note.replyStatus='received';return false}
+ const job={id:r31529Id(),sourceId:note.id,sourceAt:note.at,sourceText:note.text,category,notBefore:gameNow()+(30+Math.floor(hash(Number(note.id)*59+note.at%100000)*91))*60000,status:'pending'};
+ r31529().notes.queue.push(job);note.replyStatus='pending';return true;
+}
+function r31529DeliverReply(force=false){
+ if(force&&!sandbox)return false;
+ const n=v175jState();if(n.active||!force&&!r31529NoteAllowed())return false;
+ const f=r31529().notes,job=f.queue.find(x=>x.status==='pending'&&(force||x.notBefore<=gameNow()));if(!job)return false;
+ const lines=R31529_REPLIES[job.category]||R31529_REPLIES.neutral;
+ const fresh=lines.filter(x=>!f.replyRecent.includes(x)),different=lines.filter(x=>x!==f.replyRecent[f.replyRecent.length-1]);
+ const pool=fresh.length?fresh:different.length?different:lines;
+ const text=pool[Math.floor(hash(job.sourceAt%100000+job.sourceId*97)*pool.length)];
+ const entry={id:++n.seq,text,at:gameNow(),status:'unread',handledAt:null,kind:'reply',replyCategory:job.category,replyTo:{id:job.sourceId,at:job.sourceAt,text:job.sourceText}};
+ n.active=entry;n.history.unshift(entry);r31529TrimNotes(n);n.nextAt=gameNow()+4*3600000;
+ f.replyRecent=[...f.replyRecent.filter(x=>x!==text),text].slice(-8);job.status='delivered';job.deliveredAt=gameNow();
+ const source=v175mData().history.find(x=>x.id===job.sourceId&&x.at===job.sourceAt);if(source){source.replyStatus='delivered';source.repliedAt=gameNow()}
+ f.queue=f.queue.filter(x=>x.status==='pending'||gameNow()-(x.deliveredAt||0)<7*86400000);save();return true;
+}
+function r31529MaybeNote(){
+ const n=v175jState(),now=gameNow();if(n.active)return;
+ if(r31529DeliverReply())return;
+ if(now<n.nextAt)return;
+ if(!r31529NoteAllowed()){n.nextAt=now+60*60000;save();return}
+ n.nextAt=now+(3+Math.floor(Math.random()*5))*3600000;
+ if(Math.random()>=.45){save();return}
+ const t=r31529SelectNote(),entry={id:++n.seq,text:t.text,templateKey:t.key,at:now,status:'unread',handledAt:null,kind:'spontaneous'};
+ n.active=entry;n.history.unshift(entry);r31529TrimNotes(n);save();
+}
+function r31529ReplyLink(note){
+ const box=el('div','r29-reply-link');
+ box.append(el('small','','回覆你先前的便條｜'+v175jDate(note.replyTo.at)),el('p','',note.replyTo.text));return box;
+}
+
 // 31-5-28: reconcile before showing and responding, including between timer ticks.
 function r31528NpcAt(where){const a=current();return a.room===where&&!a.private}
 function r31528ReturnedSince(at){
@@ -2064,9 +2269,10 @@ function r31526Busy(except){
  if(except!=='private'&&Object.entries(l.privateScenes||{}).some(([where,x])=>x&&!x.finished&&x.until>now&&(PRIVATE_SCENES[where]?.nodes[x.node]?.[1]?.length||0)>0))return true;
  return false;
 }
-function r31526RemovePortable(key){
+function r31526RemovePortable(key,discard=false){
  const def=V172_ITEMS[key];if(!def)return;
  const where=key.split(':')[0],type=key.split(':')[1],data=v172();
+ if(!discard)r31529Store(key);
  delete data.items[key];if(data.scene?.key===key)data.scene=null;
  if(Array.isArray(state.items?.[where]))state.items[where]=state.items[where].filter(x=>x!==({book:'書',snack:'零食',coffee:'咖啡'}[type]));
  for(const [id,obj] of Object.entries(life().objects||{})){
@@ -2082,7 +2288,7 @@ function r31526RemoveObject(where,label){
   if(obj?.room!==where||![obj.label,obj.originalLabel].includes(label))continue;
   const original=obj.originalLabel||obj.label;
   delete objects[id];
-  for(const [key,def] of Object.entries(V172_ITEMS))if(key.startsWith(where+':')&&def.label===original)r31526RemovePortable(key);
+  for(const [key,def] of Object.entries(V172_ITEMS))if(key.startsWith(where+':')&&def.label===original){if(!v172().items[key])v172().items[key]={where,type:def.type,phase:obj.changed?'opened':'new',amount:Number.isFinite(obj.amount)?obj.amount:3,progress:Number.isFinite(obj.progress)?obj.progress:0,r29Legacy:true};r31526RemovePortable(key);}
  }
  if(where==='living'&&['電影正在播放','電視正在播放'].includes(label)&&life().shared?.kind==='movie'){
   life().shared=null;delete objects['living:電影正在播放'];delete objects['living:電視正在播放'];
@@ -2365,7 +2571,7 @@ function v3154OriginalSnackChoose(to){
  const item=data.items[s.key];if(!item){data.scene=null;render();return}
  if(!sandbox&&['share','flavor','offer'].includes(to)&&!r31528NpcAt(s.where)){render();return}
  if(to==='close'){data.scene=null;save();render();return}
- if(to==='finish'){r31526RemovePortable(s.key);data.scene=null;log('你完成了'+V172_ITEMS[s.key].label+'的日常活動。');save();render();return}
+ if(to==='finish'){r31526RemovePortable(s.key,V172_ITEMS[s.key]?.type!=='book');data.scene=null;log('你完成了'+r31529Label(s.key,item)+'的日常活動。');save();render();return}
  if(to==='store'){r31526RemovePortable(s.key);data.scene=null;save();render();return}
  if(to==='eat'){item.amount=Math.max(0,item.amount-1);item.phase='opened';s.node=item.amount?'afterEat':'empty'}
  else if(to==='read'){item.progress=Math.min(3,item.progress+1);item.phase='reading';s.node=item.progress===3?'readDone':'reading'}
@@ -2658,8 +2864,8 @@ render=function(){
   let count=0;
   for(const [key,def] of Object.entries(V172_ITEMS)){
    const item=v172().items[key];if(!key.startsWith(room+':')||!item||item.phase==='stored')continue;
-   const b=el('button','choice',(def.type==='drink'?'洗淨收好｜':'收起｜')+def.label);
-   b.onclick=()=>{r31526RemovePortable(key);$('actionReply').textContent='你把'+def.label+(def.type==='drink'?'洗淨收好了。':'收起來了。');if(room==='mine')v175fRecord($('actionReply').textContent);log($('actionReply').textContent);save();render()};
+   const b=el('button','choice',(def.type==='drink'?'洗淨收好｜':'收起｜')+r31529Label(key,item));
+   b.onclick=()=>{const label=r31529Label(key,item);r31526RemovePortable(key,def.type==='drink');$('actionReply').textContent='你把'+label+(def.type==='drink'?'洗淨收好了。':'收起來了。');if(room==='mine')v175fRecord($('actionReply').textContent);log($('actionReply').textContent);save();render()};
    area.append(b);count++;
   }
   for(const obj of lifeObjects(room)){
@@ -2684,4 +2890,63 @@ render=function(){
  render();
 })();
 </script>
-<script>document.querySelector(".head .sub").textContent="同住日常 · 31-5-28 狀態接續修正版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
+<style>.r29-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.r29-controls button{min-width:0;flex:1 1 90px;margin:0}.r29-reply-link{border-left:2px solid #71859c;padding:8px 10px;margin-bottom:12px;color:#b6c6d9}.r29-reply-link p{white-space:pre-wrap;overflow-wrap:anywhere;margin:5px 0}#r29Closet strong,#r29ReturnGift p{overflow-wrap:anywhere}</style>
+<script id="r31529-features-ui">(function(){
+ 'use strict';
+ function detailsFor(entry){return entry.type==='book'?'閱讀進度：'+Math.min(3,Number(entry.item.progress)||0)+'／3':'剩餘：'+Math.max(0,Number(entry.item.amount)||0)+'份'}
+ function renderCloset(open){
+  const panel=$('v173Items');if(!panel||room==='pei')return;
+  const f=r31529(),box=el('details','life-review');box.id='r29Closet';box.open=!!open;
+  box.append(el('summary','life-title','收納櫃（'+f.closet.length+'）'),el('p','note','收起的物品會保留數量和閱讀進度。選擇空間取出；已有同類物品的位置會先保留給原物品。'));
+  if(!f.closet.length)box.append(el('p','note','目前沒有收起的物品。'));
+  for(const entry of f.closet){
+   const row=el('div','life-change-item');row.append(el('strong','',entry.label),el('p','note',detailsFor(entry)));
+   const choices=el('div','r29-controls');
+   for(const where of r31529Destinations(entry.type)){
+    const key=r31529TypeKey(where,entry.type),occupied=v172().items[key]&&v172().items[key].phase!=='stored';
+    const button=el('button','choice','放到'+ROOMS[where][0]);button.disabled=!!occupied;
+    if(occupied)button.title='這裡已有同類物品，先收起原本那件再放。';
+    button.onclick=()=>{if(r31529Place(entry.id,where)){room=where;log('你從收納櫃拿出'+entry.label+'，放到'+ROOMS[where][0]+'。');switchTab('spaces');render()}else{$('actionReply').textContent='這裡已經有同類物品，先收起原本那件。'}};
+    choices.append(button);
+   }
+   row.append(choices);box.append(row);
+  }
+  panel.append(box);
+ }
+ function renderGift(){
+  let box=$('r29ReturnGift');if(!box){box=el('details','surface');box.id='r29ReturnGift';$('home').append(box)}
+  const r=r31529().returns,g=r.pending;
+  const wasOpen=g&&box.dataset.giftId===g.id?box.open:!!g&&!g.deferred;
+  box.replaceChildren();box.open=wasOpen;box.dataset.giftId=g?.id||'';
+  box.append(el('summary','surface-title',g?'他帶回的小東西｜'+g.label:'他帶回的小東西'));
+  if(g){
+   box.append(el('p','',g.label),el('small','', '帶回時間：'+fmt(g.at)),el('p','note','他留下的話：「'+g.line+'」'));
+   if(current().room==='away')box.append(el('p','note','這是先前帶回來的東西。他目前外出，你仍可以先收好。'));
+   const accept=el('button','choice','收進收納櫃');accept.onclick=()=>{if(r31529TakeGift())render()};
+   const later=el('button','quiet','先放著');later.onclick=()=>{g.deferred=true;box.open=false;save();render()};
+   box.append(accept,later);
+  }else box.append(el('p','note','外出回來後，他偶爾會順手帶點東西。不一定每次都有。'));
+  if(r.history.length){const hist=el('details','life-changes');hist.append(el('summary','','收下過的東西（'+r.history.length+'）'));for(const record of r.history.slice(0,20))hist.append(el('p','note',fmt(record.acceptedAt)+'｜'+record.label));box.append(hist)}
+ }
+ function renderNoteHelp(){
+  const door=$('v175jDoor');if(door){
+   const help=el('p','note');help.textContent='你貼給他的便條，在他收下後可能收到回覆。回覆會標明原便條；你門上已有紙條時，新回覆會等一等。';door.append(help);
+  }
+  const own=$('v175mDoor');if(own)own.append(el('p','note','自由文字會依詞語挑選預先寫好的回覆，不一定每張都回。寫「不用回覆」就不會安排回覆。'));
+ }
+ function renderSandbox(){
+  let panel=$('r29Sandbox');if(!panel){panel=el('div','surface');panel.id='r29Sandbox';$('timeTools').append(panel)}
+  panel.replaceChildren();panel.classList.toggle('hidden',!sandbox);if(!sandbox)return;
+  panel.append(el('div','surface-title','新增功能｜收納、帶回小物與便條回覆測試'));
+  const gift=el('button','choice','測試：模擬帶回小東西');gift.onclick=()=>{if(!sandbox)return;r31529OfferGift(gameNow(),'sandbox-'+gameNow(),true);switchTab('home');render()};panel.append(gift);
+  const reply=el('button','choice','測試：送出已安排的便條回覆');reply.onclick=()=>{if(!sandbox)return;if(r31529DeliverReply(true)){room='mine';switchTab('spaces')}else alert('請先讓自己的便條被取走並安排回覆，且你的門上不能已有其他便條。')};panel.append(reply);
+ }
+ const previousRender=render;
+ render=function(){
+  const closetOpen=$('r29Closet')?.open;
+  r31529CheckReturns();previousRender();renderCloset(closetOpen);renderGift();renderNoteHelp();renderSandbox();
+ };
+ render();
+})();
+</script>
+<script>document.querySelector(".head .sub").textContent="同住日常 · 31-5-29 收納與便條互動版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
