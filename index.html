@@ -2044,31 +2044,47 @@ function r31529TrimNotes(n){
  const recent=new Set(n.history.filter(x=>x.status!=='kept').slice(0,80));
  n.history=n.history.filter(x=>x.status==='kept'||recent.has(x));
 }
-function r31529Label(key,item=v172().items[key]){return item?.r29Label||V172_ITEMS[key]?.label||'物品'}
+function r31529Label(key,item=v172().items[key]){return item?.r29Label||(!item?r31530().pendingItems.find(x=>x.homeKey===key)?.label:null)||V172_ITEMS[key]?.label||'物品'}
 function r31529Destinations(type){return type==='book'?['mine','living','study']:type==='drink'?['mine','kitchen']:['mine','living','kitchen']}
 function r31529TypeKey(where,type){return where+':'+(type==='drink'?'coffee':type)}
-function r31529Store(key){
- const item=v172().items[key],def=V172_ITEMS[key];if(!item||!def)return false;
- if(def.type!=='book'&&Number(item.amount)<=0)return false;
- const f=r31529();item.r29id=item.r29id||r31529Id();
- const entry={id:item.r29id,homeKey:key,label:r31529Label(key,item),type:def.type,item:JSON.parse(JSON.stringify(item)),storedAt:gameNow()};
- const existing=f.closet.find(x=>x.id===entry.id);
- if(existing)Object.assign(existing,entry);else f.closet.push(entry);
- return true;
-}
-function r31529Place(id,where){
- const f=r31529(),entry=f.closet.find(x=>x.id===id);if(!entry||!r31529Destinations(entry.type).includes(where))return false;
- const key=r31529TypeKey(where,entry.type),data=v172();if(data.items[key]&&data.items[key].phase!=='stored')return false;
- if(data.items[key]?.phase==='stored'){r31529Store(key);delete data.items[key]}
- const item=JSON.parse(JSON.stringify(entry.item));item.where=where;item.r29id=entry.id;item.r29Label=entry.label;
- item.type=V172_ITEMS[key].type;if(item.phase==='stored')item.phase=item.amount<3?'opened':'new';
- data.items[key]=item;f.closet=f.closet.filter(x=>x.id!==id);save();return true;
+// 31-5-30: no ongoing cupboard. Recover already-stored items through room entries.
+function r31530(){
+ const l=life(),f=r31529();let changed=false;
+ if(!l.features30){l.features30={version:1,pendingItems:[]};changed=true}
+ const next=l.features30;
+ const activeIds=new Set(Object.values(v172().items).filter(x=>x&&x.phase!=='stored').map(x=>x.r29id).filter(Boolean));
+ function recover(entry){
+  if(!entry?.item||!['book','snack','drink'].includes(entry.type))return;
+  entry.id=entry.id||entry.item.r29id||r31529Id();
+  if(activeIds.has(entry.id)||next.pendingItems.some(x=>x.id===entry.id))return;
+  if(!V172_ITEMS[entry.homeKey]||V172_ITEMS[entry.homeKey].type!==entry.type){
+   const where=entry.type==='book'?'study':entry.type==='drink'?'kitchen':'living';entry.homeKey=r31529TypeKey(where,entry.type);
+  }
+  next.pendingItems.push(entry);
+ }
+ if(f.closet.length){for(const entry of f.closet)recover(entry);f.closet=[];changed=true}
+ for(const [key,item] of Object.entries(v172().items))if(item?.phase==='stored'&&V172_ITEMS[key]){
+  recover({id:item.r29id,homeKey:key,label:item.r29Label||V172_ITEMS[key].label,type:V172_ITEMS[key].type,item:JSON.parse(JSON.stringify(item)),storedAt:gameNow()});
+  delete v172().items[key];if(v172().scene?.key===key)v172().scene=null;changed=true;
+ }
+ if(changed)save();return next;
 }
 function r31529Restore(key){
- const entry=r31529().closet.find(x=>x.homeKey===key&&!x.item.r29GiftKey&&x.label===V172_ITEMS[key]?.label);
- return !!entry&&r31529Place(entry.id,key.split(':')[0]);
+ const f=r31530(),entry=f.pendingItems.find(x=>x.homeKey===key);if(!entry||v172().items[key])return false;
+ const item=JSON.parse(JSON.stringify(entry.item));item.r29id=entry.id;item.r29Label=entry.label;
+ item.where=key.split(':')[0];item.type=V172_ITEMS[key].type;
+ if(item.phase==='stored')item.phase=entry.type==='book'&&item.progress?'reading':Number(item.amount)<3?'opened':'new';
+ v172().items[key]=item;f.pendingItems=f.pendingItems.filter(x=>x.id!==entry.id);save();return true;
 }
-function r31529HasStored(key){return r31529().closet.some(x=>x.homeKey===key&&!x.item.r29GiftKey&&x.label===V172_ITEMS[key]?.label)}
+function r31529HasStored(key){return r31530().pendingItems.some(x=>x.homeKey===key)}
+function r31530TakeGift(where){
+ const r=r31529().returns,g=r.pending;if(!g||!r31529Destinations(g.type).includes(where))return false;
+ const key=r31529TypeKey(where,g.type);if(v172().items[key])return false;
+ v172().items[key]={r29id:g.id,r29Label:g.label,r29GiftKey:g.giftKey,phase:'new',amount:3,progress:0,where,type:g.type};
+ r.history.unshift({...g,acceptedAt:gameNow(),placedIn:where,status:'accepted'});r.history=r.history.slice(0,60);r.pending=null;
+ log('你收下了裴溯帶回的'+g.label+'，放在'+ROOMS[where][0]+'。');save();return true;
+}
+
 function r31529GiftCandidate(at){
  const h=new Date(at).getHours();const choices=R31529_GIFTS.filter(x=>x.from===undefined||h>=x.from&&h<x.to);
  const r=r31529().returns,previous=r.history[0]?.giftKey;
@@ -2097,13 +2113,7 @@ function r31529CheckReturns(){
  if(candidate&&!r.pending)r31529OfferGift(candidate.at,candidate.id);
  save();
 }
-function r31529TakeGift(){
- const f=r31529(),r=f.returns,g=r.pending;if(!g)return false;
- const where=g.type==='book'?'study':g.type==='drink'?'kitchen':'living';
- f.closet.push({id:g.id,homeKey:r31529TypeKey(where,g.type),label:g.label,type:g.type,storedAt:gameNow(),item:{r29id:g.id,r29Label:g.label,r29GiftKey:g.giftKey,phase:'new',amount:3,progress:0,where,type:g.type}});
- r.history.unshift({...g,acceptedAt:gameNow(),status:'accepted'});r.history=r.history.slice(0,60);r.pending=null;
- log('你收下了裴溯帶回的'+g.label+'，放進收納櫃。');save();return true;
-}
+function r31529TakeGift(where){return r31530TakeGift(where)}
 function r31529NoteAllowed(){
  const a=current();return a.room!=='away'&&!a.private&&!r31526Busy('')&&!document.getElementById('affShade')?.classList.contains('on');
 }
@@ -2272,7 +2282,6 @@ function r31526Busy(except){
 function r31526RemovePortable(key,discard=false){
  const def=V172_ITEMS[key];if(!def)return;
  const where=key.split(':')[0],type=key.split(':')[1],data=v172();
- if(!discard)r31529Store(key);
  delete data.items[key];if(data.scene?.key===key)data.scene=null;
  if(Array.isArray(state.items?.[where]))state.items[where]=state.items[where].filter(x=>x!==({book:'書',snack:'零食',coffee:'咖啡'}[type]));
  for(const [id,obj] of Object.entries(life().objects||{})){
@@ -2295,7 +2304,7 @@ function r31526RemoveObject(where,label){
  }
 }
 function r31526ReconcileInventory(){
- const data=v172();let changed=false;
+ r31530();const data=v172();let changed=false;
  // A hidden legacy book decoration must remain manageable through its book entry.
  const decor=life().expansion17?.decor;
  if(decor)for(const where of ['mine','study','living'])if(decor[where+':books']&&V172_ITEMS[where+':book']){
@@ -2890,63 +2899,62 @@ render=function(){
  render();
 })();
 </script>
-<style>.r29-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.r29-controls button{min-width:0;flex:1 1 90px;margin:0}.r29-reply-link{border-left:2px solid #71859c;padding:8px 10px;margin-bottom:12px;color:#b6c6d9}.r29-reply-link p{white-space:pre-wrap;overflow-wrap:anywhere;margin:5px 0}#r29Closet strong,#r29ReturnGift p{overflow-wrap:anywhere}</style>
-<script id="r31529-features-ui">(function(){
+<style>.r29-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.r29-controls button{min-width:0;flex:1 1 90px;margin:0}.r29-reply-link{border-left:2px solid #71859c;padding:8px 10px;margin-bottom:12px;color:#b6c6d9}.r29-reply-link p{white-space:pre-wrap;overflow-wrap:anywhere;margin:5px 0}#r29ReturnGift p{overflow-wrap:anywhere}</style>
+<script id="r31530-features-ui">(function(){
  'use strict';
- function detailsFor(entry){return entry.type==='book'?'閱讀進度：'+Math.min(3,Number(entry.item.progress)||0)+'／3':'剩餘：'+Math.max(0,Number(entry.item.amount)||0)+'份'}
- function renderCloset(open){
+ function renderRecovery(){
   const panel=$('v173Items');if(!panel||room==='pei')return;
-  const f=r31529(),box=el('details','life-review');box.id='r29Closet';box.open=!!open;
-  box.append(el('summary','life-title','收納櫃（'+f.closet.length+'）'),el('p','note','收起的物品會保留數量和閱讀進度。選擇空間取出；已有同類物品的位置會先保留給原物品。'));
-  if(!f.closet.length)box.append(el('p','note','目前沒有收起的物品。'));
-  for(const entry of f.closet){
-   const row=el('div','life-change-item');row.append(el('strong','',entry.label),el('p','note',detailsFor(entry)));
-   const choices=el('div','r29-controls');
-   for(const where of r31529Destinations(entry.type)){
-    const key=r31529TypeKey(where,entry.type),occupied=v172().items[key]&&v172().items[key].phase!=='stored';
-    const button=el('button','choice','放到'+ROOMS[where][0]);button.disabled=!!occupied;
-    if(occupied)button.title='這裡已有同類物品，先收起原本那件再放。';
-    button.onclick=()=>{if(r31529Place(entry.id,where)){room=where;log('你從收納櫃拿出'+entry.label+'，放到'+ROOMS[where][0]+'。');switchTab('spaces');render()}else{$('actionReply').textContent='這裡已經有同類物品，先收起原本那件。'}};
-    choices.append(button);
-   }
-   row.append(choices);box.append(row);
-  }
-  panel.append(box);
+  const pending=r31530().pendingItems.filter(x=>x.homeKey.startsWith(room+':'));
+  if(pending.length)panel.append(el('p','note','更新前在這個空間收起的物品還有 '+pending.length+' 件，可從上方「取出／使用」依序取回；若該位置已有物品，先收起原本那件即可。'));
  }
  function renderGift(){
-  let box=$('r29ReturnGift');if(!box){box=el('details','surface');box.id='r29ReturnGift';$('home').append(box)}
+  let box=$('r29ReturnGift');if(!box){box=el('details','surface');box.id='r29ReturnGift'}
+  if(box.parentNode!==$('events'))$('eventArea').after(box);
   const r=r31529().returns,g=r.pending;
-  const wasOpen=g&&box.dataset.giftId===g.id?box.open:!!g&&!g.deferred;
+  const wasOpen=g?(box.dataset.giftId===g.id?box.open:!g.deferred):box.open;
   box.replaceChildren();box.open=wasOpen;box.dataset.giftId=g?.id||'';
   box.append(el('summary','surface-title',g?'他帶回的小東西｜'+g.label:'他帶回的小東西'));
   if(g){
-   box.append(el('p','',g.label),el('small','', '帶回時間：'+fmt(g.at)),el('p','note','他留下的話：「'+g.line+'」'));
-   if(current().room==='away')box.append(el('p','note','這是先前帶回來的東西。他目前外出，你仍可以先收好。'));
-   const accept=el('button','choice','收進收納櫃');accept.onclick=()=>{if(r31529TakeGift())render()};
-   const later=el('button','quiet','先放著');later.onclick=()=>{g.deferred=true;box.open=false;save();render()};
-   box.append(accept,later);
+   box.append(el('p','',g.label),el('small','','帶回時間：'+fmt(g.at)),el('p','note','他留下的話：「'+g.line+'」'));
+   if(current().room==='away')box.append(el('p','note','這是先前帶回的東西。他目前外出，你仍可以先收下。'));
+   const choices=el('div','r29-controls');
+   for(const where of r31529Destinations(g.type)){
+    const key=r31529TypeKey(where,g.type),occupied=!!v172().items[key];
+    const accept=el('button','choice','收下，放在'+ROOMS[where][0]);accept.disabled=occupied;
+    if(occupied)accept.title='這裡已有同類物品，先收起原本那件。';
+    accept.onclick=()=>{if(r31530TakeGift(where))render();else{const old=$('r30GiftFeedback');if(old)old.remove();const message=el('p','note','這裡已有同類物品，先收起原本那件，再回來收下。');message.id='r30GiftFeedback';box.append(message)}};
+    choices.append(accept);
+   }
+   box.append(choices);
+   const first=r31529Destinations(g.type)[0];
+   if(r31529Destinations(g.type).some(where=>v172().items[r31529TypeKey(where,g.type)])){
+    box.append(el('p','note','灰色的位置已有同類物品，不會直接蓋掉原本那件。'));
+    const tidy=el('button','quiet','前往'+ROOMS[first][0]+'整理');tidy.onclick=()=>{room=first;switchTab('spaces')};box.append(tidy);
+   }
+   const later=el('button','quiet','先放著');later.onclick=()=>{g.deferred=true;box.open=false;save();render()};box.append(later);
   }else box.append(el('p','note','外出回來後，他偶爾會順手帶點東西。不一定每次都有。'));
-  if(r.history.length){const hist=el('details','life-changes');hist.append(el('summary','','收下過的東西（'+r.history.length+'）'));for(const record of r.history.slice(0,20))hist.append(el('p','note',fmt(record.acceptedAt)+'｜'+record.label));box.append(hist)}
+  if(r.history.length){
+   const hist=el('details','life-changes');hist.append(el('summary','','收下過的東西（'+r.history.length+'）'));
+   for(const record of r.history.slice(0,20))hist.append(el('p','note',fmt(record.acceptedAt)+'｜'+record.label+(record.placedIn?'｜放在'+ROOMS[record.placedIn][0]:'')));
+   box.append(hist);
+   const recent=r.history[0],active=Object.entries(v172().items).find(([,item])=>item?.r29id===recent.id);
+   if(active){const where=active[0].split(':')[0],open=el('button','quiet','前往'+ROOMS[where][0]+'查看'+recent.label);open.onclick=()=>{room=where;switchTab('spaces')};box.append(open)}
+  }
  }
  function renderNoteHelp(){
-  const door=$('v175jDoor');if(door){
-   const help=el('p','note');help.textContent='你貼給他的便條，在他收下後可能收到回覆。回覆會標明原便條；你門上已有紙條時，新回覆會等一等。';door.append(help);
-  }
+  const door=$('v175jDoor');if(door)door.append(el('p','note','你貼給他的便條，在他收下後可能收到回覆。回覆會標明原便條；你門上已有紙條時，新回覆會等一等。'));
   const own=$('v175mDoor');if(own)own.append(el('p','note','自由文字會依詞語挑選預先寫好的回覆，不一定每張都回。寫「不用回覆」就不會安排回覆。'));
  }
  function renderSandbox(){
   let panel=$('r29Sandbox');if(!panel){panel=el('div','surface');panel.id='r29Sandbox';$('timeTools').append(panel)}
   panel.replaceChildren();panel.classList.toggle('hidden',!sandbox);if(!sandbox)return;
-  panel.append(el('div','surface-title','新增功能｜收納、帶回小物與便條回覆測試'));
-  const gift=el('button','choice','測試：模擬帶回小東西');gift.onclick=()=>{if(!sandbox)return;r31529OfferGift(gameNow(),'sandbox-'+gameNow(),true);switchTab('home');render()};panel.append(gift);
+  panel.append(el('div','surface-title','新增功能｜帶回小物與便條回覆測試'));
+  const gift=el('button','choice','測試：模擬帶回小東西');gift.onclick=()=>{if(!sandbox)return;r31529OfferGift(gameNow(),'sandbox-'+gameNow(),true);switchTab('events');render()};panel.append(gift);
   const reply=el('button','choice','測試：送出已安排的便條回覆');reply.onclick=()=>{if(!sandbox)return;if(r31529DeliverReply(true)){room='mine';switchTab('spaces')}else alert('請先讓自己的便條被取走並安排回覆，且你的門上不能已有其他便條。')};panel.append(reply);
  }
  const previousRender=render;
- render=function(){
-  const closetOpen=$('r29Closet')?.open;
-  r31529CheckReturns();previousRender();renderCloset(closetOpen);renderGift();renderNoteHelp();renderSandbox();
- };
+ render=function(){r31530();r31529CheckReturns();previousRender();renderRecovery();renderGift();renderNoteHelp();renderSandbox()};
  render();
 })();
 </script>
-<script>document.querySelector(".head .sub").textContent="同住日常 · 31-5-29 收納與便條互動版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
+<script>document.querySelector(".head .sub").textContent="同住日常 · 31-5-30 事件與物品簡化版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
