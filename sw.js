@@ -1,4 +1,4 @@
-const CACHE='peisu-daily-official-31-5-30-v1';
+const CACHE='peisu-daily-official-31-5-33-v1';
 const FILES=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES.map(file=>new Request(file,{cache:'reload'})))).then(()=>self.skipWaiting()));

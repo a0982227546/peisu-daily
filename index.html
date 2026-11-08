@@ -42,6 +42,15 @@ const defaults=()=>({items:{mine:[],living:[],study:[],kitchen:[]},counts:{knock
 let timeOffset=0,sandbox=false,realState=null;const gameNow=()=>Date.now()+timeOffset;
 let state=defaults(),room='mine',tab='home',testMode=false,notice='';
 try{let raw=localStorage.getItem(KEY),migrated=false;if(!raw){for(const k of PREVIOUS){raw=localStorage.getItem(k);if(raw){migrated=true;break}}}if(raw){const d=JSON.parse(raw);if(d&&d.items&&Array.isArray(d.logs)){state={...defaults(),...d,items:{...defaults().items,...d.items},flags:{...(d.flags||{})},followupsDone:{...(d.followupsDone||{})},life:{...defaults().life,...(d.life||{}),objects:{...(d.life?.objects||{})}}};if(migrated&&(!d.activeEvent||!['remote','cable','note','late','invite_movie','invite_food','cable_return','note_followup'].includes(d.activeEvent.type))){state.activeEvent=null;state.events=[];state.eventCursor=0;state.lastAutoDay='';state.lastAutoWindow='';state.logs.unshift({at:fmt(gameNow()),text:'已讀取舊版生活資料；舊版未完成事件不會繼續。'});}}}}catch(e){notice='讀取存檔失敗，已使用新資料。'}
+// 31-5-33 compatibility: archive an unfinished removed visit, not ordinary door scenes.
+{const old=state.life?.dailyV131?.active;
+ if(old&&(old.id==='roomvisit'||old.id==='doorvisit'&&String(old.node).startsWith('r31_'))){
+  const l=state.life;l.features33=l.features33||{};l.features33.retiredVisit={...old,retiredAt:gameNow()};
+  l.dailyV131.history=Array.isArray(l.dailyV131.history)?l.dailyV131.history:[];
+  l.dailyV131.history.unshift({id:old.id,at:gameNow(),reason:'feature_removed',choices:old.history||[]});
+  l.dailyV131.active=null;
+ }
+}
 function $(id){return document.getElementById(id)}function fmt(ms){return new Date(ms).toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})}function save(){state.lastSeen=gameNow();if(sandbox)return true;try{localStorage.setItem(KEY,JSON.stringify(state));r31526StorageStatus(false);return true}catch(e){r31526StorageStatus(true);return false}}function log(s){state.logs.unshift({at:fmt(gameNow()),text:s});state.logs=state.logs.slice(0,100);save()}function memory(kind,detail){state.memory.unshift({kind,detail,at:gameNow()});state.memory=state.memory.slice(0,50)}function hash(n){let x=(Math.imul(n+state.seed,1664525)+1013904223)|0;x^=x>>>16;x=Math.imul(x,2246822519);return (x>>>0)/4294967296}function slotAt(ms){return Math.floor(ms/7200000)}
 function activity(slot){const d=new Date(slot*7200000),h=d.getHours(),day=Math.floor(slot/12),r=hash(slot),outing=hash(day*101+17),start=outing<.55?11:outing<.82?13:15,len=outing<.25?4:2;if(outing<.78&&h>=start&&h<start+len)return {room:'away',name:'外出',detail:'他出門處理自己的事，稍晚應該會回來。'};if(h>=2&&h<8)return r<.8?{room:'pei',name:'休息',private:true}:{room:'study',name:'熬夜看資料'};if(h<11)return r<.42?{room:'kitchen',name:'準備飲料'}:r<.75?{room:'living',name:'短暫休息'}:{room:'study',name:'看資料'};if(h<18)return r<.54?{room:'study',name:'處理事情'}:r<.76?{room:'living',name:'閱讀'}:r<.9?{room:'kitchen',name:'準備吃的'}:{room:'pei',name:'獨處',private:true};if(h<22)return r<.37?{room:'study',name:'閱讀'}:r<.67?{room:'living',name:'休息'}:r<.85?{room:'kitchen',name:'倒水'}:{room:'pei',name:'待在房間',private:true};return r<.42?{room:'study',name:'看資料'}:r<.75?{room:'pei',name:'休息',private:true}:{room:'living',name:'獨自待著'}}
 function baseCurrent(){return testMode?{room,name:'對話測試中'}:activity(slotAt(gameNow()))}
@@ -2271,6 +2280,7 @@ function r31526StorageStatus(failed){
 }
 function r31526Busy(except){
  const l=life(),now=gameNow();
+ if(except!=='toe'&&l.features31?.active?.until>now)return true;
  const event=pending();if(except!=='event'&&event&&r31527EventContext(event.type,event).allowed)return true;
  if(except!=='daily'&&l.dailyV131?.active?.until>now)return true;
  if(except!=='special'&&l.expansion17?.specials?.active?.until>now)return true;
@@ -2957,4 +2967,107 @@ render=function(){
  render();
 })();
 </script>
-<script>document.querySelector(".head .sub").textContent="同住日常 · 31-5-30 事件與物品簡化版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
+<script id="r31533-toe-only">
+// 31-5-33: only the approved two-way toe-touch scene, based on 31-5-30.
+function r31531(){const l=life();return l.features31||(l.features31={active:null,seat:null,lastAt:0,lastAutoAt:0,lastCheck:null,history:[]})}
+const R31531_TOE={
+ user:['你在沙發上坐到與他碰得到的位置，伸出腳尖，輕碰了一下他的拖鞋，又縮回來。他往下看了一眼，沒有出聲。', [['再碰一下','dodge'],['裝作沒發生，繼續看自己的手機','return'],['「碰到你了。」','felt']]],
+ dodge:['這次你剛伸過去，他便把腳挪開。你抬眼，他正看著你。「差一點。」',[['「你躲什麼？」','dodge_reply'],['笑著把腳收回來','quiet']]],
+ dodge_reply:['「不然等你碰？」他看著你，腳卻沒有再往旁邊挪。',[['輕輕碰回去一次','mutual'],['不鬧他了','quiet']]],
+ return:['過了片刻，你的鞋尖被輕輕碰了一下。{return}',[['抬頭看他','look'],['輕輕碰回去','mutual'],['笑著繼續做自己的事','quiet']]],
+ felt:['「感覺到了。」他沒有把腳挪遠，你收回去時，鞋尖又輕輕擦過他的拖鞋。',[['「那你還不躲。」','stay'],['就這樣坐著','quiet']]],
+ stay:['「需要躲？」他往下看了一眼，又看向你。',[['笑著碰他一下','mutual'],['把腳收回來','quiet']]],
+ auto:['你坐在沙發上，腳尖忽然被碰了一下。裴溯坐在旁邊，{doing}。你看過去，他也抬起眼。',[['輕輕碰回去','auto_return'],['把腳縮回沙發上','hide'],['「你剛剛是不是故意的？」','intent']]],
+ auto_return:['他接了這一下，隨後把腳挪開一點。等你低頭找，才又碰了過來。',[['「還來？」','again'],['笑著不再追他的腳','quiet']]],
+ again:['「你先碰回來的。」他說得平常，鞋尖卻又輕輕挨了你一下。',[['輕碰一下，算是扯平','mutual'],['先收腳，不跟他鬧了','quiet']]],
+ hide:['他的視線跟著你的動作移了一下。「躲這麼遠。」',[['「不給你碰。」','no_touch'],['把腳放回原位，碰他一下','mutual']]],
+ no_touch:['「行。」他把腳收回自己那邊，沒有再碰過來。',[['繼續各做各的','quiet']]],
+ intent:['「你覺得呢？」{back}，腳卻仍留在原來的位置。',[['「我覺得是。」','admit'],['不說話，碰回去','mutual']]],
+ admit:['他沒有否認，看著你，唇邊浮起一點笑意。',[['笑著收回腳','quiet'],['再碰他一下','mutual']]],
+ look:['他迎上你的目光，沒有急著解釋。你低頭時，他的腳還在原處。',[['「學我？」','learn'],['當作沒看見，繼續坐著','quiet']]],
+ learn:['「不能？」他反問，等著看你接下來做什麼。',[['輕碰回去','mutual'],['笑著不理他','quiet']]],
+ mutual:['你們的鞋尖輕輕碰了一下，這次誰也沒急著躲。片刻後，你把腳收回自己這邊，他也重新坐好。',[['不鬧了，坐著待一會兒','__end__'],['起身去做自己的事','__leave__']]],
+ quiet:['你收好腳，他也沒有再鬧你。兩人各自做回手邊的事。',[['結束這段互動','__end__'],['起身離開沙發','__leave__']]]
+};
+function r31531End(reason){const f=r31531(),a=f.active;if(!a)return;f.history.unshift({at:gameNow(),kind:'toe',initiator:a.initiator,reason,choices:a.history});f.history=f.history.slice(0,40);f.active=null;f.lastAt=gameNow();log('沙發邊的小動作：'+(reason==='complete'?'互動結束。':reason==='leave'?'你離開了沙發。':reason==='unavailable'?'裴溯去做自己的事了。':'兩人各自做回手邊的事。'));save()}
+function r31531Active(){
+ const f=r31531(),a=f.active;if(!a)return null;
+ const scheduled=baseCurrent();
+ if(a.until<=gameNow()||scheduled.private||scheduled.room==='away'||r31526DepartureAt(a.started,a.until)!==null){r31531End('unavailable');f.seat=null;return null}
+ return a;
+}
+const r31531PriorCurrent=current;
+current=function(){
+ const toe=r31531Active();if(toe)return {room:'living',name:toe.reading?'坐在沙發上看書':'坐在沙發上休息',detail:'沙發邊的小動作'};
+ return r31531PriorCurrent();
+};
+const r31531PriorBusy=r31526Busy;
+r31526Busy=function(except){return except!=='toe'&&!!r31531Active()||r31531PriorBusy(except)};
+function r31531SofaAllowed(){
+ if(room!=='living'||baseCurrent().room==='away'||baseCurrent().private||r31526Busy('toe')||v172().scene||document.querySelector('#affShade.on'))return false;
+ const a=current();return a.room==='living'&&!a.private&&/閱讀|看書|休息|獨自待著|看電視|看電影/.test(a.name);
+}
+function r31531Begin(initiator='user'){
+ const f=r31531();if(f.active||!r31531SofaAllowed()||f.lastAt&&gameNow()-f.lastAt<5*60000)return false;
+ if(initiator==='pei'&&(!f.seat||f.seat.room!=='living'||gameNow()-f.seat.at<30000))return false;
+ const now=gameNow(),a=current();f.active={initiator,node:initiator==='pei'?'auto':'user',started:now,until:now+8*60000,reading:/閱讀|看書/.test(a.name),history:[]};
+ f.seat={room:'living',at:now};if(initiator==='pei')f.lastAutoAt=now;
+ memory('interaction','toe:'+initiator);log(initiator==='pei'?'你坐在沙發上時，裴溯輕碰了一下你的腳尖。':'你在沙發上坐近一些，輕碰了裴溯的腳尖。');save();render();return true;
+}
+function r31531Text(a,text){return text.replace('{return}',a.reading?'他翻過一頁書，神色如常。':'他收回視線，神色如常。').replace('{doing}',a.reading?'正翻著書':'正靠著沙發休息').replace('{back}',a.reading?'他把書翻過一頁':'他收回視線')}
+function r31531Pick(i){
+ const a=r31531Active();if(!a||room!=='living')return;const choice=R31531_TOE[a.node]?.[1]?.[i];if(!choice)return;
+ a.history.push({at:gameNow(),from:a.node,choice:choice[0],to:choice[1]});
+ if(choice[1].startsWith('__')){const leave=choice[1]==='__leave__';r31531End(leave?'leave':'complete');if(leave)r31531().seat=null}
+ else a.node=choice[1];save();render();
+}
+function r31531Maybe(){
+ const f=r31531();if(f.seat&&(room!=='living'||gameNow()-f.seat.at>20*60000)){f.seat=null;save()}
+ if(f.active||!f.seat||tab!=='spaces'||!r31531SofaAllowed()||gameNow()-f.seat.at<30000||f.lastAutoAt&&gameNow()-f.lastAutoAt<2*3600000||f.lastAt&&gameNow()-f.lastAt<2*3600000)return;
+ const window=Math.floor(gameNow()/300000);if(f.lastCheck===window)return;f.lastCheck=window;save();
+ if(hash(window*193+31)<.4)r31531Begin('pei');
+}
+const r31531PriorItemStart=v172StartItem;
+v172StartItem=function(type){if(r31531Active()){$('actionReply').textContent='請先接續或結束上方互動，再整理物品。';return false}return r31531PriorItemStart(type)};
+const r31531PriorAction=doAction;
+doAction=function(id){
+ if(r31531Active()){$('actionReply').textContent='你們還坐在沙發上，先從上方選項結束這段互動。';return}
+ const seated=room==='living'&&id==='sit';if(!seated)r31531().seat=null;
+ r31531PriorAction(id);
+ if(seated&&r31531SofaAllowed()){r31531().seat={room:'living',at:gameNow()};save();render()}
+};
+const r31531PriorRender=render;
+let r31531Rendering=false;
+render=function(){
+ if(r31531Rendering)return;r31531Rendering=true;
+ try{
+  const f=r31531();if(f.active&&room!=='living'){r31531End('leave');f.seat=null}
+  r31531Active();r31531PriorRender();
+  $('r31531Toe')?.remove();
+  if(room==='living'){
+   const a=r31531Active(),can=!a&&r31531SofaAllowed(),wrap=el('section','life-review');wrap.id='r31531Toe';
+   if(a){
+    $('ambientScene').replaceChildren(el('div','life-title','沙發上的片刻'),el('p','ambient','你們坐在彼此碰得到的位置。'));
+    $('observeScene').replaceChildren();
+    wrap.append(el('div','life-title','沙發邊的小動作'),el('p','ambient',r31531Text(a,R31531_TOE[a.node][0])));
+    R31531_TOE[a.node][1].forEach(([label],i)=>{const b=el('button','choice',label);b.onclick=()=>r31531Pick(i);wrap.append(b)});
+    const leave=el('button','quiet','不鬧了，起身離開沙發');leave.onclick=()=>{if(!r31531Active()||room!=='living')return;r31531End('leave');r31531().seat=null;render()};wrap.append(leave);
+   }else if(can){
+    wrap.append(el('div','life-title','沙發邊的小動作'));
+    if(f.lastAt&&gameNow()-f.lastAt<5*60000)wrap.append(el('p','note','剛鬧過他，先各自待一會兒。'));
+    else{const b=el('button','choice','坐近一點，輕碰他的腳尖');b.onclick=()=>r31531Begin('user');wrap.append(b)}
+    if(!f.seat){const sit=el('button','quiet','在沙發另一端坐下，各做各的事');sit.onclick=()=>{if(!r31531SofaAllowed())return;f.seat={room:'living',at:gameNow()};log('你在沙發另一端坐下，和裴溯各做各的事。');save();render()};wrap.append(sit)}
+    else wrap.append(el('p','note','你已在沙發上坐下。'));
+   }
+   if(a||can)$('observeScene').append(wrap);
+  }
+  if(r31531Active())for(const button of document.querySelectorAll('#actions button,#v173Items button'))button.disabled=true;
+ }finally{r31531Rendering=false}
+ r31531Maybe();
+};
+window.addEventListener('r31526-sandbox-reset',()=>{r31531().active=null;r31531().seat=null});
+if(r31531().active&&r31531Active())room='living';
+render();
+
+</script>
+<script>document.querySelector(".head .sub").textContent="同住日常 · 31-5-33 腳尖互動版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
