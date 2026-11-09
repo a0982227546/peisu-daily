@@ -26,7 +26,11 @@
 #v175oDoorTalk > .v175n-preset-grid + button { margin-top:14px; }
 #v175oDoorTalk > .v175n-preset-grid .v175n-preset-button { margin:0; }
 #v175oDoorTalk > button.quiet { min-height:44px; }
-</style><style>.test,#timeTools,#v123SandboxControls,#v141HabitFixtures,#v17Sandbox,#affSandbox,#testMode,#jumpDev,#testTrigger{display:none!important} [hidden]{display:none!important}</style></head><body><main class="shell"><header class="head"><div><div class="eyebrow">PEI SU · DAILY RECORD</div><h1>裴總觀察日誌</h1><div class="sub">同住日常 · v1.7.5e 物品互動整合測試版</div></div><div><div class="clock" id="clock">--:--</div><div class="sub" style="text-align:right" id="date"></div></div></header>
+</style><style>.test,#timeTools,#v123SandboxControls,#v141HabitFixtures,#v17Sandbox,#affSandbox,#testMode,#jumpDev,#testTrigger{display:none!important} [hidden]{display:none!important}</style><style id="r31534-toe-spacing">
+#r31531Toe{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+#r31531Toe>button{display:block;width:100%;min-height:48px;margin:0!important;white-space:normal;overflow-wrap:anywhere}
+#r31531Toe>.ambient{margin:0}
+</style></head><body><main class="shell"><header class="head"><div><div class="eyebrow">PEI SU · DAILY RECORD</div><h1>裴總觀察日誌</h1><div class="sub">同住日常 · v1.7.5e 物品互動整合測試版</div></div><div><div class="clock" id="clock">--:--</div><div class="sub" style="text-align:right" id="date"></div></div></header>
 <section id="home" class="screen"><div class="hero"><small>此刻 · 裴溯</small><h2 id="heroTitle">……</h2><p id="heroDetail"></p><div class="status"><span class="dot"></span><span id="heroStatus"></span></div></div><div class="home-whisper" id="homeWhisper">各自的生活照常進行。</div><button class="home-notice hidden" id="homeNotice" type="button"><span>✦　有件事等你回應</span><span>查看 →</span></button></section>
 <section id="spaces" class="screen hidden"><div class="section-head"><h3>家裡的空間</h3><span>選一個地方待著</span></div><div class="rooms" id="rooms"></div><div class="surface"><div class="surface-title" id="roomTitle"></div><p id="roomDesc"></p><div class="chips" id="items"></div><div id="ambientScene" class="life-scene"></div><div id="observeScene" class="life-scene"></div><div id="lifeScene" class="life-scene"></div><div class="actions" id="actions"></div><p class="feedback" id="actionReply"></p></div><p class="note">裴溯在家也不代表有空；他的房間仍是私人空間。</p></section>
 <section id="events" class="screen hidden"><div class="section-head"><h3>家裡的新動靜</h3><span>分支對話 · 無自由輸入</span></div><div class="surface event" id="eventArea"></div><div class="surface" id="sharedArea"></div><div class="test" hidden aria-hidden="true"><button id="testTrigger" disabled>開發測試</button></div><p class="note">選擇後只會進入對應的後續情節。沒有 API，也不會判斷你自己輸入的文字。事件不回應也不會有懲罰。</p></section>
@@ -1251,18 +1255,112 @@ const R31529_GIFTS=[
  {key:'milkTea',label:'一杯奶茶',type:'drink',line:'順路帶回來的。收著吧。',from:8,to:21}
 ];
 const R31529_REPLIES={
- rest:['知道。你也別只顧著提醒我。','我有分寸。你累了就先歇。','看到了。你自己的休息也記得顧。','嗯。這張我收下了。'],
- food:['知道了。你自己也記得吃。','看見了。別只留字，自己也去吃點東西。','嗯。你也別拿飲料當一餐。','收到了。你先照顧好自己。'],
- affection:['看到了。下次當面說。','嗯。紙條我收下了。','別只留在紙上。想見我就過來。','知道了。這張我留著。','嗯。我也是。'],
- weather:['知道。你出門也記得拿外套和傘。','看到了。別只提醒我，自己也記得。','嗯。你也注意一點。'],
- goodnight:['嗯。下次不用等我才睡。','看到了。你也記得好好休息。','晚安收到了。別為了等回覆又熬著。'],
- morning:['看到了。你也記得先吃點東西。','嗯。你的早安我收到了。','知道了。今天也別一忙就忘了吃飯。'],
- outing:['知道了。鑰匙記得帶。','嗯。路上小心。','看見了。回來再說。'],
- thanks:['收到了。這點事不用一直謝。','嗯。知道了。','看見了。下次有事直接說。'],
- apology:['看到了。想說的，等你願意再當面說。','嗯。先別急著解釋。','這張我收下了。其他的之後再說。'],
- work:['看到了。你自己的事情也慢慢理清楚。','知道。你也別把自己弄得太累。','嗯。忙完再說，不用急。'],
- question:['便條看到了。這件事當面說。','收到了。有事可以直接過來問。','看見了。等方便的時候再說。'],
- neutral:['便條我收到了。','看見了。這張先放我這裡。','嗯。你的字我看到了。','收到了。不用一直來確認。']
+ "rest": [
+  "知道了。你也記得休息。",
+  "嗯，提醒收到了。",
+  "看到了。這張我收下了。"
+ ],
+ "food": [
+  "知道了。你自己也記得吃。",
+  "嗯，記下了。你也照顧好自己。",
+  "看到了。別光顧著提醒我。"
+ ],
+ "food_offer": [
+  "看到了。謝謝你替我留著。",
+  "嗯，你留的那份，我知道了。",
+  "知道了。這張我收下了。"
+ ],
+ "self_fed": [
+  "嗯。那就好。",
+  "知道了。照顧好自己。",
+  "看到了。這張我收下了。"
+ ],
+ "self_rest": [
+  "累了就先歇一會兒。",
+  "知道了。先讓自己休息。",
+  "先歇一歇。你的便條我收到了。"
+ ],
+ "self_low": [
+  "看到了。想說的話，等你願意再說。",
+  "不想說也沒關係。這張我先留著。",
+  "嗯。先別勉強自己。"
+ ],
+ "self_good": [
+  "那就好。這張我收下了。",
+  "看到了。你高興就好。",
+  "嗯，這件開心的事我知道了。"
+ ],
+ "affection": [
+  "看到了。下次當面說。",
+  "知道了。這張我留著。",
+  "嗯。你的話，我收下了。"
+ ],
+ "affection_night": [
+  "你的晚安和想說的話，我都收下了。",
+  "看到了。這張我留著。"
+ ],
+ "weather": [
+  "知道了。你自己也記得。",
+  "嗯，提醒收到了。你也注意一點。",
+  "看到了。這張我收下了。"
+ ],
+ "goodnight": [
+  "你的晚安收到了。",
+  "看到了。你也記得好好休息。",
+  "這張晚安便條，我留著。"
+ ],
+ "morning": [
+  "你的早安收到了。",
+  "嗯，早安便條我看到了。",
+  "看到了。這張我收下了。"
+ ],
+ "outing": [
+  "知道了。路上小心。",
+  "嗯。出門注意一點。",
+  "看到了。這張我收下了。"
+ ],
+ "thanks": [
+  "嗯，收到了。",
+  "知道了。不用客氣。",
+  "看到了。這張我收下了。"
+ ],
+ "apology": [
+  "看到了。有話等你願意再說。",
+  "嗯。你的話我收到了。",
+  "這張先放我這裡。"
+ ],
+ "work": [
+  "看到了。你也別把自己弄得太累。",
+  "嗯。這張我收下了。",
+  "知道了。你自己的事也慢慢來。"
+ ],
+ "care": [
+  "知道了。你自己也照顧好。",
+  "提醒收到了。別只顧著我。",
+  "嗯，這張我收下了。你也一樣。"
+ ],
+ "wish": [
+  "謝謝。你的祝福收到了。",
+  "嗯。這張我留著。",
+  "看到了。謝謝你。"
+ ],
+ "smile": [
+  "看見了。你就這麼想看我笑？",
+  "這張我收下了。下次自己來看。"
+ ],
+ "decoration": [
+  "你是來留字，還是來裝飾我的門？",
+  "看到了。這張就先留著。"
+ ],
+ "question": [
+  "這個留著當面說。",
+  "便條收到了。這件事當面再說。"
+ ],
+ "neutral": [
+  "便條收到了。我先留著。",
+  "看過了，這張放我這裡。",
+  "嗯，收下了。"
+ ]
 };
 
 function v175jState(){
@@ -2143,23 +2241,46 @@ function r31529SelectNote(){
  const t=options[Math.floor(Math.random()*options.length)];
  f.recent=[...f.recent.filter(x=>x!==t.key),t.key].slice(-12);return t;
 }
+// Conservative offline matching: distinguish who a sentence refers to; never infer unknown facts.
 function r31529Classify(text){
- const t=String(text||'').replace(/\s+/g,'');
+ const t=String(text||'').replace(/\s+/g,'').replace(/谢谢/g,'謝謝').replace(/早点/g,'早點').replace(/吃饭/g,'吃飯');
  if(/(?:不用|不必|不要|別|别)(?:特地|特意)?(?:回覆|回复|回復|回答|回信|回訊息|回消息)|(?:不用|不必|不要|別|别)回(?:我|這張|这张|這個|这个|[。！!?，,]|$)/.test(t))return 'no_reply';
- if(/對不起|对不起|抱歉/.test(t))return 'apology';
- const deniedAffection=/不(?:想|愛|爱|喜歡|喜欢)你|不是.*(?:想你|愛你|爱你)|別.*(?:想你|愛你|爱你)/.test(t);
- if(!deniedAffection&&/愛你|爱你|想你|喜歡你|喜欢你|想抱你|想親你|想亲你/.test(t))return 'affection';
- if(/晚安|好夢|好梦/.test(t))return 'goodnight';
- if(/早安|早上好/.test(t))return 'morning';
- if(/我出門|我出门|我要出去|我出去|晚點回|晚点回/.test(t))return 'outing';
- if(/謝謝|谢谢|感謝|感谢/.test(t))return 'thanks';
- if(/休息|熬夜|累了|太累|睡覺|睡觉|早點睡|早点睡|別太晚|别太晚|不要.*太晚|早點回|早点回/.test(t))return 'rest';
- if(/吃飯|吃饭|吃東西|吃东西|喝水|早餐|午餐|晚餐|點心|点心|留了.*吃/.test(t))return 'food';
- if(/天冷|冷了|下雨|外套|多穿|雨傘|雨伞|天熱|天热/.test(t))return 'weather';
- if(/加油|工作|忙完|別太忙|别太忙/.test(t))return 'work';
- if(/嗎|吗|？|\?|在哪|什麼|什么|幾點|几点/.test(t))return 'question';
+ // A question is never treated as an instruction, or answered as though its facts are known.
+ if(/[?？]|(?:嗎|吗|呢)[。！!~～]*$|要不要|有沒有|有没有|能不能|可不可以|是不是|會不會|会不会|^(?:你)?(?:在哪|幾點|几点|為什麼|为什么|怎麼|怎么|誰|谁|什麼|什么)/.test(t))return 'question';
+ const historical=/昨天|前天|上次|以前|之前|那時|那时/.test(t);
+ const deniedAffection=/開玩笑|开玩笑|只是說說|只是说说|不是認真|不是认真|不(?:想|愛|爱|喜歡|喜欢)你|不是.*(?:想你|愛你|爱你)|(?:別|别|不要).*(?:想你|愛你|爱你)/.test(t);
+ const deniedSelfRest=/(?:沒|没)有.*(?:失眠|睡不著|睡不着)|我(?:現在|现在|今天|已經|已经)?(?:不累|不太累|不想睡|不困|不用休息)/.test(t);
+ const candidates=[];
+ const add=(category,condition)=>{if(condition)candidates.push(category)};
+ add('apology',/對不起|对不起|抱歉/.test(t));
+ add('affection',!deniedAffection&&!historical&&/(?:愛你|爱你|想你|喜歡你|喜欢你)(?:[了啦呀啊喔哦呢嘛～~！!。．，,、]|$)|想(?:抱|親|亲)你(?:一下)?(?:[了啦呀啊喔哦～~！!。．，,、]|$)/.test(t));
+ add('goodnight',/晚安|好夢|好梦/.test(t));
+ add('morning',/早安|早上好/.test(t));
+ add('thanks',/謝謝|感謝|感谢/.test(t));
+ add('wish',/生日快樂|生日快乐|新年快樂|新年快乐|節日快樂|节日快乐/.test(t));
+ add('smile',/看到這張(?:紙|便條)?(?:記得)?笑一下|看到这张(?:纸|便条)?(?:记得)?笑一下/.test(t));
+ add('decoration',/你房門上好像少了點裝飾|你房门上好像少了点装饰/.test(t));
+ // Tell him about your plans or condition, separately from reminders directed at him.
+ add('outing',!historical&&/我(?:要|先|會|会|今天|現在|现在)?(?:出門|出门|出去)|我(?:會|会)?晚[點点]回|我要出[去門门]/.test(t));
+ add('self_rest',!historical&&!deniedSelfRest&&/我(?:今天|現在|现在|真的|有點|有点|也|已經|已经)?(?:好累|很累|累了|太累|有點累|有点累|想睡|好困)|我.*(?:睡不著|睡不着|失眠)/.test(t));
+ add('self_low',!historical&&/我(?:今天|現在|现在)?(?:真的|有點|有点|很)?(?:難過|难过|不開心|不开心|心情不好|委屈|想哭)/.test(t));
+ add('self_good',!historical&&/我(?:今天|現在|现在)?(?:真的|很|好|有點|有点)?(?:開心|开心|高興|高兴)/.test(t));
+ add('self_fed',!historical&&/我(?:今天|現在|现在)?(?:已經|已经|剛剛|刚刚|剛|刚)?(?:吃過飯|吃过饭|吃完飯|吃完饭|吃飽|吃饱|吃飯了|喝過水|喝过水|喝水了)/.test(t));
+ add('food_offer',!historical&&/(?:給你|给你|幫你|帮你|替你).*(?:留|準備|准备|買|买|做).*(?:飯|饭|吃|早餐|午餐|晚餐|點心|点心|零食)|(?:留|準備|准备|買|买|做).*(?:飯|饭|吃|早餐|午餐|晚餐|點心|点心|零食).*(?:給你|给你)/.test(t));
+ // Reminders must have an instruction form. Mere mentions of work, weather or meals do not qualify.
+ add('rest',/^(?:你也?|裴溯[，,：:]?)?(?:別|别|不要)(?:太累|太晚|熬夜)|(?:你|記得|记得|早點|早些).*(?:休息|睡覺|睡觉)|早點睡|不要.*太晚|早點回/.test(t)&&!/(?:我|我的).*(?:休息|早點睡|睡覺|睡觉)/.test(t));
+ add('food',/(?:^|[，,。！!、])(?:你也?|裴溯[，,：:]?)?(?:記得|记得|要|別忘了|别忘了).*(?:吃飯|喝水|早餐|午餐|晚餐)|你.*(?:記得|记得).*(?:吃|喝)/.test(t));
+ add('weather',/(?:天冷|下雨|天熱|天热|變冷|变冷).*(?:記得|记得|要|多穿|帶|带)|(?:記得|记得|多穿|帶|带).*(?:外套|傘|伞)|(?:天冷|冷了)[，,、。]?多穿/.test(t));
+ add('work',/^(?:你|裴溯)?加油[。！!~～]*$|(?:你|記得|记得).*(?:別太忙|别太忙|忙完休息)|^(?:別|别)太忙/.test(t));
+ const unique=[...new Set(candidates)];
+ if(unique.includes('food_offer')&&/(?:不是|並非|并非)|(?:沒|没)(?:有)?(?:幫你|帮你|給你|给你|替你)?(?:留|準備|准备|買|买|做)/.test(t))return 'neutral';
+ if(unique.length===1)return unique[0];
+ if(unique.length>1&&unique.every(x=>['rest','food','weather','work'].includes(x)))return 'care';
+ if(unique.length===2&&unique.includes('affection')&&unique.includes('goodnight'))return 'affection_night';
+ // Ambiguous, negated, retrospective or unrelated writing gets acknowledgment only.
  return 'neutral';
 }
+
 function r31529ScheduleReply(note,force=false){
  force=!!(force&&sandbox);
  if(note.replyDecision)return false;
@@ -2173,6 +2294,9 @@ function r31529DeliverReply(force=false){
  if(force&&!sandbox)return false;
  const n=v175jState();if(n.active||!force&&!r31529NoteAllowed())return false;
  const f=r31529().notes,job=f.queue.find(x=>x.status==='pending'&&(force||x.notBefore<=gameNow()));if(!job)return false;
+ // Recheck pending jobs created by older versions; delivered notes are never rewritten.
+ job.category=r31529Classify(job.sourceText);
+ if(job.category==='no_reply'){job.status='cancelled';const source=v175mData().history.find(x=>x.id===job.sourceId&&x.at===job.sourceAt);if(source)source.replyStatus='received';save();return false}
  const lines=R31529_REPLIES[job.category]||R31529_REPLIES.neutral;
  const fresh=lines.filter(x=>!f.replyRecent.includes(x)),different=lines.filter(x=>x!==f.replyRecent[f.replyRecent.length-1]);
  const pool=fresh.length?fresh:different.length?different:lines;
@@ -2953,7 +3077,7 @@ render=function(){
  }
  function renderNoteHelp(){
   const door=$('v175jDoor');if(door)door.append(el('p','note','你貼給他的便條，在他收下後可能收到回覆。回覆會標明原便條；你門上已有紙條時，新回覆會等一等。'));
-  const own=$('v175mDoor');if(own)own.append(el('p','note','自由文字會依詞語挑選預先寫好的回覆，不一定每張都回。寫「不用回覆」就不會安排回覆。'));
+  const own=$('v175mDoor');if(own)own.append(el('p','note','離線便條只回應能明確辨認的簡單內容；問題或無法判斷的文字只會收下或留待當面說，不一定每張都回。寫「不用回覆」就不會安排回覆。'));
  }
  function renderSandbox(){
   let panel=$('r29Sandbox');if(!panel){panel=el('div','surface');panel.id='r29Sandbox';$('timeTools').append(panel)}
@@ -3070,4 +3194,4 @@ if(r31531().active&&r31531Active())room='living';
 render();
 
 </script>
-<script>document.querySelector(".head .sub").textContent="同住日常 · 31-5-33 腳尖互動版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
+<script>document.querySelector(".head .sub").textContent="同住日常 · 31-5-34 選項與便條修正版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
