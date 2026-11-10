@@ -26,10 +26,10 @@
 #v175oDoorTalk > .v175n-preset-grid + button { margin-top:14px; }
 #v175oDoorTalk > .v175n-preset-grid .v175n-preset-button { margin:0; }
 #v175oDoorTalk > button.quiet { min-height:44px; }
-</style><style>.test,#timeTools,#v123SandboxControls,#v141HabitFixtures,#v17Sandbox,#affSandbox,#testMode,#jumpDev,#testTrigger{display:none!important} [hidden]{display:none!important}</style><style id="r31534-toe-spacing">
-#r31531Toe{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
-#r31531Toe>button{display:block;width:100%;min-height:48px;margin:0!important;white-space:normal;overflow-wrap:anywhere}
-#r31531Toe>.ambient{margin:0}
+</style><style>.test,#timeTools,#v123SandboxControls,#v141HabitFixtures,#v17Sandbox,#affSandbox,#testMode,#jumpDev,#testTrigger{display:none!important} [hidden]{display:none!important}</style><style id="r31535-toe-spacing">
+#r31531Toe{display:block}
+#r31531Toe .r31535-toe-row{display:block;padding-top:14px;margin:0;width:100%;box-sizing:border-box}
+#r31531Toe .r31535-toe-row>button{display:block;width:100%;min-height:48px;margin:0!important;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}
 </style></head><body><main class="shell"><header class="head"><div><div class="eyebrow">PEI SU · DAILY RECORD</div><h1>裴總觀察日誌</h1><div class="sub">同住日常 · v1.7.5e 物品互動整合測試版</div></div><div><div class="clock" id="clock">--:--</div><div class="sub" style="text-align:right" id="date"></div></div></header>
 <section id="home" class="screen"><div class="hero"><small>此刻 · 裴溯</small><h2 id="heroTitle">……</h2><p id="heroDetail"></p><div class="status"><span class="dot"></span><span id="heroStatus"></span></div></div><div class="home-whisper" id="homeWhisper">各自的生活照常進行。</div><button class="home-notice hidden" id="homeNotice" type="button"><span>✦　有件事等你回應</span><span>查看 →</span></button></section>
 <section id="spaces" class="screen hidden"><div class="section-head"><h3>家裡的空間</h3><span>選一個地方待著</span></div><div class="rooms" id="rooms"></div><div class="surface"><div class="surface-title" id="roomTitle"></div><p id="roomDesc"></p><div class="chips" id="items"></div><div id="ambientScene" class="life-scene"></div><div id="observeScene" class="life-scene"></div><div id="lifeScene" class="life-scene"></div><div class="actions" id="actions"></div><p class="feedback" id="actionReply"></p></div><p class="note">裴溯在家也不代表有空；他的房間仍是私人空間。</p></section>
@@ -3092,6 +3092,13 @@ render=function(){
 })();
 </script>
 <script id="r31533-toe-only">
+// Each button owns a padded block; separation does not depend on grid gap or collapsing margins.
+function r31535AddToeButton(parent,button){
+ const row=el('div','r31535-toe-row');
+ row.style.cssText='display:block!important;padding:14px 0 0!important;margin:0!important;width:100%;box-sizing:border-box';
+ button.style.cssText='display:block!important;width:100%!important;min-height:48px;margin:0!important;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere';
+ row.append(button);parent.append(row);
+}
 // 31-5-33: only the approved two-way toe-touch scene, based on 31-5-30.
 function r31531(){const l=life();return l.features31||(l.features31={active:null,seat:null,lastAt:0,lastAutoAt:0,lastCheck:null,history:[]})}
 const R31531_TOE={
@@ -3169,18 +3176,18 @@ render=function(){
   r31531Active();r31531PriorRender();
   $('r31531Toe')?.remove();
   if(room==='living'){
-   const a=r31531Active(),can=!a&&r31531SofaAllowed(),wrap=el('section','life-review');wrap.id='r31531Toe';
+   const a=r31531Active(),can=!a&&r31531SofaAllowed(),wrap=el('section','life-review');wrap.id='r31531Toe';wrap.style.display='block';
    if(a){
     $('ambientScene').replaceChildren(el('div','life-title','沙發上的片刻'),el('p','ambient','你們坐在彼此碰得到的位置。'));
     $('observeScene').replaceChildren();
     wrap.append(el('div','life-title','沙發邊的小動作'),el('p','ambient',r31531Text(a,R31531_TOE[a.node][0])));
-    R31531_TOE[a.node][1].forEach(([label],i)=>{const b=el('button','choice',label);b.onclick=()=>r31531Pick(i);wrap.append(b)});
-    const leave=el('button','quiet','不鬧了，起身離開沙發');leave.onclick=()=>{if(!r31531Active()||room!=='living')return;r31531End('leave');r31531().seat=null;render()};wrap.append(leave);
+    R31531_TOE[a.node][1].forEach(([label],i)=>{const b=el('button','choice',label);b.onclick=()=>r31531Pick(i);r31535AddToeButton(wrap,b)});
+    const leave=el('button','quiet','不鬧了，起身離開沙發');leave.onclick=()=>{if(!r31531Active()||room!=='living')return;r31531End('leave');r31531().seat=null;render()};r31535AddToeButton(wrap,leave);
    }else if(can){
     wrap.append(el('div','life-title','沙發邊的小動作'));
     if(f.lastAt&&gameNow()-f.lastAt<5*60000)wrap.append(el('p','note','剛鬧過他，先各自待一會兒。'));
-    else{const b=el('button','choice','坐近一點，輕碰他的腳尖');b.onclick=()=>r31531Begin('user');wrap.append(b)}
-    if(!f.seat){const sit=el('button','quiet','在沙發另一端坐下，各做各的事');sit.onclick=()=>{if(!r31531SofaAllowed())return;f.seat={room:'living',at:gameNow()};log('你在沙發另一端坐下，和裴溯各做各的事。');save();render()};wrap.append(sit)}
+    else{const b=el('button','choice','坐近一點，輕碰他的腳尖');b.onclick=()=>r31531Begin('user');r31535AddToeButton(wrap,b)}
+    if(!f.seat){const sit=el('button','quiet','在沙發另一端坐下，各做各的事');sit.onclick=()=>{if(!r31531SofaAllowed())return;f.seat={room:'living',at:gameNow()};log('你在沙發另一端坐下，和裴溯各做各的事。');save();render()};r31535AddToeButton(wrap,sit)}
     else wrap.append(el('p','note','你已在沙發上坐下。'));
    }
    if(a||can)$('observeScene').append(wrap);
@@ -3194,4 +3201,4 @@ if(r31531().active&&r31531Active())room='living';
 render();
 
 </script>
-<script>document.querySelector(".head .sub").textContent="同住日常 · 31-5-34 選項與便條修正版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
+<script>document.querySelector(".head .sub").textContent="同住日常 · 31-5-35 腳尖按鈕排版修正版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
