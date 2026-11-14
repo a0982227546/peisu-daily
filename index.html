@@ -84,7 +84,42 @@ html[data-weather-night=true][data-room-light=main] .r39-room-light{background:r
 .r40-story{white-space:pre-line!important}.r40-transcript{margin-top:18px}.r40-transcript summary,#r40OutingHistory summary{cursor:pointer;min-height:32px}
 html[data-player-away=true] #spaces>:not(#r40AwaySpaces),html[data-player-away=true] #events>:not(#r40AwayEvents),html[data-player-away=true] #talk>:not(#r40AwayTalk){display:none!important}
 html[data-player-away=true] #homeNotice,html[data-player-away=true] #affOpen{display:none!important}
-</style></head><body><main class="shell"><header class="head"><div><div class="eyebrow">PEI SU · DAILY RECORD</div><h1>裴總觀察日誌</h1><div class="sub">同住日常 · v1.7.5e 物品互動整合測試版</div></div><div><div class="clock" id="clock">--:--</div><div class="sub" style="text-align:right" id="date"></div></div></header>
+</style>
+<style id="r40-weather-visibility">
+/* Weather and daylight remain atmospheric overlays, not illustrated objects. */
+#r37Atmosphere{z-index:2}
+.shell{z-index:1}
+.r37-light,.r37-wash{mix-blend-mode:screen}
+.r37-light{opacity:1;filter:blur(7px)}
+html[data-light-phase=day][data-weather=sun] .r37-light{
+ background:radial-gradient(ellipse at 13% 3%,rgba(255,225,166,.30),transparent 43%),
+ linear-gradient(112deg,transparent 5%,rgba(255,231,181,.16) 24%,transparent 43%,rgba(255,226,170,.12) 62%,transparent 78%);
+}
+html[data-light-phase=dawn] .r37-light{
+ background:linear-gradient(118deg,transparent 5%,rgba(255,190,145,.24) 25%,transparent 48%,rgba(242,170,139,.17) 68%,transparent 86%);
+}
+html[data-light-phase=sunset] .r37-light{
+ background:linear-gradient(78deg,transparent 4%,rgba(255,164,112,.30) 23%,transparent 46%,rgba(230,132,103,.22) 69%,transparent 88%);
+ filter:blur(12px);
+}
+html[data-light-phase=night] .r37-light{
+ background:radial-gradient(ellipse at 78% 4%,rgba(135,173,220,.18),transparent 50%),
+ linear-gradient(120deg,transparent 8%,rgba(145,178,220,.10) 34%,transparent 60%);
+ filter:blur(17px);
+}
+html[data-weather=cloud] .r37-wash{
+ background:linear-gradient(145deg,rgba(174,193,207,.13),transparent 48%,rgba(95,119,141,.10));
+}
+html[data-weather=rain] .r37-wash{
+ background:linear-gradient(145deg,rgba(113,158,188,.16),transparent 48%,rgba(30,62,85,.16));
+}
+.r37-rain{z-index:2}
+.r37-raindrop{width:1.5px;opacity:.9;background:linear-gradient(transparent,rgba(195,222,239,.62),transparent)}
+.r36-weather{border-color:rgba(139,171,196,.48)}
+.r36-weather[data-sky=sun]{box-shadow:inset 0 1px 22px rgba(244,207,143,.07)}
+.r36-weather[data-sky=rain]{box-shadow:inset 0 1px 22px rgba(119,166,196,.12)}
+</style>
+</head><body><main class="shell"><header class="head"><div><div class="eyebrow">PEI SU · DAILY RECORD</div><h1>裴總觀察日誌</h1><div class="sub">同住日常 · v1.7.5e 物品互動整合測試版</div></div><div><div class="clock" id="clock">--:--</div><div class="sub" style="text-align:right" id="date"></div></div></header>
 <section id="home" class="screen"><div class="hero"><small>此刻 · 裴溯</small><h2 id="heroTitle">……</h2><p id="heroDetail"></p><div class="status"><span class="dot"></span><span id="heroStatus"></span></div></div><div class="home-whisper" id="homeWhisper">各自的生活照常進行。</div><button class="home-notice hidden" id="homeNotice" type="button"><span>✦　有件事等你回應</span><span>查看 →</span></button></section>
 <section id="spaces" class="screen hidden"><div class="section-head"><h3>家裡的空間</h3><span>選一個地方待著</span></div><div class="rooms" id="rooms"></div><div class="surface"><div class="surface-title" id="roomTitle"></div><p id="roomDesc"></p><div class="chips" id="items"></div><div id="ambientScene" class="life-scene"></div><div id="observeScene" class="life-scene"></div><div id="lifeScene" class="life-scene"></div><div class="actions" id="actions"></div><p class="feedback" id="actionReply"></p></div></section>
 <section id="events" class="screen hidden"><div class="section-head"><h3>家裡的新動靜</h3><span>分支對話 · 無自由輸入</span></div><div class="surface event" id="eventArea"></div><div class="surface" id="sharedArea"></div><div class="test" hidden aria-hidden="true"><button id="testTrigger" disabled>開發測試</button></div></section>
@@ -3261,7 +3296,7 @@ function r37Atmosphere(w){
   layer=el('div','');layer.id='r37Atmosphere';layer.setAttribute('aria-hidden','true');
   layer.append(el('div','r37-light'),el('div','r37-wash'));
   const rain=el('div','r37-rain');
-  for(let i=0;i<38;i++){const drop=el('span','r37-raindrop');drop.style.left=((i*37+11)%118)+'%';drop.style.height=(23+(i*17)%30)+'px';drop.style.animationDuration=(1.25+(i%9)*.13)+'s';drop.style.animationDelay=(-i*.37)+'s';drop.style.setProperty('--rest-top',((i*29)%100)+'vh');rain.append(drop)}
+  for(let i=0;i<58;i++){const drop=el('span','r37-raindrop');drop.style.left=((i*37+11)%118)+'%';drop.style.height=(23+(i*17)%30)+'px';drop.style.animationDuration=(1.25+(i%9)*.13)+'s';drop.style.animationDelay=(-i*.37)+'s';drop.style.setProperty('--rest-top',((i*29)%100)+'vh');rain.append(drop)}
   layer.append(rain);document.body.prepend(layer);
  }
  const root=document.documentElement,phase=r37Phase();root.dataset.weather=w.sky;root.dataset.weatherTemperature=w.temp;root.dataset.weatherNight=String(phase==='night');root.dataset.lightPhase=phase;
@@ -3271,12 +3306,12 @@ function r37Atmosphere(w){
 const R36_SKIES={sun:['☀','晴天'],cloud:['☁','陰天'],rain:['☔','下雨']};
 const R36_TEMPS={cold:'偏冷',mild:'舒適',hot:'偏熱'};
 function r36Random(n){let x=(Number(n)^Number(state.seed)^0x36a7c91)|0;x=Math.imul(x^(x>>>16),0x45d9f3b);x=Math.imul(x^(x>>>16),0x45d9f3b);return ((x^(x>>>16))>>>0)/4294967296}
-function r36Raw(bucket){const month=new Date(bucket*14400000).getMonth()+1,r=r36Random(bucket*19);const rain=[0,.22,.24,.30,.34,.38,.40,.35,.35,.29,.24,.22,.20][month];const sun=month>=6&&month<=9?.40:.38;return r<rain?'rain':r<rain+sun?'sun':'cloud'}
+function r36Raw(bucket){const month=new Date(bucket*7200000).getMonth()+1,r=r36Random(bucket*19);const rain=[0,.22,.24,.30,.34,.38,.40,.35,.35,.29,.24,.22,.20][month];const sun=month>=6&&month<=9?.40:.38;return r<rain?'rain':r<rain+sun?'sun':'cloud'}
 function r36At(ms){
- const bucket=Math.floor(ms/14400000),d=new Date(ms),month=d.getMonth()+1;
+ const bucket=Math.floor(ms/7200000),d=new Date(ms),month=d.getMonth()+1;
  let sky=r36Raw(bucket);const prev=r36Raw(bucket-1);if((prev==='sun'&&sky==='rain')||(prev==='rain'&&sky==='sun'))sky='cloud';
  const bases=[0,17,18,21,24,27,30,31,31,29,25,22,18];
- const h=new Date(bucket*14400000).getHours(),warm=bases[month]+Math.floor(r36Random(bucket*29+7)*5)-2+(sky==='sun'?1:sky==='rain'?-1:0)+(h>=8&&h<18?1:-1);
+ const h=new Date(bucket*7200000).getHours(),warm=bases[month]+Math.floor(r36Random(bucket*29+7)*5)-2+(sky==='sun'?1:sky==='rain'?-1:0)+(h>=8&&h<18?1:-1);
  return {bucket,sky,temp:warm<20?'cold':warm>=28?'hot':'mild'};
 }
 function r36State(){const l=life();if(!l.weather36)l.weather36={version:1,bucket:null,sky:null,temp:null,windows:{},lastAction:null,rainUntil:0,history:[]};return l.weather36}
@@ -3308,8 +3343,13 @@ function r36Action(id){
   if(r36Window(where)==='closed')return false;w.windows[where]='closed';text=w.sky==='rain'?'你把窗戶關上，雨聲隔著玻璃悶了一些。':'你把窗戶關上，擋住了窗外的風。';
   if(near)text+=' 裴溯抬眼看了看窗邊，隨後繼續做自己的事。';
  }else if(id==='air'){
-  if(w.sky==='rain'||w.temp==='cold'||r36Window(where)!=='closed')return false;
-  w.windows[where]='ajar';text='你把窗戶推開一點，讓空氣流通。';if(near)text+=' 裴溯把窗邊的一張紙往裡挪了些。';
+  if(r36Window(where)!=='closed')return false;
+  w.windows[where]='ajar';
+  if(w.sky==='rain'&&w.temp==='cold')text='你把窗戶推開一點，濕涼的雨氣立刻從窗縫滲進來。';
+  else if(w.sky==='rain')text='你把窗戶推開一點，雨聲變得清楚，細細的水氣也飄了進來。';
+  else if(w.temp==='cold')text='你把窗戶推開一點，冷空氣沿著窗縫進來，讓人清醒了些。';
+  else text='你把窗戶推開一點，讓空氣流通。';
+  if(near)text+=' 裴溯看了眼窗邊，提醒你別讓風一直吹進來。';
  }else if(id==='watch'){
   if(w.sky!=='rain')return false;text='你在窗邊停了一會兒，細碎的雨聲連成一片。';if(near)text+=' 裴溯順著你的目光看向窗外，沒有急著說話。';
  }else if(id==='water'){
@@ -3340,7 +3380,7 @@ function r36Render(){
   const controls=el('div','r36-controls');
   const add=(label,fn)=>{const b=el('button','quiet',label);b.onclick=fn;controls.append(b)};
   if(r36Window(room)!=='closed')add('關上窗戶',()=>r36Action('close'));
-  else if(w.sky!=='rain'&&w.temp!=='cold')add('開一點窗透氣',()=>r36Action('air'));
+  else add('開一點窗透氣',()=>r36Action('air'));
   if(w.sky==='rain')add('看一會兒窗外',()=>r36Action('watch'));
   if(controls.children.length)panel.append(controls);
  }
@@ -3450,7 +3490,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)r39Pause()}
 window.addEventListener('pagehide',()=>r39Pause());
 window.addEventListener('r31526-sandbox-reset',()=>{r39Audio.lastRoom=null;r39Audio.readyAt=gameNow()+90000});
 setInterval(()=>{if(r39Audio.playing)r39Tick()},30000);
-document.documentElement.dataset.build='31-5-39';render();
+document.documentElement.dataset.build='31-5-40';render();
 
 </script>
 <script id="r40-outings">
