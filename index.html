@@ -3506,9 +3506,9 @@ function r40Until(){
 function r40OutsideText(a){
  const w=r36Sync(),h=new Date(gameNow()).getHours(),day=h>=6&&h<18;
  const weather=w.sky==='rain'?'雨落在傘面上，路面映著細碎的光。':w.sky==='cloud'?(day?'雲影慢慢掠過路面。':'街邊的燈照著安靜的路口。'):(day?'日光落在人行道邊，樹影微微晃動。':'路燈把你們前方的路照亮了一段。');
- return (a.destination==='store'?'便利商店的門口亮著燈。':a.destination==='errands'?'你照自己的步調處理出門的事情。':'你'+(a.mode==='together'?'們':'')+'沿著附近的街道慢慢走。')+' '+weather.replace('你們',a.mode==='together'?'你們':'你');
+ return '你'+(a.mode==='together'?'們':'')+'在外面。 '+weather.replace('你們',a.mode==='together'?'你們':'你');
 }
-function r40Start(mode,destination){
+function r40Start(mode,destination='walk'){
  const f=r40State(),reason=mode==='together'?r40TogetherReason():r40Blocker();
  if(reason){f.feedback=reason;f.feedbackAt=gameNow();save();render();return false}
  if(!['solo','together'].includes(mode)||!(mode==='solo'?['walk','errands']:['walk','store']).includes(destination))return false;
@@ -3552,8 +3552,10 @@ function r40Look(){
  a.lines.push({at:gameNow(),text});save();render();return true;
 }
 function r40Message(){
- const a=r40Active();if(!a||a.mode!=='solo'||a.messageSent)return false;
- a.messageSent=true;const npc=r40HomeBase();let text='你傳了訊息：「我晚點回去。」\n';
+ const a=r40Active(),incoming=a?.contact&&!a.contact.answered;
+ if(!a||a.mode!=='solo'||a.messageSent&&!incoming)return false;
+ a.messageSent=true;if(incoming)a.contact.answered=true;
+ const npc=r40HomeBase();let text=incoming?'你回了訊息：「還在外面，我晚點回去。」\n':'你傳了訊息：「我晚點回去。」\n';
  text+=npc.private||/忙|處理|資料/.test(npc.name)?'訊息已送出，暫時沒有回覆。':'過了一會兒，裴溯回了：「知道了。」';
  a.lines.push({at:gameNow(),text});log('外出時，你告訴裴溯自己會晚點回家。');save();render();return true;
 }
@@ -3579,29 +3581,20 @@ function r40Button(parent,label,fn,quiet=false){const b=el('button',quiet?'quiet
 function r40TripPanel(id){
  const a=r40Active(),box=el('section','surface r40-trip');box.id=id;
  box.append(el('div','surface-title',a.mode==='together'?'一起外出':'你在外面'),el('p','',r40OutsideText(a)));
- if(a.mode==='together')box.append(el('p','note','這趟是附近的短暫外出，約半小時內回家，也可以提早回去。'));
  const last=a.lines.at(-1);if(last)box.append(el('p','ambient r40-story',last.text));
- if(a.interaction){const node=R40_INTERACTIONS[a.destination][a.interaction];for(const [label,to]of node[1])r40Button(box,label,()=>r40Interact(to))}
- else{
-  if(a.seen.length<3)r40Button(box,'看看周圍',r40Look,true);
-  if(a.mode==='together'&&!a.didInteract)r40Button(box,a.destination==='store'?'看看他在挑什麼':'放慢腳步',()=>r40Interact(),true);
-  if(a.mode==='solo'&&!a.messageSent)r40Button(box,'傳訊息｜我晚點回去',r40Message,true);
- }
- if(a.contact&&!a.contact.answered){const incoming=el('div','life-review');incoming.append(el('p','',a.contact.text));for(const label of ['快回去了。','還要一會兒。','先不回覆'])r40Button(incoming,label,()=>r40Answer(label),true);box.append(incoming)}
- r40Button(box,a.mode==='together'?'一起回家':'回家',()=>{r40Return();render()},true);
- const history=el('details','r40-transcript');history.append(el('summary','life-title','這趟外出的紀錄'));for(const line of a.lines)history.append(el('p','note r40-story',line.text));box.append(history);return box;
+ if(a.mode==='solo'){const message=r40Button(box,'傳訊息',r40Message,true);message.disabled=!!(a.messageSent&&!(a.contact&&!a.contact.answered))}
+ r40Button(box,'回家',()=>{r40Return();render()},true);return box;
 }
 function r40Render(){
  const a=r40Active();document.documentElement.dataset.playerAway=String(!!a);
  const planOpen=!!$('r40Outing')?.querySelector('details.r40-plan')?.open;$('r40Outing')?.remove();const home=el('section','r40-outing');home.id='r40Outing';
  if(a){
-  $('heroTitle').textContent=a.mode==='together'?'一起出門了':'你出門了';$('heroDetail').textContent=a.mode==='together'?'你們正在附近'+(a.destination==='store'?'逛便利商店。':'走走。'):'你在外面'+(a.destination==='errands'?'處理自己的事。':'走走。');
+  $('heroTitle').textContent=a.mode==='together'?'一起出門了':'你出門了';$('heroDetail').textContent=a.mode==='together'?'你和裴溯一起外出中。':'你在外面，家裡的生活照常進行。';
   $('heroStatus').textContent=a.mode==='together'?'兩人 · 外出中':'你 · 外出中';$('homeWhisper').textContent='';home.append(r40TripPanel('r40HomeTrip'));
  }else{
   const details=el('details','r40-plan'),summary=el('summary','life-title','出門');details.open=planOpen;details.append(summary);
-  const block=r40Blocker(),together=r40TogetherReason();
-  for(const [mode,dest,label]of [['solo','walk','自己出去走走'],['solo','errands','自己出門辦事'],['together','walk','邀他一起散步'],['together','store','邀他去便利商店']]){r40Button(details,label,()=>r40Start(mode,dest),true)}
-  if(block||together)details.append(el('p','note',block||together));home.append(details);
+  for(const [mode,label]of [['solo','自己出門'],['together','邀他出門']])r40Button(details,label,()=>r40Start(mode),true);
+  home.append(details);
   if(r40State().feedback&&(!r40State().feedbackAt||gameNow()-r40State().feedbackAt<10*60000))home.append(el('p','note',r40State().feedback));
  }
  $('home').insertBefore(home,$('r39Sound'));
@@ -3614,7 +3607,7 @@ const r40PriorRender=render;
 render=function(){r40Reconcile();r40MaybeContact();document.documentElement.dataset.playerAway=String(!!r40Active());r40PriorRender();r40Render()};
 window.addEventListener('r31526-sandbox-reset',()=>{if(r40Active())r40Return();render()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
-document.documentElement.dataset.build='31-5-41';render();save();
+document.documentElement.dataset.build='31-5-42';render();save();
 
 </script>
 <script>document.querySelector(".head .sub").textContent="同住日常";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
