@@ -60,6 +60,18 @@ html[data-weather-temperature=hot] .r37-wash{background:linear-gradient(150deg,r
 .r36-weather .ambient{font-size:13px;line-height:1.9}.r36-window-state{color:#91a6bb;font-size:12px!important}
 .r36-controls{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}.r36-controls button{min-height:44px;flex:1 1 120px;margin:0}.r36-weather .feedback{font-size:13px}
 @media(prefers-reduced-motion:reduce){body{transition:none}#r37Atmosphere *{animation:none!important}.r37-raindrop{top:var(--rest-top);transform:rotate(16deg);will-change:auto}}
+</style><style id="r39-ambience-style">.r39-room-light,.r39-room-dim{position:absolute;inset:0;pointer-events:none;transition:background 1.1s ease}
+html[data-room-light=main] .r39-room-light{background:radial-gradient(ellipse at 48% 0,rgba(246,220,178,.12),transparent 72%)}
+html[data-room-light=lamp] .r39-room-light{background:radial-gradient(ellipse at 8% 62%,rgba(235,170,108,.24),transparent 63%)}
+html[data-room-light=off] .r39-room-light{background:none}
+html[data-room-light=off] .r39-room-dim{background:rgba(2,7,16,.07)}
+html[data-weather-night=true][data-room-light=off] .r39-room-dim{background:rgba(2,7,16,.24)}
+html[data-weather-night=true][data-room-light=main] .r39-room-light{background:radial-gradient(ellipse at 48% 0,rgba(246,220,178,.20),transparent 76%)}
+.r39-lights{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:14px 0}.r39-light-title{color:#9fb4c8;font-size:12px;margin-right:4px}.r39-lights button{min-height:44px;flex:1 1 58px;margin:0}.r39-lights button[aria-pressed=true]{background:#3b5065;color:#f0f5fa;border-color:#8299af}
+.r39-sound>summary{cursor:pointer}.r39-sound>button{margin:14px 0 6px;min-height:44px;width:100%}.r39-sound-options{display:flex;flex-wrap:wrap;gap:18px;margin:10px 0}.r39-check{display:flex;align-items:center;gap:8px;min-height:44px;font-size:13px;color:#c0cedc}.r39-check input{width:18px;height:18px;accent-color:#9eb2c7}.r39-volume{display:block;margin:12px 0;color:#adbed0;font-size:12px}.r39-volume input{display:block;width:100%;margin-top:12px;accent-color:#9eb2c7;min-height:30px}
+@media(prefers-reduced-motion:reduce){.r39-room-light,.r39-room-dim{transition:none}}
+
+.r39-mute{min-height:44px;padding:7px 10px;margin-top:7px;font-size:11px}
 </style></head><body><main class="shell"><header class="head"><div><div class="eyebrow">PEI SU · DAILY RECORD</div><h1>裴總觀察日誌</h1><div class="sub">同住日常 · v1.7.5e 物品互動整合測試版</div></div><div><div class="clock" id="clock">--:--</div><div class="sub" style="text-align:right" id="date"></div></div></header>
 <section id="home" class="screen"><div class="hero"><small>此刻 · 裴溯</small><h2 id="heroTitle">……</h2><p id="heroDetail"></p><div class="status"><span class="dot"></span><span id="heroStatus"></span></div></div><div class="home-whisper" id="homeWhisper">各自的生活照常進行。</div><button class="home-notice hidden" id="homeNotice" type="button"><span>✦　有件事等你回應</span><span>查看 →</span></button></section>
 <section id="spaces" class="screen hidden"><div class="section-head"><h3>家裡的空間</h3><span>選一個地方待著</span></div><div class="rooms" id="rooms"></div><div class="surface"><div class="surface-title" id="roomTitle"></div><p id="roomDesc"></p><div class="chips" id="items"></div><div id="ambientScene" class="life-scene"></div><div id="observeScene" class="life-scene"></div><div id="lifeScene" class="life-scene"></div><div class="actions" id="actions"></div><p class="feedback" id="actionReply"></p></div></section>
@@ -3279,7 +3291,7 @@ function r36Description(where,w=r36Sync()){
 function r36CanAct(){return ['mine','living','study','kitchen'].includes(room)&&!r31526Busy('weather')&&!v172().scene&&!document.querySelector('#affShade.on')}
 function r36Action(id){
  const w=r36Sync(),where=room;if(!r36CanAct())return false;
- if(w.lastAction&&w.lastAction.where===where&&gameNow()-w.lastAction.at<15000)return false;
+
  const npc=current(),near=npc.room===where&&!npc.private;let text='';
  if(id==='close'){
   if(r36Window(where)==='closed')return false;w.windows[where]='closed';text=w.sky==='rain'?'你把窗戶關上，雨聲隔著玻璃悶了一些。':'你把窗戶關上，擋住了窗外的風。';
@@ -3315,7 +3327,7 @@ function r36Render(){
  if(room!=='pei')panel.append(el('p','r36-window-state',r36Window(room)==='closed'?'窗戶關著。':'窗戶開著一條縫。'));
  if(r36CanAct()){
   const controls=el('div','r36-controls');
-  const add=(label,fn)=>{const b=el('button','quiet',label);b.onclick=fn;b.disabled=!!(w.lastAction&&w.lastAction.where===room&&gameNow()-w.lastAction.at<15000);controls.append(b)};
+  const add=(label,fn)=>{const b=el('button','quiet',label);b.onclick=fn;controls.append(b)};
   if(r36Window(room)!=='closed')add('關上窗戶',()=>r36Action('close'));
   else if(w.sky!=='rain'&&w.temp!=='cold')add('開一點窗透氣',()=>r36Action('air'));
   if(w.sky==='rain')add('看一會兒窗外',()=>r36Action('watch'));
@@ -3330,8 +3342,106 @@ function r36Render(){
 }
 const r36PriorRender=render;
 render=function(){r36Sync();r36PriorRender();r36Render()};
-document.documentElement.dataset.build='31-5-37';
+document.documentElement.dataset.build='31-5-38';
 render();
+
+</script>
+<script id="r39-ambience">
+// Soft, local audio only. No recordings, network requests or automatic playback.
+function r39State(){const l=life();if(!l.ambience39)l.ambience39={lights:{},sound:{volume:35,environment:true,events:true,nextAt:0,lastAt:0,cues:[]}};return l.ambience39}
+const r39Audio={ctx:null,master:null,environment:null,eventBus:null,filter:null,playing:false,lastRoom:null,readyAt:0,lastCheck:0,token:0,error:''};
+function r39NoiseBuffer(ctx){
+ const length=Math.ceil(ctx.sampleRate*12),buffer=ctx.createBuffer(1,length,ctx.sampleRate),out=buffer.getChannelData(0);let smooth=0,slow=0,seed=7319;
+ for(let i=0;i<length;i++){seed=(Math.imul(seed,1664525)+1013904223)|0;const white=(seed>>>0)/2147483648-1;smooth=.82*smooth+.18*white;slow=.98*slow+.02*white;const edge=Math.min(1,i/(ctx.sampleRate*.025),(length-1-i)/(ctx.sampleRate*.025));out[i]=(.7*smooth+.3*slow)*edge}
+ return buffer;
+}
+function r39Envelope(ctx,bus,start,duration,peak){const gain=ctx.createGain();gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(peak,start+Math.min(.07,duration*.25));gain.gain.exponentialRampToValueAtTime(Math.max(.00001,peak*.18),start+duration*.65);gain.gain.linearRampToValueAtTime(0,start+duration);gain.connect(bus);return gain}
+function r39Voice(ctx,bus,kind,start=ctx.currentTime,level=1){
+ const sources=[],noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter();noise.buffer=r39Audio.ctx===ctx&&r39Audio.noise?r39Audio.noise:r39NoiseBuffer(ctx);filter.type='lowpass';filter.Q.value=.45;
+ const configs={steps:[270,1.35,.15],door:[220,.9,.13],cup:[650,.55,.10],paper:[850,1.1,.11]};const [freq,duration,peak]=configs[kind]||configs.paper;filter.frequency.value=freq;
+ noise.connect(filter);const envelope=r39Envelope(ctx,bus,start,duration,peak*level);filter.connect(envelope);noise.start(start);noise.stop(start+duration+.1);sources.push(noise);
+ if(kind==='steps'){
+  const pulse=ctx.createGain();pulse.gain.value=0;filter.disconnect();filter.connect(pulse);pulse.connect(envelope);
+  for(let i=0;i<3;i++){const t=start+i*.4;pulse.gain.setValueAtTime(0,t);pulse.gain.linearRampToValueAtTime(.9,t+.09);pulse.gain.linearRampToValueAtTime(0,t+.3)}
+ }
+ if(kind==='cup'){
+  // A muffled setting-down sound, not a bright glass clang.
+  for(const [frequency,amount] of [[280,.012],[420,.005]]){const osc=ctx.createOscillator();osc.type='sine';osc.frequency.value=frequency;const g=r39Envelope(ctx,bus,start+.035,.36,amount*level);osc.connect(g);osc.start(start+.035);osc.stop(start+.46);sources.push(osc)}
+ }
+ return {sources,duration};
+}
+function r39MakeAudio(){
+ if(r39Audio.ctx)return r39Audio.ctx;
+ const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)throw new Error('unsupported');const ctx=new Audio({latencyHint:'playback'});
+ const master=ctx.createGain();master.gain.value=0;const lowpass=ctx.createBiquadFilter();lowpass.type='lowpass';lowpass.frequency.value=1800;lowpass.Q.value=.5;
+ const highpass=ctx.createBiquadFilter();highpass.type='highpass';highpass.frequency.value=65;highpass.Q.value=.5;
+ const limiter=ctx.createWaveShaper(),curve=new Float32Array(4096);for(let i=0;i<curve.length;i++){const x=i*2/(curve.length-1)-1;curve[i]=.1*Math.tanh(x*8)}limiter.curve=curve;limiter.oversample='2x';master.connect(highpass);highpass.connect(lowpass);lowpass.connect(limiter);limiter.connect(ctx.destination);
+ const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),environment=ctx.createGain(),eventBus=ctx.createGain();noise.buffer=r39NoiseBuffer(ctx);noise.loop=true;filter.type='lowpass';filter.frequency.value=450;filter.Q.value=.45;environment.gain.value=0;
+ noise.connect(filter);filter.connect(environment);environment.connect(master);eventBus.connect(master);noise.start();
+ Object.assign(r39Audio,{ctx,master,environment,eventBus,filter,noise:noise.buffer,source:noise});ctx.onstatechange=()=>{if(ctx.state!=='running'&&r39Audio.playing){r39Audio.playing=false;r39Render()}};return ctx;
+}
+function r39UpdateAudio(){
+ const a=r39Audio;if(!a.ctx)return;const pref=r39State().sound,w=r36Sync(),t=a.ctx.currentTime;
+ a.master.gain.setTargetAtTime(a.playing?Math.max(0,Math.min(100,pref.volume))/100*.45:0,t,.25);
+ a.environment.gain.setTargetAtTime(a.playing&&pref.environment?(w.sky==='rain'?.19:.105):0,t,.65);
+ a.filter.frequency.setTargetAtTime(w.sky==='rain'?1100:450,t,.65);a.eventBus.gain.setTargetAtTime(a.playing&&pref.events?1:0,t,.12);
+}
+async function r39ToggleAudio(){
+ if(r39Audio.playing){r39Pause();return}
+ try{const ctx=r39MakeAudio();await ctx.resume();if(ctx.state!=='running')throw new Error('paused');r39Audio.playing=true;r39Audio.error='';r39Audio.token++;r39Audio.readyAt=gameNow()+90000;r39Audio.lastRoom=current().room;r39State().sound.nextAt=gameNow()+90000;save();r39UpdateAudio();r39Render();}
+ catch(e){r39Audio.playing=false;r39Audio.error='目前無法播放，請再點一次開啟。';r39Render()}
+}
+function r39Pause(){
+ const a=r39Audio;a.playing=false;a.token++;const token=a.token;r39UpdateAudio();if(a.ctx)setTimeout(()=>{if(!a.playing&&a.token===token)a.ctx.suspend().catch(()=>{})},600);r39Render();
+}
+function r39CueChoice(prev,npc,where){
+ if(prev&&prev!==npc.room){
+  if(prev==='away'||npc.room==='away'||prev==='pei'||npc.room==='pei')return {kind:'door',text:'很輕的關門聲'};
+  return {kind:'steps',text:where==='mine'?'走廊上短暫的腳步聲':'幾步輕輕的腳步聲'};
+ }
+ if(npc.room==='away'||npc.private)return null;
+ if(npc.room==='kitchen')return {kind:'cup',text:'杯子輕放的細響'};
+ if(['study','living'].includes(npc.room)&&/閱讀|書|資料/.test(npc.name))return {kind:'paper',text:'書頁翻動的細響'};
+ return null;
+}
+function r39Tick(){
+ const a=r39Audio,npc=current(),prev=a.lastRoom;a.lastRoom=npc.room;
+ if(!a.playing||!r39State().sound.events||document.hidden||gameNow()<a.readyAt||r31526Busy('sound')||v172().scene)return false;
+ const pref=r39State().sound,now=gameNow();if(now<(pref.nextAt||0))return false;
+ const tick=Math.floor(now/60000);if(a.lastCheck===tick)return false;a.lastCheck=tick;
+ const cue=r39CueChoice(prev,npc,room);if(!cue){pref.nextAt=now+90000;return false}
+ // Private rooms and distant spaces sound muffled; no loud transients.
+ const level=room==='mine'||room==='pei'?.35:npc.room===room?.7:.45;
+ r39Voice(a.ctx,a.eventBus,cue.kind,a.ctx.currentTime+.04,level);
+ pref.lastAt=now;pref.nextAt=now+(180+Math.floor(r36Random(tick+399)*240))*1000;pref.cues.unshift({at:now,kind:cue.kind,text:cue.text,from:npc.room,where:room});pref.cues=pref.cues.slice(0,12);save();
+ const status=$('r39SoundStatus');if(status)status.textContent='剛才：'+cue.text;return true;
+}
+function r39SetLight(mode){if(!['main','lamp','off'].includes(mode)||!['mine','living','study','kitchen'].includes(room))return false;r39State().lights[room]=mode;save();r39Render();return true}
+function r39ApplyLight(){
+ const mode=room==='pei'?'off':r39State().lights[room]||'main';document.documentElement.dataset.roomLight=mode;
+ const atmosphere=$('r37Atmosphere');if(atmosphere&&!$('r39RoomLight')){const light=el('div','r39-room-light');light.id='r39RoomLight';const dim=el('div','r39-room-dim');dim.id='r39RoomDim';atmosphere.append(light,dim)}
+}
+function r39Render(){
+ r39ApplyLight();let mute=$('r39Mute');if(!mute){mute=el('button','quiet r39-mute');mute.id='r39Mute';mute.onclick=()=>r39ToggleAudio();$('clock').parentNode.append(mute)}mute.textContent=r39Audio.playing?'聲音：開':'聲音：關';mute.setAttribute('aria-label',r39Audio.playing?'靜音所有聲音':'開啟柔和聲音');let sound=$('r39Sound');if(!sound){sound=el('details','surface r39-sound');sound.id='r39Sound';$('home').append(sound)}const wasOpen=sound.open;sound.replaceChildren();sound.open=wasOpen;
+ const pref=r39State().sound;sound.append(el('summary','surface-title','聲音｜'+(r39Audio.playing?'已開啟':'關閉')));
+ const toggle=el('button','quiet',r39Audio.playing?'關閉聲音':'開啟聲音');toggle.onclick=()=>r39ToggleAudio();sound.append(toggle);
+ const options=el('div','r39-sound-options');for(const [key,label]of [['environment','環境音'],['events','門內外動靜']]){const wrap=el('label','r39-check'),input=el('input','');input.type='checkbox';input.checked=pref[key];input.onchange=()=>{pref[key]=input.checked;save();r39UpdateAudio()};wrap.append(input,el('span','',label));options.append(wrap)}sound.append(options);
+ const label=el('label','r39-volume'),text=el('span','','音量 '+pref.volume+'%'),slider=el('input','');slider.type='range';slider.min=0;slider.max=100;slider.value=pref.volume;slider.setAttribute('aria-label','聲音音量');slider.oninput=()=>{pref.volume=Number(slider.value);text.textContent='音量 '+pref.volume+'%';save();r39UpdateAudio()};label.append(text,slider);sound.append(label);
+ const status=el('p','note',r39Audio.error||(r39Audio.playing?'輕柔播放中。':'點一下開啟聲音。'));status.id='r39SoundStatus';status.setAttribute('aria-live','polite');sound.append(status);
+ $('r39Lights')?.remove();if(['mine','living','study','kitchen'].includes(room)){
+  const panel=el('div','r39-lights');panel.id='r39Lights';panel.append(el('span','r39-light-title','燈光'));const mode=r39State().lights[room]||'main';
+  for(const [key,name]of [['main','開燈'],['lamp','小燈'],['off','關燈']]){const b=el('button','quiet',name);b.setAttribute('aria-pressed',String(key===mode));b.onclick=()=>r39SetLight(key);panel.append(b)}
+  $('r36RoomWeather').before(panel);
+ }
+ r39UpdateAudio();
+}
+const r39PriorRender=render;
+render=function(){r39PriorRender();r39Render();r39Tick()};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)r39Pause()});
+window.addEventListener('pagehide',()=>r39Pause());
+window.addEventListener('r31526-sandbox-reset',()=>{r39Audio.lastRoom=null;r39Audio.readyAt=gameNow()+90000});
+setInterval(()=>{if(r39Audio.playing)r39Tick()},30000);
+document.documentElement.dataset.build='31-5-39';render();
 
 </script>
 <script>document.querySelector(".head .sub").textContent="同住日常";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
