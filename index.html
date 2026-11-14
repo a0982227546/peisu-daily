@@ -30,10 +30,24 @@
 #r31531Toe{display:block}
 #r31531Toe .r31535-toe-row{display:block;padding-top:14px;margin:0;width:100%;box-sizing:border-box}
 #r31531Toe .r31535-toe-row>button{display:block;width:100%;min-height:48px;margin:0!important;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}
+</style><style id="r36-weather-style">.r36-home-weather{margin:10px 2px 18px;color:#afc4d6;font-size:13px}.r36-weather{margin:15px 0}.r36-weather .ambient{font-size:13px;line-height:1.9}.r36-window-state{color:#91a6bb;font-size:12px!important}.r36-controls{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}.r36-controls button{min-height:44px;flex:1 1 120px;margin:0}.r36-weather .feedback{font-size:13px}</style><style id="r36-weather-visual">.r36-window{width:100%;height:138px;border-radius:13px;overflow:hidden;background:#294457;pointer-events:none;contain:paint}
+.r36-window svg{display:block;width:100%;height:100%}.r36-home-weather .r36-window{height:122px}
+.r36-weather .life-title{margin-bottom:12px}.r36-weather .ambient{margin-top:12px}
+.r36-cloud{animation:r36-cloud-drift 18s ease-in-out infinite alternate}.r36-cloud-1{animation-delay:-9s}.r36-cloud-2{animation-delay:-4s}
+.r36-rain{animation:r36-rainfall 1.15s linear infinite}.r36-glass-rain{animation:r36-glass 5s ease-in-out infinite alternate}
+.r36-heat{animation:r36-heat-wave 4s ease-in-out infinite alternate}.r36-breeze{animation:r36-wind 5s ease-in-out infinite alternate}
+@keyframes r36-cloud-drift{to{transform:translateX(30px)}}@keyframes r36-rainfall{to{transform:translate(-16px,40px)}}
+@keyframes r36-glass{to{opacity:.2;transform:translateY(5px)}}@keyframes r36-heat-wave{to{transform:translateY(-7px);opacity:.08}}@keyframes r36-wind{to{transform:translateX(20px);opacity:.1}}
+html[data-weather=rain] body{background:radial-gradient(ellipse at 15% -10%,#294e63 0%,#101b28 45%,#090d14 80%)}
+html[data-weather=cloud] body{background:radial-gradient(ellipse at 30% -15%,#3a4651 0%,#161e29 45%,#090d14 80%)}
+html[data-weather=sun][data-weather-night=false] body{background:radial-gradient(ellipse at 85% -10%,#65543d 0%,#233849 35%,#090d14 75%)}
+html[data-weather-night=true] body{background:radial-gradient(ellipse at 65% -15%,#26334c 0%,#101926 45%,#090d14 80%)}
+html[data-weather-temperature=cold] .r36-window{box-shadow:0 0 18px #9ed4ed13}html[data-weather-temperature=hot] .r36-window{box-shadow:0 0 18px #f2be7b20}
+@media(prefers-reduced-motion:reduce){.r36-window *{animation:none!important}}
 </style></head><body><main class="shell"><header class="head"><div><div class="eyebrow">PEI SU · DAILY RECORD</div><h1>裴總觀察日誌</h1><div class="sub">同住日常 · v1.7.5e 物品互動整合測試版</div></div><div><div class="clock" id="clock">--:--</div><div class="sub" style="text-align:right" id="date"></div></div></header>
 <section id="home" class="screen"><div class="hero"><small>此刻 · 裴溯</small><h2 id="heroTitle">……</h2><p id="heroDetail"></p><div class="status"><span class="dot"></span><span id="heroStatus"></span></div></div><div class="home-whisper" id="homeWhisper">各自的生活照常進行。</div><button class="home-notice hidden" id="homeNotice" type="button"><span>✦　有件事等你回應</span><span>查看 →</span></button></section>
-<section id="spaces" class="screen hidden"><div class="section-head"><h3>家裡的空間</h3><span>選一個地方待著</span></div><div class="rooms" id="rooms"></div><div class="surface"><div class="surface-title" id="roomTitle"></div><p id="roomDesc"></p><div class="chips" id="items"></div><div id="ambientScene" class="life-scene"></div><div id="observeScene" class="life-scene"></div><div id="lifeScene" class="life-scene"></div><div class="actions" id="actions"></div><p class="feedback" id="actionReply"></p></div><p class="note">裴溯在家也不代表有空；他的房間仍是私人空間。</p></section>
-<section id="events" class="screen hidden"><div class="section-head"><h3>家裡的新動靜</h3><span>分支對話 · 無自由輸入</span></div><div class="surface event" id="eventArea"></div><div class="surface" id="sharedArea"></div><div class="test" hidden aria-hidden="true"><button id="testTrigger" disabled>開發測試</button></div><p class="note">選擇後只會進入對應的後續情節。沒有 API，也不會判斷你自己輸入的文字。事件不回應也不會有懲罰。</p></section>
+<section id="spaces" class="screen hidden"><div class="section-head"><h3>家裡的空間</h3><span>選一個地方待著</span></div><div class="rooms" id="rooms"></div><div class="surface"><div class="surface-title" id="roomTitle"></div><p id="roomDesc"></p><div class="chips" id="items"></div><div id="ambientScene" class="life-scene"></div><div id="observeScene" class="life-scene"></div><div id="lifeScene" class="life-scene"></div><div class="actions" id="actions"></div><p class="feedback" id="actionReply"></p></div></section>
+<section id="events" class="screen hidden"><div class="section-head"><h3>家裡的新動靜</h3><span>分支對話 · 無自由輸入</span></div><div class="surface event" id="eventArea"></div><div class="surface" id="sharedArea"></div><div class="test" hidden aria-hidden="true"><button id="testTrigger" disabled>開發測試</button></div></section>
 <section id="talk" class="screen hidden"><div class="section-head"><h3>找裴溯說話</h3><span>不一定有回應</span></div><div class="surface"><p id="talkLocation"></p><div class="actions" id="topics"></div><p class="feedback" id="talkReply"></p></div><div class="surface"><div class="surface-title">傳個訊息</div><p>他外出時也能傳訊息，但不保證立即回覆。</p><button class="choice" id="messageBtn">傳一則簡短訊息</button><p class="feedback" id="messageReply"></p></div></section>
 <section id="journal" class="screen hidden"><div class="section-head"><h3>觀察日誌</h3><span>留下發生過的事</span></div><div class="surface" hidden aria-hidden="true"><button id="jumpDev" disabled>測試工具</button></div><div class="surface"><div class="surface-title">事件回顧</div><div class="log" id="eventHistory"></div></div><div class="surface"><div class="surface-title">日常紀錄</div><div class="log" id="dailyLog"></div></div><div class="surface settings" id="developerSettings"><div class="surface-title">存檔與備份</div><p>本機儲存不保證永久有效，建議定期匯出備份。匯入舊版存檔時，未完成的舊事件不會延續，以避免對話錯亂。</p><div class="row"><button id="export">匯出備份</button><button id="importBtn">匯入備份</button><input type="file" id="importFile" accept=".json,application/json" hidden></div><label class="toggle" hidden aria-hidden="true">測試沙盒<input type="checkbox" id="testMode" disabled></label><div id="timeTools" class="hidden"><p class="note" id="timeInfo"></p><div class="row"><button data-fast="10">＋10 分鐘</button><button data-fast="30">＋30 分鐘</button><button data-fast="120">＋2 小時</button></div><p class="note">測試期間使用虛擬時間與複製存檔；關閉測試模式後還原正式資料。</p></div><p class="note">本遊戲可離線使用，不消耗 AI API；原本的裴總聊天室不受影響。</p></div></section>
 </main><nav class="nav"><button data-tab="home" class="active"><b>⌂</b>首頁</button><button data-tab="spaces"><b>▦</b>空間</button><button data-tab="events"><b>✦</b>事件</button><button data-tab="talk"><b>◌</b>說話</button><button data-tab="journal"><b>▤</b>日誌</button></nav>
@@ -817,7 +831,7 @@ function v175Panel(){
  const panel=$('v173Items');if(!panel)return;
  const previousOpen=panel.open;panel.replaceChildren();panel.open=previousOpen;
  panel.append(el('summary','life-title','生活與物品（使用、放置、整理、布置）'));
- panel.append(el('p','note','房間裡的物品會保留狀態。收放與使用都在這裡，不必到下面找重複按鈕。'));
+
  const grid=el('div','v173-grid');panel.append(grid);
  const add=(label,fn)=>{const b=el('button','choice',label);b.onclick=fn;grid.append(b);return b};
  // One stateful entry per portable object.
@@ -3201,4 +3215,114 @@ if(r31531().active&&r31531Active())room='living';
 render();
 
 </script>
-<script>document.querySelector(".head .sub").textContent="同住日常 · 31-5-35 腳尖按鈕排版修正版";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
+<script id="r36-weather">
+function r36WindowView(w,where){
+ const h=new Date(gameNow()).getHours(),night=h<6||h>=18,sky=w.sky;
+ const palettes=night?{sun:['#12203d','#314664'],cloud:['#18222e','#3a4756'],rain:['#112631','#3b5666']}:{sun:['#589dc7',w.temp==='hot'?'#f6d3a0':'#cde9ef'],cloud:['#5c7184','#b5c2ca'],rain:['#304d63','#6d909e']};
+ const colors=palettes[sky],id='r36-'+(where||'home'),open=where&&r36Window(where)!=='closed';
+ let moon=night?'<path class="r36-moon" d="M430 26a23 23 0 1 0 24 30 24 24 0 0 1-24-30" fill="#eee5c1"/>'+[44,114,242,346,510,566].map((x,i)=>'<circle cx="'+x+'" cy="'+(22+i%3*18)+'" r="1.5" fill="#e9f3ff" opacity="'+(sky==='sun'?.8:.22)+'"/>').join(''):sky!=='rain'?'<g class="r36-sun"><circle cx="430" cy="44" r="35" fill="#ffe9a0" opacity=".2"/><circle cx="430" cy="44" r="23" fill="#ffe7a2"/>'+Array.from({length:8},(_,i)=>'<path d="M430 8v-8" transform="rotate('+i*45+' 430 44)" stroke="#fff0bb" stroke-width="3" stroke-linecap="round"/>').join('')+'</g>':'';
+ if(night&&sky==='rain')moon='';
+ const cloud='<path d="M-48 26c-13-19-44-14-47 5-26-5-36 28-11 33h126c28-4 24-38-2-38-11-27-50-26-66 0z"/>';
+ const clouds=(sky==='sun'?[{x:150,y:24,o:.35,s:1}]:[{x:145,y:15,o:.8,s:1.2},{x:380,y:30,o:.65,s:1.6},{x:605,y:5,o:.8,s:1.2}]).map((c,i)=>'<g transform="translate('+c.x+' '+c.y+') scale('+c.s+')"><g class="r36-cloud r36-cloud-'+i+'" fill="'+(night?'#627184':sky==='rain'?'#415f72':'#d1dbe1')+'" opacity="'+c.o+'">'+cloud+'</g></g>').join('');
+ const rain=sky==='rain'?'<g class="r36-rain" stroke="'+(night?'#b9d9e4':'#d0edf6')+'" stroke-width="1.8" opacity=".65">'+Array.from({length:24},(_,i)=>'<path d="M'+(i*27-12)+' '+(-40+(i%4)*40)+'l-12 30"/>').join('')+'</g>':'';
+ const trails=sky==='rain'&&!open?'<g class="r36-glass-rain" fill="none" stroke="#c5e6ed" stroke-width="1.4" opacity=".48">'+[62,129,214,353,425,548].map((x,i)=>'<path d="M'+x+' '+(10+i%3*25)+'q-5 21 0 40t-2 37"/>').join('')+'</g>':'';
+ const thermal=w.temp==='hot'?'<g class="r36-heat" stroke="#f2d2a3" fill="none" opacity=".22" stroke-width="2"><path d="M110 145q-10-13 0-26t0-26M270 153q-10-13 0-26t0-26M505 148q-10-13 0-26t0-26"/></g>':'';
+ const cold=w.temp==='cold'?'<rect x="6" y="6" width="588" height="168" rx="10" fill="none" stroke="#d1f1fa" stroke-width="12" opacity=".13"/>':'';
+ const pane=open?'<path d="M303 10l49 20v122l-49 20z" fill="#b3d9e8" fill-opacity=".12" stroke="#93b1c4" stroke-width="3"/>':'<path d="M24 12L180 168M390 10L570 172" stroke="#d1ecf4" opacity=".09" stroke-width="18"/>';
+ const wind=open&&sky!=='rain'?'<g class="r36-breeze" fill="none" stroke="#e7f6fa" stroke-width="1.5" opacity=".28"><path d="M65 103q52-14 104 0t104 0M320 126q52-14 104 0t104 0"/></g>':'';
+ const box=el('div','r36-window');box.dataset.sky=sky;box.dataset.night=String(night);box.dataset.temperature=w.temp;box.setAttribute('role','img');box.setAttribute('aria-label','窗外，'+R36_SKIES[sky][1]+'，'+R36_TEMPS[w.temp]+(night?'，夜間':''));
+ box.innerHTML='<svg viewBox="0 0 600 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="'+id+'" x2="0" y2="1"><stop stop-color="'+colors[0]+'"/><stop offset="1" stop-color="'+colors[1]+'"/></linearGradient></defs><rect width="600" height="180" fill="url(#'+id+')"/>'+moon+clouds+rain+thermal+wind+pane+trails+cold+'<path d="M300 6v168M6 89h588" stroke="#263b50" stroke-width="7"/><rect x="4" y="4" width="592" height="172" rx="10" fill="none" stroke="#3f566d" stroke-width="8"/><path d="M0 177h600" stroke="#7e8f9e" stroke-width="6"/></svg>';
+ return box;
+}
+
+// Offline world weather: one deterministic four-hour state shared by every space.
+const R36_SKIES={sun:['☀','晴天'],cloud:['☁','陰天'],rain:['☔','下雨']};
+const R36_TEMPS={cold:'偏冷',mild:'舒適',hot:'偏熱'};
+function r36Random(n){let x=(Number(n)^Number(state.seed)^0x36a7c91)|0;x=Math.imul(x^(x>>>16),0x45d9f3b);x=Math.imul(x^(x>>>16),0x45d9f3b);return ((x^(x>>>16))>>>0)/4294967296}
+function r36Raw(bucket){const month=new Date(bucket*14400000).getMonth()+1,r=r36Random(bucket*19);const rain=[0,.22,.24,.30,.34,.38,.40,.35,.35,.29,.24,.22,.20][month];const sun=month>=6&&month<=9?.40:.38;return r<rain?'rain':r<rain+sun?'sun':'cloud'}
+function r36At(ms){
+ const bucket=Math.floor(ms/14400000),d=new Date(ms),month=d.getMonth()+1;
+ let sky=r36Raw(bucket);const prev=r36Raw(bucket-1);if((prev==='sun'&&sky==='rain')||(prev==='rain'&&sky==='sun'))sky='cloud';
+ const bases=[0,17,18,21,24,27,30,31,31,29,25,22,18];
+ const h=new Date(bucket*14400000).getHours(),warm=bases[month]+Math.floor(r36Random(bucket*29+7)*5)-2+(sky==='sun'?1:sky==='rain'?-1:0)+(h>=8&&h<18?1:-1);
+ return {bucket,sky,temp:warm<20?'cold':warm>=28?'hot':'mild'};
+}
+function r36State(){const l=life();if(!l.weather36)l.weather36={version:1,bucket:null,sky:null,temp:null,windows:{},lastAction:null,rainUntil:0,history:[]};return l.weather36}
+function r36Sync(){
+ const w=r36State(),now=gameNow(),next=r36At(now),active=life().expansion17?.specials?.active;
+ if(active?.id==='rainy'&&active.until>now)w.rainUntil=Math.max(w.rainUntil||0,active.until);
+ if((w.rainUntil||0)>now)next.sky='rain';
+ if(w.bucket!==next.bucket||w.sky!==next.sky||w.temp!==next.temp){
+  const prior=w.sky;Object.assign(w,next,{updatedAt:now});w.history.unshift({at:now,bucket:next.bucket,sky:next.sky,temp:next.temp});w.history=w.history.slice(0,16);
+  if(prior&&prior!==next.sky&&w.lastAction)w.lastAction=null;save();
+ }
+ return w;
+}
+function r36Window(where){return r36State().windows[where]||'closed'}
+function r36Label(w=r36Sync()){const s=R36_SKIES[w.sky];return s[0]+' '+s[1]+' · '+R36_TEMPS[w.temp]}
+function r36Description(where,w=r36Sync()){
+ const h=new Date(gameNow()).getHours(),day=h>=6&&h<18,open=r36Window(where)!=='closed';
+ if(where==='pei')return w.sky==='rain'?'走廊裡也聽得見窗外的雨聲。':day?'走廊盡頭透進一些天光。':'走廊外是安靜的夜色。';
+ const skies={sun:day?{mine:'日光斜斜落在房間窗邊。',living:'客廳窗邊亮著一片日光。',study:'窗邊的日光照到書架一角。',kitchen:'廚房窗邊透著明亮的日光。'}[where]:'窗外沒有雨聲，夜色很靜。',cloud:day?'雲層遮住日光，窗邊的光線柔和了一些。':'夜色裡看不清雲層，窗外很安靜。',rain:open?'雨聲從窗縫傳進來，窗沿有些潮氣。':'雨點敲在窗玻璃上，聲音隔著玻璃悶了一些。'};
+ const temp={cold:'空氣有些涼。',mild:'室內的溫度剛好。',hot:'空氣有些悶熱。'}[w.temp];
+ return skies[w.sky]+' '+temp;
+}
+function r36CanAct(){return ['mine','living','study','kitchen'].includes(room)&&!r31526Busy('weather')&&!v172().scene&&!document.querySelector('#affShade.on')}
+function r36Action(id){
+ const w=r36Sync(),where=room;if(!r36CanAct())return false;
+ if(w.lastAction&&w.lastAction.where===where&&gameNow()-w.lastAction.at<15000)return false;
+ const npc=current(),near=npc.room===where&&!npc.private;let text='';
+ if(id==='close'){
+  if(r36Window(where)==='closed')return false;w.windows[where]='closed';text=w.sky==='rain'?'你把窗戶關上，雨聲隔著玻璃悶了一些。':'你把窗戶關上，擋住了窗外的風。';
+  if(near)text+=' 裴溯抬眼看了看窗邊，隨後繼續做自己的事。';
+ }else if(id==='air'){
+  if(w.sky==='rain'||w.temp==='cold'||r36Window(where)!=='closed')return false;
+  w.windows[where]='ajar';text='你把窗戶推開一點，讓空氣流通。';if(near)text+=' 裴溯把窗邊的一張紙往裡挪了些。';
+ }else if(id==='watch'){
+  if(w.sky!=='rain')return false;text='你在窗邊停了一會兒，細碎的雨聲連成一片。';if(near)text+=' 裴溯順著你的目光看向窗外，沒有急著說話。';
+ }else if(id==='water'){
+  if(where!=='kitchen')return false;
+  doAction('water');text=w.temp==='cold'?'你在廚房倒了一杯溫水，捧在手裡暖了暖。':'你在廚房倒了一杯水，慢慢喝了幾口。';
+  const cup=life().objects['kitchen:用過的杯子'];if(cup)cup.weatherTemperature=w.temp==='cold'?'warm':'normal';
+  if(near)text+=' 裴溯把自己的杯子往旁邊挪了些，給你空出位置。';
+ }else return false;
+ w.lastAction={where,bucket:w.bucket,at:gameNow(),text};memory('weather',id);log(text);save();render();return true;
+}
+const r36PriorSpecialContext=r31527SpecialContext;
+r31527SpecialContext=function(id){return (id!=='rainy'||r36Sync().sky==='rain')&&r36PriorSpecialContext(id)};
+// The approved rainy-scene choice closes the same window as the weather panel.
+const r36PriorSpecialPick=v17Pick;
+v17Pick=function(to){
+ const active=v17SpecialActive();if(active?.id==='rainy'&&room==='living'&&r31527SpecialContext('rainy')){
+  const option=V17_SPECIAL.rainy.steps[active.node]?.options?.find(x=>x[1]===to);
+  if(option&&/關.*窗|关.*窗/.test(option[0])){r36State().windows.living='closed';save()}
+ }
+ return r36PriorSpecialPick(to);
+};
+function r36Render(){
+ const w=r36Sync();let home=$('r36HomeWeather');if(!home){home=el('div','r36-home-weather');home.id='r36HomeWeather';$('home').querySelector('.hero').after(home)}home.replaceChildren(r36WindowView(w));const root=document.documentElement;root.dataset.weather=w.sky;root.dataset.weatherTemperature=w.temp;const hour=new Date(gameNow()).getHours();root.dataset.weatherNight=String(hour<6||hour>=18);
+ $('r36RoomWeather')?.remove();const panel=el('section','life-review r36-weather');panel.id='r36RoomWeather';panel.dataset.sky=w.sky;panel.dataset.temperature=w.temp;
+ panel.append(el('div','life-title','窗外'),r36WindowView(w,room),el('p','ambient',r36Description(room,w)));
+ if(room!=='pei')panel.append(el('p','r36-window-state',r36Window(room)==='closed'?'窗戶關著。':'窗戶開著一條縫。'));
+ if(r36CanAct()){
+  const controls=el('div','r36-controls');
+  const add=(label,fn)=>{const b=el('button','quiet',label);b.onclick=fn;b.disabled=!!(w.lastAction&&w.lastAction.where===room&&gameNow()-w.lastAction.at<15000);controls.append(b)};
+  if(r36Window(room)!=='closed')add('關上窗戶',()=>r36Action('close'));
+  else if(w.sky!=='rain'&&w.temp!=='cold')add('開一點窗透氣',()=>r36Action('air'));
+  if(w.sky==='rain')add('看一會兒窗外',()=>r36Action('watch'));
+  if(room==='kitchen')add(w.temp==='cold'?'倒杯溫水':'倒杯水',()=>r36Action('water'));
+  else if(w.temp!=='mild')add(w.temp==='cold'?'去廚房倒杯溫水':'去廚房倒水',()=>{room='kitchen';switchTab('spaces')});
+  if(controls.children.length)panel.append(controls);
+ }
+ if(w.lastAction?.where===room&&w.lastAction.bucket===w.bucket)panel.append(el('p','feedback',w.lastAction.text));
+ $('ambientScene').before(panel);
+ const offer=$('v17Offer');if(w.sky!=='rain'&&offer?.textContent.includes('突然下起雨'))offer.classList.add('hidden');
+ document.querySelector('.head .sub').textContent='同住日常';
+}
+const r36PriorRender=render;
+render=function(){r36Sync();r36PriorRender();r36Render()};
+document.documentElement.dataset.build='31-5-36';
+render();
+
+</script>
+<script>document.querySelector(".head .sub").textContent="同住日常";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
