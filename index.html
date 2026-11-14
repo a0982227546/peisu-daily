@@ -30,20 +30,36 @@
 #r31531Toe{display:block}
 #r31531Toe .r31535-toe-row{display:block;padding-top:14px;margin:0;width:100%;box-sizing:border-box}
 #r31531Toe .r31535-toe-row>button{display:block;width:100%;min-height:48px;margin:0!important;box-sizing:border-box;white-space:normal;overflow-wrap:anywhere}
-</style><style id="r36-weather-style">.r36-home-weather{margin:10px 2px 18px;color:#afc4d6;font-size:13px}.r36-weather{margin:15px 0}.r36-weather .ambient{font-size:13px;line-height:1.9}.r36-window-state{color:#91a6bb;font-size:12px!important}.r36-controls{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}.r36-controls button{min-height:44px;flex:1 1 120px;margin:0}.r36-weather .feedback{font-size:13px}</style><style id="r36-weather-visual">.r36-window{width:100%;height:138px;border-radius:13px;overflow:hidden;background:#294457;pointer-events:none;contain:paint}
-.r36-window svg{display:block;width:100%;height:100%}.r36-home-weather .r36-window{height:122px}
-.r36-weather .life-title{margin-bottom:12px}.r36-weather .ambient{margin-top:12px}
-.r36-cloud{animation:r36-cloud-drift 18s ease-in-out infinite alternate}.r36-cloud-1{animation-delay:-9s}.r36-cloud-2{animation-delay:-4s}
-.r36-rain{animation:r36-rainfall 1.15s linear infinite}.r36-glass-rain{animation:r36-glass 5s ease-in-out infinite alternate}
-.r36-heat{animation:r36-heat-wave 4s ease-in-out infinite alternate}.r36-breeze{animation:r36-wind 5s ease-in-out infinite alternate}
-@keyframes r36-cloud-drift{to{transform:translateX(30px)}}@keyframes r36-rainfall{to{transform:translate(-16px,40px)}}
-@keyframes r36-glass{to{opacity:.2;transform:translateY(5px)}}@keyframes r36-heat-wave{to{transform:translateY(-7px);opacity:.08}}@keyframes r36-wind{to{transform:translateX(20px);opacity:.1}}
-html[data-weather=rain] body{background:radial-gradient(ellipse at 15% -10%,#294e63 0%,#101b28 45%,#090d14 80%)}
-html[data-weather=cloud] body{background:radial-gradient(ellipse at 30% -15%,#3a4651 0%,#161e29 45%,#090d14 80%)}
-html[data-weather=sun][data-weather-night=false] body{background:radial-gradient(ellipse at 85% -10%,#65543d 0%,#233849 35%,#090d14 75%)}
-html[data-weather-night=true] body{background:radial-gradient(ellipse at 65% -15%,#26334c 0%,#101926 45%,#090d14 80%)}
-html[data-weather-temperature=cold] .r36-window{box-shadow:0 0 18px #9ed4ed13}html[data-weather-temperature=hot] .r36-window{box-shadow:0 0 18px #f2be7b20}
-@media(prefers-reduced-motion:reduce){.r36-window *{animation:none!important}}
+</style><style id="r37-atmosphere-style">/* Ambient light and weather occupy the page background; no pictorial sun, moon or window. */
+html{background:#090d14}body{background:var(--r37-base,#0b1420)!important;transition:background 2s ease;color:#eaf0f8}
+html[data-light-phase=dawn]{--r37-base:#1c2834;--r37-glow:rgba(235,183,129,.17)}
+html[data-light-phase=day]{--r37-base:#1c2c39;--r37-glow:rgba(245,221,174,.19)}
+html[data-light-phase=sunset]{--r37-base:#2e2730;--r37-glow:rgba(233,150,96,.23)}
+html[data-light-phase=night]{--r37-base:#0a1321;--r37-glow:rgba(156,187,223,.12)}
+html[data-weather=cloud]{--r37-base:#1b2733;--r37-glow:rgba(176,191,204,.07)}
+html[data-weather=rain]{--r37-base:#142532;--r37-glow:rgba(135,167,188,.06)}
+html[data-weather-night=true][data-weather=rain]{--r37-base:#0c1927}
+html[data-weather-night=true][data-weather=cloud]{--r37-base:#101c2c}
+#r37Atmosphere{position:fixed;inset:0;overflow:hidden;pointer-events:none!important;z-index:0;contain:strict}
+#r37Atmosphere *{pointer-events:none!important}.shell{position:relative;z-index:1}
+.r37-light,.r37-wash,.r37-rain{position:absolute;inset:0;pointer-events:none}
+.r37-light{background:linear-gradient(111deg,transparent 5%,var(--r37-glow) 19%,transparent 32%,transparent 41%,var(--r37-glow) 49%,transparent 62%);filter:blur(9px);opacity:.85}
+html[data-light-phase=dawn] .r37-light{background:linear-gradient(122deg,transparent 4%,var(--r37-glow) 27%,transparent 49%,var(--r37-glow) 62%,transparent 80%)}
+html[data-light-phase=sunset] .r37-light{background:linear-gradient(76deg,transparent 8%,var(--r37-glow) 25%,transparent 43%,var(--r37-glow) 65%,transparent 82%);filter:blur(13px)}
+html[data-light-phase=night] .r37-light{background:linear-gradient(120deg,transparent 6%,var(--r37-glow) 28%,transparent 52%);filter:blur(21px);opacity:.8}
+html[data-weather=cloud] .r37-light,html[data-weather=rain] .r37-light{background:linear-gradient(160deg,var(--r37-glow),transparent 65%);filter:blur(22px)}
+.r37-wash{background:linear-gradient(180deg,rgba(130,160,183,.06),transparent 55%,rgba(2,7,14,.28))}
+html[data-weather-temperature=cold] .r37-wash{background:linear-gradient(150deg,rgba(143,184,213,.08),transparent 58%,rgba(2,7,14,.28))}
+html[data-weather-temperature=hot] .r37-wash{background:linear-gradient(150deg,rgba(224,169,112,.06),transparent 58%,rgba(2,7,14,.25))}
+.r37-rain{display:none}html[data-weather=rain] .r37-rain{display:block}
+.r37-raindrop{position:absolute;top:-12vh;width:1px;background:linear-gradient(transparent,rgba(180,210,227,.42),transparent);opacity:.6;animation:r37-fall linear infinite;will-change:transform}
+@keyframes r37-fall{from{transform:translate3d(0,-5vh,0) rotate(16deg)}to{transform:translate3d(-18vw,120vh,0) rotate(16deg)}}
+.surface{background:rgba(16,27,40,.82)}.life-review{background-color:rgba(24,37,53,.65)}
+.hero:before{display:none}.hero{background:linear-gradient(145deg,rgba(39,55,75,.83),rgba(20,30,44,.83) 65%,rgba(17,24,35,.90))}
+.r36-weather{margin:15px 0}.r36-weather>summary{cursor:pointer;min-height:28px;color:#a5b9cb;font-size:12px}
+.r36-weather .ambient{font-size:13px;line-height:1.9}.r36-window-state{color:#91a6bb;font-size:12px!important}
+.r36-controls{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}.r36-controls button{min-height:44px;flex:1 1 120px;margin:0}.r36-weather .feedback{font-size:13px}
+@media(prefers-reduced-motion:reduce){body{transition:none}#r37Atmosphere *{animation:none!important}.r37-raindrop{top:var(--rest-top);transform:rotate(16deg);will-change:auto}}
 </style></head><body><main class="shell"><header class="head"><div><div class="eyebrow">PEI SU · DAILY RECORD</div><h1>裴總觀察日誌</h1><div class="sub">同住日常 · v1.7.5e 物品互動整合測試版</div></div><div><div class="clock" id="clock">--:--</div><div class="sub" style="text-align:right" id="date"></div></div></header>
 <section id="home" class="screen"><div class="hero"><small>此刻 · 裴溯</small><h2 id="heroTitle">……</h2><p id="heroDetail"></p><div class="status"><span class="dot"></span><span id="heroStatus"></span></div></div><div class="home-whisper" id="homeWhisper">各自的生活照常進行。</div><button class="home-notice hidden" id="homeNotice" type="button"><span>✦　有件事等你回應</span><span>查看 →</span></button></section>
 <section id="spaces" class="screen hidden"><div class="section-head"><h3>家裡的空間</h3><span>選一個地方待著</span></div><div class="rooms" id="rooms"></div><div class="surface"><div class="surface-title" id="roomTitle"></div><p id="roomDesc"></p><div class="chips" id="items"></div><div id="ambientScene" class="life-scene"></div><div id="observeScene" class="life-scene"></div><div id="lifeScene" class="life-scene"></div><div class="actions" id="actions"></div><p class="feedback" id="actionReply"></p></div></section>
@@ -3215,24 +3231,17 @@ if(r31531().active&&r31531Active())room='living';
 render();
 
 </script>
-<script id="r36-weather">
-function r36WindowView(w,where){
- const h=new Date(gameNow()).getHours(),night=h<6||h>=18,sky=w.sky;
- const palettes=night?{sun:['#12203d','#314664'],cloud:['#18222e','#3a4756'],rain:['#112631','#3b5666']}:{sun:['#589dc7',w.temp==='hot'?'#f6d3a0':'#cde9ef'],cloud:['#5c7184','#b5c2ca'],rain:['#304d63','#6d909e']};
- const colors=palettes[sky],id='r36-'+(where||'home'),open=where&&r36Window(where)!=='closed';
- let moon=night?'<path class="r36-moon" d="M430 26a23 23 0 1 0 24 30 24 24 0 0 1-24-30" fill="#eee5c1"/>'+[44,114,242,346,510,566].map((x,i)=>'<circle cx="'+x+'" cy="'+(22+i%3*18)+'" r="1.5" fill="#e9f3ff" opacity="'+(sky==='sun'?.8:.22)+'"/>').join(''):sky!=='rain'?'<g class="r36-sun"><circle cx="430" cy="44" r="35" fill="#ffe9a0" opacity=".2"/><circle cx="430" cy="44" r="23" fill="#ffe7a2"/>'+Array.from({length:8},(_,i)=>'<path d="M430 8v-8" transform="rotate('+i*45+' 430 44)" stroke="#fff0bb" stroke-width="3" stroke-linecap="round"/>').join('')+'</g>':'';
- if(night&&sky==='rain')moon='';
- const cloud='<path d="M-48 26c-13-19-44-14-47 5-26-5-36 28-11 33h126c28-4 24-38-2-38-11-27-50-26-66 0z"/>';
- const clouds=(sky==='sun'?[{x:150,y:24,o:.35,s:1}]:[{x:145,y:15,o:.8,s:1.2},{x:380,y:30,o:.65,s:1.6},{x:605,y:5,o:.8,s:1.2}]).map((c,i)=>'<g transform="translate('+c.x+' '+c.y+') scale('+c.s+')"><g class="r36-cloud r36-cloud-'+i+'" fill="'+(night?'#627184':sky==='rain'?'#415f72':'#d1dbe1')+'" opacity="'+c.o+'">'+cloud+'</g></g>').join('');
- const rain=sky==='rain'?'<g class="r36-rain" stroke="'+(night?'#b9d9e4':'#d0edf6')+'" stroke-width="1.8" opacity=".65">'+Array.from({length:24},(_,i)=>'<path d="M'+(i*27-12)+' '+(-40+(i%4)*40)+'l-12 30"/>').join('')+'</g>':'';
- const trails=sky==='rain'&&!open?'<g class="r36-glass-rain" fill="none" stroke="#c5e6ed" stroke-width="1.4" opacity=".48">'+[62,129,214,353,425,548].map((x,i)=>'<path d="M'+x+' '+(10+i%3*25)+'q-5 21 0 40t-2 37"/>').join('')+'</g>':'';
- const thermal=w.temp==='hot'?'<g class="r36-heat" stroke="#f2d2a3" fill="none" opacity=".22" stroke-width="2"><path d="M110 145q-10-13 0-26t0-26M270 153q-10-13 0-26t0-26M505 148q-10-13 0-26t0-26"/></g>':'';
- const cold=w.temp==='cold'?'<rect x="6" y="6" width="588" height="168" rx="10" fill="none" stroke="#d1f1fa" stroke-width="12" opacity=".13"/>':'';
- const pane=open?'<path d="M303 10l49 20v122l-49 20z" fill="#b3d9e8" fill-opacity=".12" stroke="#93b1c4" stroke-width="3"/>':'<path d="M24 12L180 168M390 10L570 172" stroke="#d1ecf4" opacity=".09" stroke-width="18"/>';
- const wind=open&&sky!=='rain'?'<g class="r36-breeze" fill="none" stroke="#e7f6fa" stroke-width="1.5" opacity=".28"><path d="M65 103q52-14 104 0t104 0M320 126q52-14 104 0t104 0"/></g>':'';
- const box=el('div','r36-window');box.dataset.sky=sky;box.dataset.night=String(night);box.dataset.temperature=w.temp;box.setAttribute('role','img');box.setAttribute('aria-label','窗外，'+R36_SKIES[sky][1]+'，'+R36_TEMPS[w.temp]+(night?'，夜間':''));
- box.innerHTML='<svg viewBox="0 0 600 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="'+id+'" x2="0" y2="1"><stop stop-color="'+colors[0]+'"/><stop offset="1" stop-color="'+colors[1]+'"/></linearGradient></defs><rect width="600" height="180" fill="url(#'+id+')"/>'+moon+clouds+rain+thermal+wind+pane+trails+cold+'<path d="M300 6v168M6 89h588" stroke="#263b50" stroke-width="7"/><rect x="4" y="4" width="592" height="172" rx="10" fill="none" stroke="#3f566d" stroke-width="8"/><path d="M0 177h600" stroke="#7e8f9e" stroke-width="6"/></svg>';
- return box;
+<script id="r37-weather">
+function r37Phase(ms=gameNow()){const d=new Date(ms),hour=d.getHours()+d.getMinutes()/60;return hour<6||hour>=18?'night':hour<8?'dawn':hour<16?'day':'sunset'}
+function r37Atmosphere(w){
+ let layer=$('r37Atmosphere');if(!layer){
+  layer=el('div','');layer.id='r37Atmosphere';layer.setAttribute('aria-hidden','true');
+  layer.append(el('div','r37-light'),el('div','r37-wash'));
+  const rain=el('div','r37-rain');
+  for(let i=0;i<38;i++){const drop=el('span','r37-raindrop');drop.style.left=((i*37+11)%118)+'%';drop.style.height=(23+(i*17)%30)+'px';drop.style.animationDuration=(1.25+(i%9)*.13)+'s';drop.style.animationDelay=(-i*.37)+'s';drop.style.setProperty('--rest-top',((i*29)%100)+'vh');rain.append(drop)}
+  layer.append(rain);document.body.prepend(layer);
+ }
+ const root=document.documentElement,phase=r37Phase();root.dataset.weather=w.sky;root.dataset.weatherTemperature=w.temp;root.dataset.weatherNight=String(phase==='night');root.dataset.lightPhase=phase;
 }
 
 // Offline world weather: one deterministic four-hour state shared by every space.
@@ -3300,9 +3309,9 @@ v17Pick=function(to){
  return r36PriorSpecialPick(to);
 };
 function r36Render(){
- const w=r36Sync();let home=$('r36HomeWeather');if(!home){home=el('div','r36-home-weather');home.id='r36HomeWeather';$('home').querySelector('.hero').after(home)}home.replaceChildren(r36WindowView(w));const root=document.documentElement;root.dataset.weather=w.sky;root.dataset.weatherTemperature=w.temp;const hour=new Date(gameNow()).getHours();root.dataset.weatherNight=String(hour<6||hour>=18);
- $('r36RoomWeather')?.remove();const panel=el('section','life-review r36-weather');panel.id='r36RoomWeather';panel.dataset.sky=w.sky;panel.dataset.temperature=w.temp;
- panel.append(el('div','life-title','窗外'),r36WindowView(w,room),el('p','ambient',r36Description(room,w)));
+ const w=r36Sync();$('r36HomeWeather')?.remove();r37Atmosphere(w);
+ const old=$('r36RoomWeather'),wasOpen=!!(old?.open&&old.dataset.room===room);old?.remove();const panel=el('details','life-review r36-weather');panel.id='r36RoomWeather';panel.dataset.room=room;panel.dataset.sky=w.sky;panel.dataset.temperature=w.temp;panel.open=wasOpen;
+ panel.append(el('summary','life-title','窗邊'),el('p','ambient',r36Description(room,w)));
  if(room!=='pei')panel.append(el('p','r36-window-state',r36Window(room)==='closed'?'窗戶關著。':'窗戶開著一條縫。'));
  if(r36CanAct()){
   const controls=el('div','r36-controls');
@@ -3321,7 +3330,7 @@ function r36Render(){
 }
 const r36PriorRender=render;
 render=function(){r36Sync();r36PriorRender();r36Render()};
-document.documentElement.dataset.build='31-5-36';
+document.documentElement.dataset.build='31-5-37';
 render();
 
 </script>
