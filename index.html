@@ -72,6 +72,18 @@ html[data-weather-night=true][data-room-light=main] .r39-room-light{background:r
 @media(prefers-reduced-motion:reduce){.r39-room-light,.r39-room-dim{transition:none}}
 
 .r39-mute{min-height:44px;padding:7px 10px;margin-top:7px;font-size:11px}
+</style><style id="r40-outings-style">/* Keep sound settings discreet without making their touch targets tiny. */
+#r39Sound{background:none;border:0;border-radius:0;box-shadow:none;padding:0;margin:20px 0 4px}
+#r39Sound>summary{font-size:11px;font-weight:400;color:#8fa2b7;min-height:44px;display:list-item;align-content:center}
+#r39Sound[open]{padding-bottom:8px}
+#r39Sound>button{width:auto;min-width:120px;font-size:12px}
+#r39Sound .r39-check{font-size:12px}
+#r39Mute{border-color:transparent;background:none;color:#91a4b9;padding:5px 8px;min-width:44px;min-height:44px}
+.r40-outing{margin:18px 0}.r40-plan>summary{color:#a5b7c9;font-size:12px;min-height:44px;cursor:pointer;align-content:center}
+.r40-choice-row{padding-top:12px;display:block;width:100%}.r40-choice-row>button{display:block;width:100%;margin:0!important;min-height:46px;text-align:left;white-space:normal;overflow-wrap:anywhere;box-sizing:border-box}
+.r40-story{white-space:pre-line!important}.r40-transcript{margin-top:18px}.r40-transcript summary,#r40OutingHistory summary{cursor:pointer;min-height:32px}
+html[data-player-away=true] #spaces>:not(#r40AwaySpaces),html[data-player-away=true] #events>:not(#r40AwayEvents),html[data-player-away=true] #talk>:not(#r40AwayTalk){display:none!important}
+html[data-player-away=true] #homeNotice,html[data-player-away=true] #affOpen{display:none!important}
 </style></head><body><main class="shell"><header class="head"><div><div class="eyebrow">PEI SU · DAILY RECORD</div><h1>裴總觀察日誌</h1><div class="sub">同住日常 · v1.7.5e 物品互動整合測試版</div></div><div><div class="clock" id="clock">--:--</div><div class="sub" style="text-align:right" id="date"></div></div></header>
 <section id="home" class="screen"><div class="hero"><small>此刻 · 裴溯</small><h2 id="heroTitle">……</h2><p id="heroDetail"></p><div class="status"><span class="dot"></span><span id="heroStatus"></span></div></div><div class="home-whisper" id="homeWhisper">各自的生活照常進行。</div><button class="home-notice hidden" id="homeNotice" type="button"><span>✦　有件事等你回應</span><span>查看 →</span></button></section>
 <section id="spaces" class="screen hidden"><div class="section-head"><h3>家裡的空間</h3><span>選一個地方待著</span></div><div class="rooms" id="rooms"></div><div class="surface"><div class="surface-title" id="roomTitle"></div><p id="roomDesc"></p><div class="chips" id="items"></div><div id="ambientScene" class="life-scene"></div><div id="observeScene" class="life-scene"></div><div id="lifeScene" class="life-scene"></div><div class="actions" id="actions"></div><p class="feedback" id="actionReply"></p></div></section>
@@ -748,7 +760,7 @@ function v173Talk(){
 }
 function v173Contact(){const l=life();return l.outbound173||(l.outbound173={pending:null,lastAt:0,history:[],lastCheck:0})}
 const V173_OUTBOUND=[{type:'sms',text:'「晚點回去。冰箱裡有東西，你要吃自己拿。」'},{type:'sms',text:'「我可能會晚一點到家。」'},{type:'call',text:'手機響了。來電顯示：裴溯。'}];
-function v173Incoming(force){r31528ReconcileContact();const c=v173Contact(),a=current(),now=gameNow();if(a.room!=='away'||c.pending)return false;if(!force){const tick=Math.floor(now/3600000);if(c.lastCheck===tick)return false;c.lastCheck=tick;if(now-c.lastAt<12*3600000||hash(tick*173+state.seed)>.22)return false}
+function v173Incoming(force){if(state.life?.outings40?.active)return false;r31528ReconcileContact();const c=v173Contact(),a=current(),now=gameNow();if(a.room!=='away'||c.pending)return false;if(!force){const tick=Math.floor(now/3600000);if(c.lastCheck===tick)return false;c.lastCheck=tick;if(now-c.lastAt<12*3600000||hash(tick*173+state.seed)>.22)return false}
  const i=force==='sms'?0:force==='call'?2:Math.floor(hash(Math.floor(now/3600000)*71+state.seed)*V173_OUTBOUND.length);const def=V173_OUTBOUND[i];c.pending={type:def.type,text:def.text,at:now};c.lastAt=now;save();return true}
 function v173Answer(action){if(r31528ReconcileContact()){render();return}const c=v173Contact(),p=c.pending;if(!p)return;const label=action==='reply'?(p.type==='call'?'你接起電話。裴溯：「我晚點回去。」':'你回了訊息：「知道了。」'):action==='later'?'你決定晚點再回覆。':'你沒有回應這次聯絡。';c.history.unshift({at:gameNow(),type:p.type,action,text:label});c.history=c.history.slice(0,30);if(action==='later'){p.snoozed=true;p.text=p.type==='call'?'裴溯剛才打來電話。':'裴溯之前傳來一則訊息。'}else c.pending=null;log(label);save();render()}
 function v173ContactPanel(){r31528ReconcileContact();let p=$('v173Contact');if(!p){p=el('div','surface');p.id='v173Contact';$('messageReply').parentNode.append(p)}p.replaceChildren();const c=v173Contact(),a=current();p.append(el('div','surface-title','裴溯的聯絡'));if(c.pending){const x=c.pending;p.append(el('small','', '收到時間：'+fmt(x.at)),el('p','life-detail',x.text));if(x.type==='sms'&&baseCurrent().room!=='away')p.append(el('p','note','這是先前外出時傳來的訊息；裴溯目前已回家。'));for(const [label,action] of (x.snoozed?[['現在回覆','reply'],['不回覆','ignore']]:[[x.type==='call'?'接電話':'回訊息','reply'],['晚點再理','later'],['不理他','ignore']])){const b=el('button','choice',label);b.onclick=()=>v173Answer(action);p.append(b)}}else p.append(el('p','note',a.room==='away'?'目前沒有新聯絡。裴溯可能會主動傳訊息或打電話，但不一定每次外出都會。':'目前沒有新聯絡。外出時才可能有主動聯絡。'));if(c.history.length){const details=el('details','');details.append(el('summary','','最近的聯絡紀錄（'+c.history.length+'）'));for(const h of c.history.slice(0,5))details.append(el('p','note',fmt(h.at)+'｜'+h.text));p.append(details)}}
@@ -2445,6 +2457,7 @@ function r31526StorageStatus(failed){
  document.body.prepend(box);
 }
 function r31526Busy(except){
+ if(state.life?.outings40?.active)return true;
  const l=life(),now=gameNow();
  if(except!=='toe'&&l.features31?.active?.until>now)return true;
  const event=pending();if(except!=='event'&&event&&r31527EventContext(event.type,event).allowed)return true;
@@ -3331,8 +3344,6 @@ function r36Render(){
   if(r36Window(room)!=='closed')add('關上窗戶',()=>r36Action('close'));
   else if(w.sky!=='rain'&&w.temp!=='cold')add('開一點窗透氣',()=>r36Action('air'));
   if(w.sky==='rain')add('看一會兒窗外',()=>r36Action('watch'));
-  if(room==='kitchen')add(w.temp==='cold'?'倒杯溫水':'倒杯水',()=>r36Action('water'));
-  else if(w.temp!=='mild')add(w.temp==='cold'?'去廚房倒杯溫水':'去廚房倒水',()=>{room='kitchen';switchTab('spaces')});
   if(controls.children.length)panel.append(controls);
  }
  if(w.lastAction?.where===room&&w.lastAction.bucket===w.bucket)panel.append(el('p','feedback',w.lastAction.text));
@@ -3423,7 +3434,7 @@ function r39ApplyLight(){
 }
 function r39Render(){
  r39ApplyLight();let mute=$('r39Mute');if(!mute){mute=el('button','quiet r39-mute');mute.id='r39Mute';mute.onclick=()=>r39ToggleAudio();$('clock').parentNode.append(mute)}mute.textContent=r39Audio.playing?'聲音：開':'聲音：關';mute.setAttribute('aria-label',r39Audio.playing?'靜音所有聲音':'開啟柔和聲音');let sound=$('r39Sound');if(!sound){sound=el('details','surface r39-sound');sound.id='r39Sound';$('home').append(sound)}const wasOpen=sound.open;sound.replaceChildren();sound.open=wasOpen;
- const pref=r39State().sound;sound.append(el('summary','surface-title','聲音｜'+(r39Audio.playing?'已開啟':'關閉')));
+ const pref=r39State().sound;sound.append(el('summary','','聲音設定'));
  const toggle=el('button','quiet',r39Audio.playing?'關閉聲音':'開啟聲音');toggle.onclick=()=>r39ToggleAudio();sound.append(toggle);
  const options=el('div','r39-sound-options');for(const [key,label]of [['environment','環境音'],['events','門內外動靜']]){const wrap=el('label','r39-check'),input=el('input','');input.type='checkbox';input.checked=pref[key];input.onchange=()=>{pref[key]=input.checked;save();r39UpdateAudio()};wrap.append(input,el('span','',label));options.append(wrap)}sound.append(options);
  const label=el('label','r39-volume'),text=el('span','','音量 '+pref.volume+'%'),slider=el('input','');slider.type='range';slider.min=0;slider.max=100;slider.value=pref.volume;slider.setAttribute('aria-label','聲音音量');slider.oninput=()=>{pref.volume=Number(slider.value);text.textContent='音量 '+pref.volume+'%';save();r39UpdateAudio()};label.append(text,slider);sound.append(label);
@@ -3442,6 +3453,167 @@ window.addEventListener('pagehide',()=>r39Pause());
 window.addEventListener('r31526-sandbox-reset',()=>{r39Audio.lastRoom=null;r39Audio.readyAt=gameNow()+90000});
 setInterval(()=>{if(r39Audio.playing)r39Tick()},30000);
 document.documentElement.dataset.build='31-5-39';render();
+
+</script>
+<script id="r40-outings">
+// Player outings are independent of Pei Su's autonomous schedule.
+// Only a mutually accepted short trip temporarily makes him co-present outside.
+function r40State(){const l=life();return l.outings40||(l.outings40={active:null,history:[],seq:0,lastInviteAt:0,lastRefused:false,feedback:''})}
+function r40Active(){return r40State().active||null}
+const r40HomeCurrent=current,r40HomeBase=baseCurrent;
+baseCurrent=function(){const a=r40Active();return a?.mode==='together'?{room:'away',name:'一起外出',detail:'你們正在外面。'}:r40HomeBase()};
+current=function(){const a=r40Active();return a?.mode==='together'?{room:'away',name:'一起外出',detail:'你們正在外面。'}:r40HomeCurrent()};
+const r40HomeBusy=r31526Busy;
+r31526Busy=function(except){return !!r40Active()||r40HomeBusy(except)};
+const r40HomeEventContext=r31527EventContext;
+r31527EventContext=function(type,event){if(r40Active())return {allowed:false,where:event?.where||'living',reason:'你目前不在家，回家後再接續。'};return r40HomeEventContext(type,event)};
+const r40HomeDailyAllowed=r31527DailyAllowed,r40HomeSpecialContext=r31527SpecialContext;
+r31527DailyAllowed=function(id){return !r40Active()&&r40HomeDailyAllowed(id)};
+r31527SpecialContext=function(id){return !r40Active()&&r40HomeSpecialContext(id)};
+const r40HomeIncoming=v173Incoming;
+v173Incoming=function(force){return !r40Active()&&r40HomeIncoming(force)};
+const r40ApplyHomeLight=r39ApplyLight;
+r39ApplyLight=function(){r40ApplyHomeLight();if(r40Active())document.documentElement.dataset.roomLight='off'};
+const r40HomeCueTick=r39Tick;
+r39Tick=function(){if(r40Active()){r39Audio.lastRoom=current().room;return false}return r40HomeCueTick()};
+// Stop hidden home controls as well as new offers while the player is outside.
+for(const name of ['doAction','talk','beginStory','privatePick','v172StartItem','v172Choose','r36Action','r39SetLight']){
+ const original=({doAction,talk,beginStory,privatePick,v172StartItem,v172Choose,r36Action,r39SetLight})[name];
+ if(typeof original!=='function')continue;
+ const guarded=function(...args){if(r40Active())return false;return original.apply(this,args)};
+ if(name==='doAction')doAction=guarded;else if(name==='talk')talk=guarded;else if(name==='beginStory')beginStory=guarded;else if(name==='privatePick')privatePick=guarded;else if(name==='v172StartItem')v172StartItem=guarded;else if(name==='v172Choose')v172Choose=guarded;else if(name==='r36Action')r36Action=guarded;else if(name==='r39SetLight')r39SetLight=guarded;
+}
+function r40Blocker(){
+ const l=life();
+ if(r40Active())return '你已經在外面了。';
+ if(r40HomeBusy('outing')||v172().scene||l.affectionBed||l.peiRoomAccess175s?.inside||$('affShade')?.classList.contains('on'))return '先結束目前的互動，再出門。';
+ if(l.talkV141&&!l.talkV141.done||l.r28KitchenDialogue||l.r31517RoomDialogue||l.snackTalk315)return '先結束目前的對話，再出門。';
+ return '';
+}
+function r40TogetherReason(){
+ const block=r40Blocker();if(block)return block;
+ const a=r40HomeCurrent();
+ if(a.room==='away')return '裴溯已經外出，等他回家再問。';
+ if(a.private||a.room==='pei')return '裴溯正在自己的房間，晚點再問。';
+ if(/處理|忙|準備|熬夜|整理/.test(a.name))return '他手邊還有事，晚點再邀他。';
+ if(r40State().lastRefused&&gameNow()-r40State().lastInviteAt<10*60000)return '他剛才沒有答應，先讓他做自己的事。';
+ const boundary=(slotAt(gameNow())+1)*7200000,next=activity(slotAt(gameNow())+1);
+ if(boundary-gameNow()<5*60000&&(next.room==='away'||next.private))return '他等會兒有自己的事，改天再一起出門。';
+ return '';
+}
+function r40Until(){
+ let end=gameNow()+30*60000;
+ for(let slot=slotAt(gameNow())+1;slot*7200000<end;slot++){const next=activity(slot);if(next.room==='away'||next.private){end=slot*7200000;break}}
+ return end;
+}
+function r40OutsideText(a){
+ const w=r36Sync(),h=new Date(gameNow()).getHours(),day=h>=6&&h<18;
+ const weather=w.sky==='rain'?'雨落在傘面上，路面映著細碎的光。':w.sky==='cloud'?(day?'雲影慢慢掠過路面。':'街邊的燈照著安靜的路口。'):(day?'日光落在人行道邊，樹影微微晃動。':'路燈把你們前方的路照亮了一段。');
+ return (a.destination==='store'?'便利商店的門口亮著燈。':a.destination==='errands'?'你照自己的步調處理出門的事情。':'你'+(a.mode==='together'?'們':'')+'沿著附近的街道慢慢走。')+' '+weather.replace('你們',a.mode==='together'?'你們':'你');
+}
+function r40Start(mode,destination){
+ const f=r40State(),reason=mode==='together'?r40TogetherReason():r40Blocker();
+ if(reason){f.feedback=reason;f.feedbackAt=gameNow();save();render();return false}
+ if(!['solo','together'].includes(mode)||!(mode==='solo'?['walk','errands']:['walk','store']).includes(destination))return false;
+ if(mode==='together'){
+  f.lastInviteAt=gameNow();f.lastRefused=hash(Math.floor(gameNow()/600000)+state.seed+407)>.86;
+  if(f.lastRefused){f.feedback='你問他要不要一起出門。裴溯看了眼手邊的東西：「這次先不了。」';f.feedbackAt=gameNow();save();render();return false}
+ }
+ const now=gameNow(),w=r36Sync(),npc=r40HomeCurrent();
+ const a={id:'outing-'+now+'-'+(++f.seq),mode,destination,started:now,until:mode==='together'?r40Until():null,returnRoom:room,seen:[],lines:[],interaction:null,messageSent:false,contact:null,contactChecked:false};
+ const rain=w.sky==='rain'?'帶上雨傘，':'';
+ const intro=mode==='together'?'你問他要不要一起'+(destination==='store'?'去便利商店':'出去走走')+'。\n「走吧。」他拿上鑰匙，和你一起'+rain+'出了門。':(npc.room===room&&!npc.private?'你說自己要出去一下。裴溯應了一聲，沒有多問。\n':'')+'你拿好鑰匙，'+rain+'出了門。';
+ a.lines.push({at:now,text:intro});f.active=a;f.feedback='';r31531().seat=null;
+ r39Audio.lastRoom=mode==='together'?'away':npc.room;
+ log(mode==='together'?'你和裴溯一起出門了。':'你自己出門了。');save();render();return true;
+}
+function r40Return(reason='manual'){
+ const f=r40State(),a=f.active;if(!a)return false;
+ f.active=null;const now=gameNow(),npc=r40HomeCurrent();
+ let text=a.mode==='together'?'你們一起回到家，在門口收好鑰匙，各自做回自己的事。':'你回到家，把鑰匙放好。';
+ if(a.mode==='solo')text+=npc.room==='away'?'裴溯還沒回來。':npc.private?'他的房門仍關著。':'裴溯在'+ROOMS[npc.room][0]+'，正做自己的事。';
+ if(reason==='elapsed')text='這趟短暫的外出已經結束。'+text;
+ if(reason==='clock')text='裝置時間已變更，這趟外出先結束。'+text;
+ a.lines.push({at:now,text});f.history.unshift({...a,returnedAt:now,reason});f.history=f.history.slice(0,30);f.feedback=text;f.feedbackAt=now;
+ room=ROOMS[a.returnRoom]?a.returnRoom:'living';r39Audio.lastRoom=npc.room;
+ log(text);save();return true;
+}
+function r40Reconcile(){const a=r40Active();if(!a)return false;if(gameNow()<a.started)return r40Return('clock');if(a.mode==='together'&&gameNow()>=a.until)return r40Return('elapsed');return false}
+const R40_LOOK={
+ walk:['你在街角停了一下，等對向的人走過才繼續往前。','你繞過路邊的一小片落葉，沿著原本的路慢慢走。','路口的號誌換了顏色，你停下來等了一會兒。'],
+ store:['你在貨架前停了一會兒，看了看新換上的商品。','你換到另一排貨架，沒有急著拿東西。','店門開了又合上，街上的聲音短暫傳進來。'],
+ errands:['你把手邊的一件事辦妥，才慢慢往下一個地方走。','你在路口確認了一下方向，繼續自己的行程。','事情處理得差不多了，你找了個不擋路的位置停一會兒。']
+};
+function r40Look(){
+ const a=r40Active();if(!a||a.seen.length>=3||a.interaction)return false;
+ const i=[0,1,2].find(i=>!a.seen.includes(i));a.seen.push(i);let text=R40_LOOK[a.destination][i];
+ if(a.mode==='together')text+=['裴溯在一旁等你，等你走過來才接著往前。','你轉頭時，他也正好看過來：「怎麼？」','他收起手機，和你一起繼續往前。'][i];
+ a.lines.push({at:gameNow(),text});save();render();return true;
+}
+function r40Message(){
+ const a=r40Active();if(!a||a.mode!=='solo'||a.messageSent)return false;
+ a.messageSent=true;const npc=r40HomeCurrent();let text='你傳了訊息：「我晚點回去。」\n';
+ text+=npc.private||/忙|處理|資料/.test(npc.name)?'訊息已送出，暫時沒有回覆。':'過了一會兒，裴溯回了：「知道了。」';
+ a.lines.push({at:gameNow(),text});log('外出時，你告訴裴溯自己會晚點回家。');save();render();return true;
+}
+function r40MaybeContact(){
+ const a=r40Active();if(!a||a.mode!=='solo'||a.contactChecked||gameNow()-a.started<10*60000)return;
+ const npc=r40HomeCurrent();if(npc.private||npc.room==='away'||/忙|處理|資料/.test(npc.name))return;
+ a.contactChecked=true;if(hash(a.started/60000+state.seed+40)<.5){a.contact={at:gameNow(),text:'裴溯傳來一則訊息：「還在外面？」',answered:false};a.lines.push({at:gameNow(),text:a.contact.text})}save();
+}
+function r40Answer(label){const a=r40Active();if(!a?.contact||a.contact.answered||!['快回去了。','還要一會兒。','先不回覆'].includes(label))return false;a.contact.answered=true;const text=label==='先不回覆'?'你暫時沒有回覆這則訊息。':'你回了：「'+label+'」';a.lines.push({at:gameNow(),text});save();render();return true}
+const R40_INTERACTIONS={
+ walk:{start:['你放慢腳步，裴溯也跟著慢了些。\n「走累了？」',[['「沒有，想慢慢走。」','slow'],['「你走太快了。」','fast']]],slow:['他看了你一眼：「那就慢點。」\n你們沿著原來的路繼續走。',[['靠近一點，和他並排','near'],['就照這個步調走','done']]],fast:['「現在呢？」他停了半步，等你走到身旁。',[['「這樣剛好。」','near'],['笑著跟上他','done']]],near:['你走到他身旁，他沒有再加快腳步。',[['繼續走走','done']]]},
+ store:{start:['你湊過去看他正在看的貨架。\n裴溯偏頭：「你也想看這個？」',[['「看看你在挑什麼。」','look'],['「還沒決定。」','choose']]],look:['他往旁邊讓了些，讓你也能看見。\n「那你看。」',[['和他一起看一會兒','near'],['去看看別的','done']]],choose:['「慢慢挑。」他沒有催你，繼續看自己的。',[['在他旁邊再看一會兒','near'],['換一排看看','done']]],near:['你們並排站了一會兒，偶爾交換一個眼神。',[['繼續逛逛','done']]]}
+};
+function r40Interact(to='start'){
+ const a=r40Active();if(!a||a.mode!=='together')return false;
+ if(to==='start'&&a.didInteract)return false;
+ if(to==='done'){a.didInteract=true;a.interaction=null;save();render();return true}
+ const tree=R40_INTERACTIONS[a.destination];if(!tree?.[to])return false;
+ if(to!=='start'&&!tree[a.interaction]?.[1]?.some(x=>x[1]===to))return false;
+ a.interaction=to;a.lines.push({at:gameNow(),text:tree[to][0]});save();render();return true;
+}
+function r40Button(parent,label,fn,quiet=false){const b=el('button',quiet?'quiet':'choice',label);b.onclick=fn;const row=el('div','r40-choice-row');row.append(b);parent.append(row);return b}
+function r40TripPanel(id){
+ const a=r40Active(),box=el('section','surface r40-trip');box.id=id;
+ box.append(el('div','surface-title',a.mode==='together'?'一起外出':'你在外面'),el('p','',r40OutsideText(a)));
+ if(a.mode==='together')box.append(el('p','note','這趟是附近的短暫外出，約半小時內回家，也可以提早回去。'));
+ const last=a.lines.at(-1);if(last)box.append(el('p','ambient r40-story',last.text));
+ if(a.interaction){const node=R40_INTERACTIONS[a.destination][a.interaction];for(const [label,to]of node[1])r40Button(box,label,()=>r40Interact(to))}
+ else{
+  if(a.seen.length<3)r40Button(box,'看看周圍',r40Look,true);
+  if(a.mode==='together'&&!a.didInteract)r40Button(box,a.destination==='store'?'看看他在挑什麼':'放慢腳步',()=>r40Interact(),true);
+  if(a.mode==='solo'&&!a.messageSent)r40Button(box,'傳訊息｜我晚點回去',r40Message,true);
+ }
+ if(a.contact&&!a.contact.answered){const incoming=el('div','life-review');incoming.append(el('p','',a.contact.text));for(const label of ['快回去了。','還要一會兒。','先不回覆'])r40Button(incoming,label,()=>r40Answer(label),true);box.append(incoming)}
+ r40Button(box,a.mode==='together'?'一起回家':'回家',()=>{r40Return();render()},true);
+ const history=el('details','r40-transcript');history.append(el('summary','life-title','這趟外出的紀錄'));for(const line of a.lines)history.append(el('p','note r40-story',line.text));box.append(history);return box;
+}
+function r40Render(){
+ const a=r40Active();document.documentElement.dataset.playerAway=String(!!a);
+ const planOpen=!!$('r40Outing')?.querySelector('details.r40-plan')?.open;$('r40Outing')?.remove();const home=el('section','r40-outing');home.id='r40Outing';
+ if(a){
+  $('heroTitle').textContent=a.mode==='together'?'一起出門了':'你出門了';$('heroDetail').textContent=a.mode==='together'?'你們正在附近'+(a.destination==='store'?'逛便利商店。':'走走。'):'你在外面'+(a.destination==='errands'?'處理自己的事。':'走走。');
+  $('heroStatus').textContent=a.mode==='together'?'兩人 · 外出中':'你 · 外出中';$('homeWhisper').textContent='';home.append(r40TripPanel('r40HomeTrip'));
+ }else{
+  const details=el('details','r40-plan'),summary=el('summary','life-title','出門');details.open=planOpen;details.append(summary);
+  const block=r40Blocker(),together=r40TogetherReason();
+  for(const [mode,dest,label]of [['solo','walk','自己出去走走'],['solo','errands','自己出門辦事'],['together','walk','邀他一起散步'],['together','store','邀他去便利商店']]){const b=r40Button(details,label,()=>r40Start(mode,dest),true);b.disabled=!!(mode==='solo'?block:together)}
+  if(block||together)details.append(el('p','note',block||together));home.append(details);
+  if(r40State().feedback&&(!r40State().feedbackAt||gameNow()-r40State().feedbackAt<10*60000))home.append(el('p','note',r40State().feedback));
+ }
+ $('home').insertBefore(home,$('r39Sound'));
+ for(const [section,id]of [['spaces','r40AwaySpaces'],['events','r40AwayEvents'],['talk','r40AwayTalk']]){$(id)?.remove();if(a)$(section).append(r40TripPanel(id))}
+ if(a){document.documentElement.dataset.roomLight='off';$('affOpen').style.display='none'}
+ let journal=$('r40OutingHistory');if(!journal){journal=el('details','surface');journal.id='r40OutingHistory';$('journal').append(journal)}const opened=journal.open;journal.replaceChildren();journal.open=opened;journal.append(el('summary','life-title','外出紀錄（'+r40State().history.length+'）'));
+ for(const h of r40State().history.slice(0,12)){const d=el('details','entry');d.append(el('summary','',fmt(h.started)+'｜'+(h.mode==='together'?'一起外出':'自己外出')));for(const line of h.lines)d.append(el('p','note r40-story',line.text));journal.append(d)}
+}
+const r40PriorRender=render;
+render=function(){r40Reconcile();r40MaybeContact();document.documentElement.dataset.playerAway=String(!!r40Active());r40PriorRender();r40Render()};
+window.addEventListener('r31526-sandbox-reset',()=>{if(r40Active())r40Return();render()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
+document.documentElement.dataset.build='31-5-40';render();save();
 
 </script>
 <script>document.querySelector(".head .sub").textContent="同住日常";</script><script>if("serviceWorker" in navigator && location.protocol.startsWith("http")){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
